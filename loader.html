@@ -1,28 +1,49 @@
 <!-- ============================================================
-TeraWulf custom-code loading — two pieces:
+Custom-code loading — two pieces. Replace terawulf (all occurrences)
+and set VER at each release.
 
-1) CSS base link — lives in the global embed component (g-embed-code),
-   next to the phosphor-icons links:
+1) CSS base link — Site settings → Head code (or the site's global
+   embed component if one exists):
 
-   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/brandvm/terawulf@1.1.0/dist/styles.css" />
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/brandvm/terawulf@1.1.1/dist/styles.css" />
 
-2) JS loader — Site settings → Custom code → Footer code (below).
-   prod = pinned jsDelivr tag
-   webflow.io = latest pushed staging bundle (JS + CSS override)
-   dev flag (localStorage bv-dev=1, staging only) = localhost:3000
+2) JS loader — Site settings → Footer code (below).
+   prod        = pinned jsDelivr tag (immutable)
+   webflow.io  = latest pushed staging bundle (JS + CSS override)
+   dev flag    = the dev machine's server (staging only)
 
-At release: bump the @X.Y.Z in BOTH the embed link and the footer
-loader, then publish. Rollback = revert both strings.
+Dev flag — set via URL params on the staging site (works on any
+device, no console needed):
+   ?bv-dev=1                          → dev mode on (persists)
+   ?bv-dev=1&bv-host=192.168.2.35:3000 → dev mode against the dev
+                                        machine over the LAN
+   ?bv-dev=0                          → back to normal
+Console equivalent: localStorage.setItem('bv-dev','1') / removeItem.
+
+LAN caveat: https staging + http LAN server is "mixed content" —
+browsers allow http://localhost but BLOCK http://192.168.x.x by
+default. On the testing device, allow insecure content for the
+webflow.io site (site settings → Insecure content → Allow), or just
+git push and use the staging bundle (~1 min).
+
+At release: bump the @1.1.1 in BOTH the CSS link and VER below,
+then publish. Rollback = revert both strings.
 ============================================================ -->
 <script>
 (function () {
-  var VER      = '1.1.0';
+  var VER      = '1.1.1';
   var PROD_JS  = 'https://cdn.jsdelivr.net/gh/brandvm/terawulf@' + VER + '/dist/index.js';
   var STAG     = 'https://brandvm.github.io/terawulf/';
-  var DEV      = 'http://localhost:3000/';
   var staging = /\.webflow\.io$/.test(location.hostname);
-  var flag = false;
-  try { flag = staging && localStorage.getItem('bv-dev') === '1'; } catch (e) {}
+  var flag = false, devHost = 'localhost:3000';
+  try {
+    var q = new URLSearchParams(location.search);
+    if (q.has('bv-dev')) localStorage.setItem('bv-dev', q.get('bv-dev'));
+    if (q.get('bv-host')) localStorage.setItem('bv-host', q.get('bv-host'));
+    flag = staging && localStorage.getItem('bv-dev') === '1';
+    devHost = localStorage.getItem('bv-host') || devHost;
+  } catch (e) {}
+  var DEV = 'http://' + devHost + '/';
   function js(src, fallback) {
     var s = document.createElement('script');
     s.src = src;
