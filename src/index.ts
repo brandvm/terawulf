@@ -1,3 +1,4 @@
+// @ts-nocheck — migrated as-is from CodeSandbox (plain JS); new modules should be typed
 /**
  * File: terawulf-main.js
  *
