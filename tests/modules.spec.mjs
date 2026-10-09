@@ -258,3 +258,52 @@ test('dotted canvas: reduced motion keeps the dots still', async ({ page }) => {
   await page.waitForTimeout(100);
   expect(await snap()).toBe(before);
 });
+
+// play()/pause() stubs: the test videos have no media, so fake the state and
+// fire the same events a real element would.
+const fakeMedia = () => {
+  const paused = new WeakMap();
+  Object.defineProperty(HTMLMediaElement.prototype, 'paused', {
+    configurable: true,
+    get() { return paused.has(this) ? paused.get(this) : true; },
+  });
+  HTMLMediaElement.prototype.play = function () {
+    paused.set(this, false); this.dispatchEvent(new Event('play')); return Promise.resolve();
+  };
+  HTMLMediaElement.prototype.pause = function () {
+    if (paused.get(this) === false) { paused.set(this, true); this.dispatchEvent(new Event('pause')); }
+  };
+};
+
+const hero = `
+  <section style="position:relative;height:100vh">
+    <video autoplay muted loop playsinline><source src="/hero.mp4" type="video/mp4"></video>
+    <button type="button" data-video-toggle><i class="ph-bold ph-pause" aria-hidden="true"></i></button>
+  </section>
+  <video data-popup-video><source src="/popup.mp4"></video>`;
+
+test('video toggle: pauses and plays the hero video, label and icon follow, pause sticks', async ({ page }) => {
+  const errors = await setup(page, hero, { init: fakeMedia });
+  const btn = page.locator('[data-video-toggle]');
+  const icon = btn.locator('i');
+  await expect(btn).toHaveAttribute('aria-label', 'Pause background video'); // playing (autoplay module)
+  await expect(icon).toHaveClass(/ph-pause/);
+  await btn.click();
+  await expect(btn).toHaveAttribute('aria-label', 'Play background video');
+  await expect(icon).toHaveClass(/ph-play/);
+  expect(await page.evaluate(() => document.querySelector('section video').paused)).toBe(true);
+  expect(await page.evaluate(() => document.querySelector('[data-popup-video]').paused)).toBe(true);
+  // A visitor pause is never auto-resumed when the video scrolls back in.
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.waitForTimeout(300);
+  await expect(btn).toHaveAttribute('aria-label', 'Play background video');
+  await btn.press('Enter');
+  await expect(btn).toHaveAttribute('aria-label', 'Pause background video');
+  expect(errors).toEqual([]);
+});
+
+test('video toggle: reduced motion starts paused with a Play label', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await setup(page, hero, { init: fakeMedia });
+  await expect(page.locator('[data-video-toggle]')).toHaveAttribute('aria-label', 'Play background video');
+});
