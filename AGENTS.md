@@ -17,15 +17,11 @@ Adopted from `brandvm/wf-template` 0.1.0 (63bfb79) on 2026-10-09
 - Staging site: `https://terawulff.webflow.io` (double f)
 - Staging bundles: `https://brandvm.github.io/terawulf/`
 - Production domain: `https://www.terawulf.com` (apex redirects to www)
-- Webflow state (2026-10-09): the v1.2.0 loader, G | Components and the
-  removal of the old page scripts are saved in Webflow and published to
-  **terawulff.webflow.io only**. The next custom-domain publish ships them.
-- Production release: `1.1.1`, installed with the **old** two-piece loader
-  (pinned CSS link in the G | Embed Code component + `VER` in footer code,
-  `bv-dev` flags). `loader.html` in this repo is the template's three-piece
-  loader, **not yet installed** — it ships with the next release, after
-  approval (see Project notes). Until then, this file is the exception to
-  "keep `loader.html` identical to what is installed".
+- Production release: **`1.2.0`** (published 2026-10-09, batch 1), installed
+  with the template loader: `RELEASE` in head code + the `@1.2.0` in Embed 2a
+  (G | Components). Previous release 1.1.1 with the old two-piece loader is
+  saved in `docs/rollback/2026-10-09/`. Release plan: small batches, each
+  staging → check → production (`docs/audit/STATUS.md`).
 - Global code component: **G | Components** (2026-10-09, wf-template
   shell): fixed 0×0 div, `aria-hidden="true"`, first child of `body` on all
   15 pages, holding Embed 2a (icon CSS + `#wfc-css` pinned release) and
