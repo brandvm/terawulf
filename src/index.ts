@@ -10,6 +10,7 @@ import { initSessionModal } from './modules/session-modal';
 import { initDottedCanvas } from './modules/dotted-canvas';
 import { initPopupVideo } from './modules/popup-video';
 import { initAutoplayVideo } from './modules/autoplay-video';
+import { initVideoToggle } from './modules/video-toggle';
 import { initResizeReload } from './modules/resize-reload';
 import { initHashScroll } from './modules/hash-scroll';
 
@@ -33,6 +34,7 @@ function boot() {
   run('dotted-canvas', initDottedCanvas);
   run('popup-video', initPopupVideo);
   run('autoplay-video', initAutoplayVideo);
+  run('video-toggle', initVideoToggle);
   run('resize-reload', initResizeReload);
   run('hash-scroll', initHashScroll);
 }

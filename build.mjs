@@ -14,6 +14,9 @@ const config = {
   // unminified files or sourcemaps in dist/ to be committed by accident.
   write: !dev,
   target: 'es2019',
+  // Icon subset fonts are ~1 KB each: inline them so styles.css stays one
+  // request and the icons never wait on a second download.
+  loader: { '.woff2': 'dataurl' },
   logLevel: 'info',
   banner: dev
     ? { js: "(() => { try { var u = document.currentScript && document.currentScript.src ? new URL('/esbuild', document.currentScript.src).href : 'http://localhost:3000/esbuild'; new EventSource(u).addEventListener('change', () => location.reload()); } catch (e) {} })();" }
