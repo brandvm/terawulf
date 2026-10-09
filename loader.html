@@ -31,8 +31,8 @@ published.
 1) Head code — Site settings → Custom code → Head code.
 
    Only things that must exist before the bundle does: the shared
-   config (window.WFC), meta tags the browser reads at parse time,
-   connection warming, and the pre-paint scroll lock.
+   config (window.WFC), meta tags the browser reads at parse time and
+   connection warming.
 
    RELEASE is null until the first tag exists. While it is null, a
    page served from a custom domain uses the STAGING bundle and logs a
@@ -78,14 +78,10 @@ published.
       v: "?v=" + Date.now(),
     };
 
-    // Paired with the html.is-loading rules in src/styles.css. The bundle
-    // removes this when it boots; the timeout is the safety net so a 404
-    // on the bundle never leaves a permanently scroll-locked page. A plain
-    // timeout, not one started on `load` — a slow image would otherwise
-    // keep the page locked far past 3 s.
-    var root = document.documentElement;
-    root.classList.add("is-loading");
-    setTimeout(function () { root.classList.remove("is-loading"); }, 3000);
+    // TeraWulf: no pre-paint scroll lock (template's html.is-loading). The
+    // bundle loads after Webflow's interaction scripts, so a lock would
+    // freeze scrolling for a second or more on phones, and nothing on this
+    // site needs it. src/index.ts still removes the class if present.
   })();
 </script>
 
@@ -126,8 +122,14 @@ published.
    not delete staging's copy of it. Deletions can only be verified
    after a push.
 
-   GitHub Pages caches ~10 min; bump ?v=1 below to pull fresh staging
-   CSS into the canvas.
+   TeraWulf: 2a's href is the PINNED RELEASE stylesheet, not staging.
+   The browser's preload scanner requests 2a's href before 2b can change
+   it, so a staging href meant every production visitor downloaded the
+   CSS twice, once from github.io (tested 2026-10-09). With the release
+   URL, production downloads it once; only *.webflow.io swaps to
+   staging. Trade-offs: the canvas shows the release CSS (as before the
+   template), and a release updates TWO strings — RELEASE in piece 1 and
+   the @version below. 2b logs a console error if they disagree.
 
    Placement: an Embed in the body loads after Webflow's own
    stylesheet, so our rules win ties on specificity. That is exactly
@@ -137,13 +139,13 @@ published.
 <link
   id="wfc-css"
   rel="stylesheet"
-  href="https://brandvm.github.io/terawulf/styles.css?v=1"
+  href="https://cdn.jsdelivr.net/gh/brandvm/terawulf@1.2.0/dist/styles.css"
 />
 
 <!-- ============================================================
 2b) Second HTML Embed, directly after 2a in the same component: this
-    script only. The canvas never runs it (2a still shows the staging
-    CSS there); on published pages it settles the stylesheet URL.
+    script only. The canvas never runs it (2a shows the release CSS
+    there); on published pages it settles the stylesheet URL.
 ------------------------------------------------------------ -->
 <script>
   (function () {
@@ -151,9 +153,13 @@ published.
     var base = document.getElementById("wfc-css");
     if (!C) return console.error("[wfc] Head code config missing; the stylesheet stays on staging.");
     if (!base) return;
-    // Runs right after 2a, before anything paints, so the staging sheet
-    // never applies on prod — the href is settled before first paint.
-    base.href = C.staging ? C.stag + "styles.css" + C.v : C.prod + "styles.css";
+    // Runs right after 2a, before anything paints. Every href write drops
+    // the sheet and fetches it again, so only write when the URL differs:
+    // on production 2a already carries the release URL.
+    var want = C.staging ? C.stag + "styles.css" + C.v : C.prod + "styles.css";
+    if (!C.staging && C.release && base.href !== want)
+      console.error("[wfc] Embed 2a pins " + base.href + " but RELEASE is " + C.release + " — update 2a; the stylesheet downloads twice until then.");
+    if (base.href !== want) base.href = want;
     if (C.dev && !document.getElementById("wfc-css-dev")) {
       var dev = document.createElement("link");
       dev.id = "wfc-css-dev";

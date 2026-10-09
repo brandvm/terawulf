@@ -25,6 +25,22 @@ repos to improve `brandvm/wf-template`.
 
 <!-- Add new entries here, newest first. -->
 
+### 2026-10-09 · Template Embed 2a makes production download the CSS twice
+- Area: loader, perf
+- Scope: template-candidate
+- Symptom: with the template loader, every production page requested
+  `styles.css` from github.io (staging) **and** from jsDelivr (release).
+- Cause: Embed 2a's static href is the staging URL; the browser's preload
+  scanner requests it before Embed 2b rewrites the href to the release.
+  Measured in Chromium on 2026-10-09: 3 of 3 runs fetched both.
+- Fix: 2a carries the pinned release URL; 2b only rewrites the href when it
+  differs (staging, dev) and logs an error if 2a's version ≠ RELEASE.
+  Trade-off: a release updates two strings (RELEASE and 2a), and the canvas
+  shows the release CSS. Also dropped the `is-loading` scroll lock: the
+  bundle loads after Webflow's interaction scripts here.
+- Status: fixed in loader.html
+- Found by: claude
+
 ### 2026-10-09 · Template tests require `RELEASE = null` in loader.html
 - Area: release
 - Scope: template-candidate

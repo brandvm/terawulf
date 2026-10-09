@@ -10,7 +10,10 @@ const repo = source.match(/var SITE = "([^"]+)"/)[1];
 const org = source.match(/var OWNER = "([^"]+)"/)[1];
 if (!source.includes('var RELEASE = null;')) throw new Error('loader.html must ship with `var RELEASE = null;`');
 function loader(release) {
-  const text = source.replace('var RELEASE = null;', `var RELEASE = ${JSON.stringify(release)};`);
+  // TeraWulf: Embed 2a pins the release stylesheet; keep it in step with
+  // RELEASE the way a real release does (loader.html header, 2a).
+  const text = source.replace('var RELEASE = null;', `var RELEASE = ${JSON.stringify(release)};`)
+    .replace(/(terawulf|wf-example)@[0-9.]+\/dist\//g, `$1@${release ?? '0.0.0'}/dist/`);
   return {
     scripts: [...text.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(match => match[0]),
     links: [...text.matchAll(/<link\b[^>]*>/g)].map(match => match[0])
@@ -186,10 +189,25 @@ test('production without a RELEASE serves staging and logs an error', async ({ p
   // Staging changes on every push, so it is cache-busted like on webflow.io.
   await expect(page.locator('#wfc-css')).toHaveAttribute('href', new RegExp('^' + stage + 'styles\\.css\\?v=\\d+$'));
   expect(requests.some(request => request.startsWith(stage + 'index.js'))).toBe(true);
-  expect(requests.filter(request => request.includes('cdn.jsdelivr.net/gh/'))).toEqual([]);
+  // TeraWulf: 2a's static href is the pinned release stylesheet, so the
+  // preload scanner may still request it; no script may come from jsDelivr.
+  expect(requests.filter(request => request.includes('cdn.jsdelivr.net/gh/') && request.endsWith('.js'))).toEqual([]);
   expect(consoleErrors.join('\n')).toContain('RELEASE is not set');
 });
 
 test('the scroll lock is released when the bundle cannot load', async ({ page }) => {
   await setup(page, { url: 'https://client.example/', unavailable: url => url.endsWith('index.js') });
+});
+
+test('production downloads the stylesheet once, from the pinned release', async ({ page }) => {
+  const requests = [];
+  await setup(page, { url: 'https://client.example/', requests });
+  const css = requests.filter((u) => u.includes('styles.css'));
+  expect(css).toEqual([release + 'styles.css']);
+});
+
+test('no scroll lock: the page can scroll before the bundle boots', async ({ page }) => {
+  const { scripts } = loader('1.0.0');
+  await page.setContent(`<!doctype html><html><head>${scripts[0]}</head><body style="height:5000px"></body></html>`);
+  await expect(page.locator('html')).not.toHaveClass(/is-loading/);
 });

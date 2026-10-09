@@ -67,6 +67,10 @@ Adopted from `brandvm/wf-template` 0.1.0 (63bfb79) on 2026-10-09
   home-transition on desktop); IX2 on /about (`data-w-id` on
   `.image-overlay.is_left`, Our Vision). Webflow components (nav, dropdown,
   tabs) are not interactions and stay.
+- **Release = two strings** (TeraWulf loader): `RELEASE` in head code AND
+  the `@x.y.z` in Embed 2a's href (G | Embed Code). 2a pins the release so
+  production downloads the CSS once (GOTCHAS 2026-10-09). 2b logs a console
+  error when they disagree.
 - Installing the template loader: remove the old head/footer snippets and
   the old CSS link in G | Embed Code, keep the existing `theme-color` meta
   only once, set `RELEASE` to the new tag, paste 2a/2b into G | Embed Code.
