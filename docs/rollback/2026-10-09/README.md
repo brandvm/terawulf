@@ -23,7 +23,7 @@ Webflow → Site settings → **Backups** → *Create backup*, named
 `Pre-cleanup 2026-10-09`. Webflow also keeps an automatic backup at each
 publish, but a named one is easy to find. Record it here:
 
-- [ ] Backup created: `Pre-cleanup 2026-10-09`, started 2026-10-09 by the account owner (in progress). Tick once Webflow shows it complete.
+- [x] Backup created: `Pre-cleanup 2026-10-09`, 2026-10-09, by the account owner. Confirmed complete.
 
 ## How to roll back
 
