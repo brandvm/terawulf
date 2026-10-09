@@ -6,19 +6,70 @@ source of agent rules — edit this file, never a copy of it.
 
 ## Project facts
 
-- Client / site: TeraWulf
+Adopted from `brandvm/wf-template` 0.1.0 (63bfb79) on 2026-10-09
+(`.wf-template.json`); the repo predates the template layout.
+
+- Client / site: TeraWulf (live, SEO/AEO/GEO retainer)
 - GitHub: `brandvm/terawulf`, default branch `master`
-- Webflow site ID: unknown — fill in
-- Staging site: unknown — fill in (`https://<slug>.webflow.io`; the loader
-  matches any `*.webflow.io` host)
+- Webflow site ID: `69cc1149c7144d8f6b6c386a` (workspace
+  `67d43a7ab8bacff8137b6bb3`). A legacy "Terawulf (2025)" site
+  `66ec3b11f11d4b8b14e1f1e9` also exists — never edit it.
+- Staging site: `https://terawulff.webflow.io` (double f)
 - Staging bundles: `https://brandvm.github.io/terawulf/`
-- Production bundles: `https://cdn.jsdelivr.net/gh/brandvm/terawulf@<VER>/dist/`
-- Production domain: unknown — fill in
-- Production release: `v1.1.1` (tags `v1.0.0`, `v1.1.0`, `v1.1.1`; snippet URLs
-  use `@1.1.1`, which jsDelivr resolves to the `v`-prefixed tag)
+- Production domain: `https://www.terawulf.com` (apex redirects to www)
+- Production release: `1.1.1`, installed with the **old** two-piece loader
+  (pinned CSS link in the G | Embed Code component + `VER` in footer code,
+  `bv-dev` flags). `loader.html` in this repo is the template's three-piece
+  loader, **not yet installed** — it ships with the next release, after
+  approval (see Project notes). Until then, this file is the exception to
+  "keep `loader.html` identical to what is installed".
+- Global embed component: **G | Embed Code** (the template calls it
+  G | Components). Embeds 2a/2b go there.
 - Origin: migrated 2026-09-02 from CodeSandbox (`terawulf-main.js`,
-  `terawulf-main.css`) plus the inline `<style>` block that lived in the global
-  embed component.
+  `terawulf-main.css`) plus the inline `<style>` of the global embed.
+
+## Project notes
+
+- **Rollback point:** `docs/rollback/2026-10-09/` (verbatim Webflow custom code and page schema) + tag `rollback/2026-10-09-pre-cleanup`. Make a new dated folder before any later round of Webflow changes.
+- **Live site — no Webflow change without explicit approval per item.**
+  Stage on terawulff.webflow.io, check, then publish with `safe-publish`.
+  Audit and fix plan: `docs/audit/`.
+- `src/styles.css` §01 keeps TeraWulf's legacy **`:root`** fluid scale and
+  the `--_colors---*` redefinitions (`override-webflow`, GOTCHAS 2026-09-02).
+  Do not add the template's body scaling on top: both would apply.
+- Webflow loads GSAP 3.15 + ScrollTrigger, SplitText and CustomEase itself
+  (IX3, site settings). Never bundle a second GSAP; if a module needs GSAP,
+  read `window.gsap` and no-op without it.
+- Page custom code outside this repo (move into modules when touched):
+  Home/About/Careers popup-video scripts, Finsweet v1 + v2 on /news and
+  /careers, a resize-reload on /our-operations, BlogPosting JSON-LD on the
+  Resources template, Organization/WebSite JSON-LD in site head code.
+- **Animation: moving off Webflow interactions — all versions (classic IX,
+  IX2, IX3)** (decided 2026-10-09). New motion never goes into Webflow
+  Interactions. Existing interactions are rebuilt in the repo, keeping the
+  approved motion and timing, then removed from Webflow page by page:
+  1. CSS first: transitions/`@keyframes` on a class or `[data-state]` that a
+     module toggles (`js-state`), CSS scroll-driven animations
+     (`animation-timeline: view()`, behind `@supports`) for parallax-style
+     effects, `prefers-reduced-motion` in §07.
+  2. A repo module only where CSS can't: one shared IntersectionObserver
+     for reveals keyed by the existing `data-gsap="text-animate" | "para-in"`
+     attributes; GSAP (`pnpm add gsap`, only the plugins used) for
+     SplitText line/word reveals and scrubbed or pinned scenes.
+  3. Never hide first-screen content (hero logo, h1, CTA) with
+     `visibility: hidden` waiting for JS — that is today's IX3 gate and the
+     main mobile LCP cost. Hero motion starts from visible content.
+  4. When a page has no Webflow interactions left, it drops the IX3 gate
+     style; when the site has none, turn off Webflow's GSAP/IX site settings
+     so gsap, ScrollTrigger, SplitText and CustomEase stop loading.
+  Inventory as of 2026-10-09: IX3 on every page (`data-gsap` text/para
+  reveals, hero, page headers, parallax, stats, timeline overlays, smoke and
+  home-transition on desktop); IX2 on /about (`data-w-id` on
+  `.image-overlay.is_left`, Our Vision). Webflow components (nav, dropdown,
+  tabs) are not interactions and stay.
+- Installing the template loader: remove the old head/footer snippets and
+  the old CSS link in G | Embed Code, keep the existing `theme-color` meta
+  only once, set `RELEASE` to the new tag, paste 2a/2b into G | Embed Code.
 
 ## Who owns what
 
@@ -26,12 +77,12 @@ Webflow owns markup, layout, classes, components, CMS content, interactions
 **and styling by default**. This repo owns JavaScript behaviour and only the
 CSS the Designer cannot express.
 
-That split is deliberate. Repo CSS loads after `webflow.css`, so it wins every
-specificity tie against the Designer. Any rule written here that the Designer
-could have expressed becomes a hidden override: the next person changes that
-style in the Designer, nothing happens, and the only fix is edit `src/` →
-release → bump the version in Webflow → publish. Every project built from
-`wf-template` has lost time to that loop.
+That split is deliberate. Repo CSS loads from an Embed after `webflow.css`,
+so it wins every specificity tie against the Designer. Any rule written here
+that the Designer could have expressed becomes a hidden override: the next
+person changes that style in the Designer, nothing happens, and the only fix
+is edit `src/` → push → wait for staging → reload the Designer. Every project
+built from this template has lost time to that loop.
 
 ## CSS policy — Designer first
 
@@ -71,96 +122,70 @@ Before writing any CSS, decide where it belongs.
    code before editing anything. "Make the heading bigger on mobile" is a
    Designer breakpoint style, not a media query here.
 
-Existing rules predate this policy and are untagged; add a `repo-css` tag to
-any rule you touch, and question rules the Designer could own. In particular
-`src/styles.css` §01 sets a fluid `:root` font-size and §02 redefines Webflow
-`--_colors---*` variables; both were migrated as-is (see `GOTCHAS.md`).
+## Read before changing integration
 
-## Architecture
-
-- **No HTML Embed carries repo CSS.** `loader.html` has two pieces:
-  1. The pinned release stylesheet — a `<link>` to
-     `cdn.jsdelivr.net/gh/brandvm/terawulf@<VER>/dist/styles.css` in
-     **Site settings → Head code** ("or the site's global embed component if
-     one exists" — confirm which in Webflow and record it here).
-  2. The JS loader in **Site settings → Footer code**. Prod loads the pinned
-     `index.js`. On `*.webflow.io` it loads the staging `index.js` (falling
-     back to prod) and **appends** the staging `styles.css` after the pinned
-     base link. In dev mode it loads localhost JS/CSS the same way (falling
-     back to staging JS).
-- Staging and dev CSS are therefore layered **on top of** the pinned release
-  CSS, not instead of it. A rule deleted in `src/` still applies on staging
-  until the next release.
-- `src/index.ts` is one migrated legacy IIFE marked `// @ts-nocheck`:
-  `Utils` → modules (`SessionModal`, `DottedCanvas`) → `Utils.run(name, init)`
-  per module (one failing module does not stop the others). Modules removed in
-  the 2026-09-02 audit (KeyboardIx3ShiftGToggle, GoToTop, SmartSwiper,
-  ClickOnLoad, NavShrink) can be restored from tag `v1.0.0`.
-- New features: put them in a new typed file (there is no `src/modules/` yet),
-  import it into `src/index.ts`, register it in the `modules` list, and make it
-  no-op when its markup is absent. The header comment asks for new modules to
-  be typed.
-- `src/styles.css` is numbered (00 font-face … 09 site overrides). Add rules to
-  the section they belong to, never to the end of the file. The SessionModal
-  CSS (`.is-open`, `html.modal-open`) pairs with the JS module.
+- `README.md` — commands, daily flow, release, handoff.
+- `loader.html` — the three snippets pasted into Webflow (head code, the
+  two canvas Embeds — 2a the stylesheet link, 2b its script — and footer
+  code). Read it before touching any
+  of them.
+- `src/index.ts` is a manifest: one `run('<name>', init<Name>)` call per
+  module, so a module that throws is logged and the rest still run. Features
+  go in `src/modules/`, one file each, exporting an init function that no-ops
+  when its target markup is absent.
+- `src/styles.css` opens with cascade notes. Add rules to the section they
+  belong to, never to the end of the file.
 - Third-party libraries are bundled with `pnpm add`, not added as CDN tags.
   The footer loader appends the bundle dynamically, so a sibling
-  `<script defer>` has no ordering guarantee.
+  `<script defer>` has no ordering guarantee. Finsweet Attributes too: use
+  the webflow-build skill's `recipes/finsweet/`, never Finsweet's script
+  tag in Webflow.
+- `src/styles.css` §01 scales the **root** font-size with the viewport
+  (TeraWulf's legacy scale, not the template's body scaling — see Project
+  notes). Don't set a root or body font-size in the Designer.
 
 ## Webflow canvas facts
 
 - **The Designer canvas never runs scripts.** Anything shown only after JS
-  runs (the modal, `DottedCanvas`) is invisible there; use a `canvas-preview`
-  rule if the Designer needs to see it.
-- **Repo CSS loads from head code, which the canvas does not render.** The
-  canvas therefore shows no repo CSS at all — and never staging or localhost
-  CSS, because those are added by the footer script. If the base link is in
-  the global embed component instead, the canvas shows the pinned *release*
-  CSS only. Either way, CSS work in `src/` cannot be checked in the Designer;
-  check it on the published `*.webflow.io` page.
+  runs is invisible there; use a `canvas-preview` rule if the Designer needs
+  to see it.
+- **The canvas shows the staging stylesheet only.** Seeing a CSS change in
+  the Designer means push → ~1 min → reload the Designer tab. Never add a
+  static `http://localhost` link to the Embed for good — every public
+  visitor's browser would request it. `loader.html` describes the temporary
+  opt-in; if one is in use, the local and staging sheets are additive and a
+  deleted rule keeps applying from staging until pushed.
 - No live reload on the canvas. Reload the Designer tab.
 - Debug "is my CSS loading?" with `background`, not `outline` — outlines on
   `body` paint outside the canvas iframe and get clipped.
 
 ## Snippets are not versioned
 
-A push updates the staging JS/CSS bundles only. Any change to `loader.html`
-must be re-pasted into Webflow and published to take effect — say so in the
-commit message, and keep `loader.html` identical to what is installed.
+A push updates the JS/CSS bundles only. Any change to `loader.html` must be
+re-pasted into Webflow and published to take effect — say so in the commit
+or PR description, and keep `loader.html` identical to what is installed.
 
-## Commands, dev mode and release
+## Commands and release
 
 ```bash
-pnpm dev      # watch + server on :3000 (logs each entry URL)
+pnpm dev      # watch + server on :3000
 pnpm build    # minified -> dist/
-pnpm check    # tsc --noEmit (src/index.ts is @ts-nocheck)
+pnpm check    # tsc --noEmit + repo checks (scripts parse, skill links)
+pnpm test     # build + Playwright checks (loader + modules) + the new-project test
+pnpm wf:pass /   # webflow-build checks: wf:compare, wf:pass, wf:anchors, wf:outline,
+                 # wf:film, wf:transitions, wf:a11y, wf:links, wf:baseline
+pnpm update-skills   # skills from the latest template release (ask first)
 ```
 
-No test suite. Node 22 and the pinned pnpm in `package.json`. CI
-(`.github/workflows/staging.yml`) builds on every push to `master` and deploys
-`dist/` to GitHub Pages; it runs no type check.
+Node 22 and the pinned pnpm in `package.json`. `dist/` is committed: after
+any `src/` change run `pnpm build` and commit `dist/` with it — CI fails the
+push otherwise, and staging only deploys after `pnpm check`, the browser
+tests and the `dist/` check pass. `pnpm dev` builds in memory and never
+touches `dist/`.
 
-Dev mode on the staging site (persists in localStorage):
-`?bv-dev=1` on, `?bv-dev=1&bv-host=<lan-ip>:3000` against a LAN machine,
-`?bv-dev=0` off. LAN hosts are blocked as mixed content unless the testing
-browser allows insecure content for the site; otherwise push and use staging.
-
-Release (`README.md` + `loader.html`):
-
-```bash
-pnpm build
-git add dist && git commit -m "release: vX.Y.Z"
-git tag vX.Y.Z && git push && git push --tags
-```
-
-- `dist/` is **tracked permanently** here (not gitignored, never un-tracked)
-  and there is no CI drift check, so `dist/` on `master` can lag `src/`
-  between releases. Only commit `dist/` in release commits.
-- Bump the version in **both** places: the CSS `<link>` in head code and
-  `VER` in the footer loader (the README only mentions the footer). Publish
-  staging → verify → publish prod. Rollback = revert both strings.
-- Never move a pushed tag; cut the next patch. Never use `@latest` or a branch
-  URL in production. Do not tag a release with no changes (v1.1.1 was).
+Release as the README describes: tag a commit whose CI passed, then set
+`RELEASE` in the head snippet — the only version string. Never move a pushed
+tag; cut the next patch. Never use `@latest` or a branch URL in production.
 
 ## Webflow MCP limits
 
@@ -171,8 +196,12 @@ Worked around, not fixed — do not rediscover these.
   `valueType: "custom"`.
 - No variable rename or reorder within a collection. Rename in the Designer
   (preserves ids and aliases; recreating does not).
-- The WHTML importer drops `class` attributes. Create the style, then apply
-  it.
+- The WHTML importer keeps classes that already exist, but drops the whole
+  class list if any one is missing (create classes first, then re-check
+  `styleNames`). It drops every `<img>` attribute and the asset link, turns
+  `<button>` into a Link and every `<span>` into a text Span, and trims a
+  space before `<br>`. The webflow-build skill's `lessons/mcp.md` has the
+  fixes.
 - `get_all_elements` does not descend into component definitions — pass the
   component scope. An element "missing" from a page is usually inside one.
 - Concurrent Designer edits change element ids. Re-query on "Element not
@@ -182,7 +211,10 @@ Worked around, not fixed — do not rediscover these.
 
 ## Session protocol
 
-1. **Start:** read `GOTCHAS.md`. Do not repeat a mistake already logged.
+1. **Start:** read `GOTCHAS.md`, `docs/handoff/`, and the webflow-build
+   skill's lesson file for the area you will work in
+   (`.claude/skills/webflow-build/lessons/`). Do not repeat a mistake
+   already logged.
 2. **During:** when something surprising costs time — a Webflow quirk, a
    template default that gets in the way, an MCP limitation, a fix that had
    to be reverted — add an entry to `GOTCHAS.md` in the same commit as the

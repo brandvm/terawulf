@@ -1,0 +1,12 @@
+<script>
+  let lastWidth = window.innerWidth;
+  let resizeTimer;
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth === lastWidth) return;
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      location.reload();
+    }, 250);
+  });
+</script>
