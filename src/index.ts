@@ -8,6 +8,10 @@
 import { initEnvironmentSwitcher } from './modules/environment-switcher';
 import { initSessionModal } from './modules/session-modal';
 import { initDottedCanvas } from './modules/dotted-canvas';
+import { initPopupVideo } from './modules/popup-video';
+import { initAutoplayVideo } from './modules/autoplay-video';
+import { initResizeReload } from './modules/resize-reload';
+import { initHashScroll } from './modules/hash-scroll';
 
 // Each module runs in isolation: one that throws is logged and skipped,
 // and every module after it still initializes.
@@ -27,6 +31,10 @@ function boot() {
   run('environment-switcher', initEnvironmentSwitcher);
   run('session-modal', () => initSessionModal());
   run('dotted-canvas', initDottedCanvas);
+  run('popup-video', initPopupVideo);
+  run('autoplay-video', initAutoplayVideo);
+  run('resize-reload', initResizeReload);
+  run('hash-scroll', initHashScroll);
 }
 
 if (document.readyState === 'loading') {

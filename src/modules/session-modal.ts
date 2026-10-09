@@ -128,6 +128,23 @@ export function initSessionModal(options: Partial<Config> = {}): void {
   const cfg = readDataOverrides(modal, base);
   const card = modal.querySelector<HTMLElement>(cfg.cardSelector);
 
+  // Dialog semantics for screen readers, unless Webflow already set them.
+  if (!modal.hasAttribute('role')) modal.setAttribute('role', 'dialog');
+  if (!modal.hasAttribute('aria-modal')) modal.setAttribute('aria-modal', 'true');
+  if (!modal.hasAttribute('aria-hidden')) modal.setAttribute('aria-hidden', 'true');
+  const heading = modal.querySelector<HTMLElement>('h1, h2, h3, h4, [role="heading"]');
+  if (heading && !modal.hasAttribute('aria-labelledby') && !modal.hasAttribute('aria-label')) {
+    if (!heading.id) heading.id = 'wfc-modal-title';
+    modal.setAttribute('aria-labelledby', heading.id);
+  }
+  modal.querySelectorAll<HTMLElement>(cfg.closeSelector).forEach((el) => {
+    if (!el.matches('a[href], button')) {
+      el.setAttribute('role', 'button');
+      if (!el.hasAttribute('tabindex')) el.tabIndex = 0;
+    }
+    if (!el.getAttribute('aria-label') && !(el.textContent || '').trim()) el.setAttribute('aria-label', 'Close');
+  });
+
   let lastFocus: Element | null = null;
   let downOnBackdrop = false;
   let hideTimer: number | undefined;
@@ -174,6 +191,13 @@ export function initSessionModal(options: Partial<Config> = {}): void {
 
   const onKeyDown = (e: KeyboardEvent) => {
     if (!isOpen()) return;
+
+    // Enter/Space on a close control that is not a native button.
+    if ((e.key === 'Enter' || e.key === ' ') && (e.target as Element)?.matches?.(cfg.closeSelector)) {
+      e.preventDefault();
+      close();
+      return;
+    }
 
     if (e.key === 'Escape') {
       close();

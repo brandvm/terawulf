@@ -128,14 +128,20 @@ function loadImagePixels(
     try {
       cb(ox.getImageData(0, 0, W, H).data, W, H);
     } catch {
-      // CORS tainted — re-fetch with crossOrigin, then redraw.
-      const proxy = new Image();
-      proxy.crossOrigin = 'anonymous';
-      proxy.onload = () => drawToCanvas(proxy);
-      proxy.src = source.src + (source.src.includes('?') ? '&' : '?') + '_nocache=' + Date.now();
+      /* still tainted (CDN without CORS headers) — nothing to draw */
     }
   }
-  drawToCanvas(img);
+
+  // Reading pixels needs a CORS-clean image. With crossorigin="anonymous" on
+  // the <img> (Webflow custom attribute) the page's own copy is used and the
+  // image downloads once. Without it, load a CORS copy of the same URL; the
+  // Webflow CDN varies on Origin, so that is a second request — but no longer
+  // cache-busted, so repeat visits come from the cache.
+  if (img.crossOrigin === 'anonymous') return drawToCanvas(img);
+  const corsCopy = new Image();
+  corsCopy.crossOrigin = 'anonymous';
+  corsCopy.onload = () => drawToCanvas(corsCopy);
+  corsCopy.src = img.currentSrc || img.src;
 }
 
 function findImg(el: HTMLElement): HTMLImageElement | null {
@@ -197,6 +203,8 @@ function createInstance(canvasEl: HTMLCanvasElement) {
   let rafId: number | null = null;
 
   const VEL_SMOOTH = 0.18;
+  const [cr, cg, cb] = hexRgb(cfg.dotColor);
+  const rgba = (alpha: number) => `rgba(${cr},${cg},${cb},${Math.min(0.99, alpha).toFixed(3)})`;
 
   function inMap(cx: number, cy: number): boolean {
     if (!srcPx) return false;
@@ -229,20 +237,34 @@ function createInstance(canvasEl: HTMLCanvasElement) {
     ctx.clearRect(0, 0, W, H);
     if (!srcPx) return;
 
-    const [r, g, b] = hexRgb(cfg.dotColor);
     const half = cfg.dotSpacing / 2;
+    const TAU = Math.PI * 2;
 
+    // Every dot at the base opacity goes into ONE path and one fill — the
+    // per-dot beginPath/fill was the 280 ms long task on mobile. Only dots
+    // inside a hotspot fade (different alpha each) are filled one by one.
+    // Same dots, same colours, same order of paint as before.
+    const base = new Path2D();
+    const boosted: Array<[number, number, number]> = [];
     for (let y = half; y < H; y += cfg.dotSpacing) {
       for (let x = half; x < W; x += cfg.dotSpacing) {
         if (!inMap(x - offX, y - offY)) continue;
         const boost = hotspotBoost(x - offX, y - offY);
-        const alpha =
-          boost > 0 ? cfg.dotOpacity + boost * (cfg.hotspotOpacity - cfg.dotOpacity) : cfg.dotOpacity;
-        ctx.beginPath();
-        ctx.arc(x, y, cfg.dotSize, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${r},${g},${b},${Math.min(0.99, alpha).toFixed(3)})`;
-        ctx.fill();
+        if (boost > 0) {
+          boosted.push([x, y, cfg.dotOpacity + boost * (cfg.hotspotOpacity - cfg.dotOpacity)]);
+        } else {
+          base.moveTo(x + cfg.dotSize, y);
+          base.arc(x, y, cfg.dotSize, 0, TAU);
+        }
       }
+    }
+    ctx.fillStyle = rgba(cfg.dotOpacity);
+    ctx.fill(base);
+    for (const [x, y, alpha] of boosted) {
+      ctx.beginPath();
+      ctx.arc(x, y, cfg.dotSize, 0, TAU);
+      ctx.fillStyle = rgba(alpha);
+      ctx.fill();
     }
   }
 
@@ -302,7 +324,10 @@ function createInstance(canvasEl: HTMLCanvasElement) {
   const mouseTarget: HTMLElement =
     (selector && canvasEl.closest<HTMLElement>(selector)) || canvasEl.parentElement || canvasEl;
 
+  // prefers-reduced-motion: the dots stay still (no inertia follow).
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   mouseTarget.addEventListener('mousemove', (e) => {
+    if (reduced) return;
     const { x, y } = canvasCoords(e);
     const dx = x - lastMX;
     const dy = y - lastMY;
@@ -361,23 +386,38 @@ function createInstance(canvasEl: HTMLCanvasElement) {
   }
 }
 
-export function initDottedCanvas(): void {
-  function boot() {
-    document.querySelectorAll<CanvasEl>('canvas[data-dotted-canvas]').forEach((el) => {
-      if (el._dottedCanvasInit) return;
-      el._dottedCanvasInit = true;
-      try {
-        createInstance(el);
-      } catch (err) {
-        console.error('[wfc] dotted-canvas failed on', el, err);
-      }
-    });
+function start(el: CanvasEl) {
+  if (el._dottedCanvasInit) return;
+  el._dottedCanvasInit = true;
+  try {
+    createInstance(el);
+  } catch (err) {
+    console.error('[wfc] dotted-canvas failed on', el, err);
   }
+}
 
-  // Defer to rAF so Webflow layout has painted and offsetWidth is real; retry
-  // on window load for elements that were hidden until then.
-  requestAnimationFrame(() => {
-    boot();
-    if (document.readyState !== 'complete') window.addEventListener('load', boot, { once: true });
-  });
+export function initDottedCanvas(): void {
+  const canvases = Array.from(document.querySelectorAll<CanvasEl>('canvas[data-dotted-canvas]'));
+  if (!canvases.length) return;
+
+  // Nothing runs at page load any more: each canvas starts when it comes
+  // within ~1 screen of the viewport, so the pixel read and first paint stay
+  // out of the load-time main thread. The source <img> stays visible until
+  // the canvas has painted, as before.
+  if (!('IntersectionObserver' in window)) {
+    requestAnimationFrame(() => canvases.forEach(start));
+    return;
+  }
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        io.unobserve(entry.target);
+        // rAF so Webflow layout has settled and offsetWidth is real.
+        requestAnimationFrame(() => start(entry.target as CanvasEl));
+      }
+    },
+    { rootMargin: '100% 0px' },
+  );
+  canvases.forEach((el) => io.observe(el));
 }

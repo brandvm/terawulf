@@ -68,6 +68,12 @@ Two different videos are involved. It is not one video being downloaded twice:
 | "Who we are" Webflow Background Video | **MP4** 337,574 B, then WebM 1,447,127 B | Chrome takes the MP4 | Webflow controls the source order; poster 59 KB |
 | Popup "Moving at a Different Speed" | MP4 **31,115,928 B** on `s3.amazonaws.com` | Partly fetched (~150–180 KB) on load | Hidden, with no `preload` attribute, so it defaults to metadata |
 
+**Autoplay previews that use the full popup file** (found 2026-10-09):
+- About's intro preview plays "The Evolution of Energy" as a muted autoplay loop: 6.5 MB downloaded in the first 6 s on mobile.
+- Careers' intro preview (`.about-intro-visual-w video`, `preload="auto"`) plays the **same 59 MB 1080p file** as its popup: 3.5 MB downloaded in the first 6 s, and it keeps streaming.
+
+Fix in Webflow, with the same look: a short, compressed loop (~5–10 s, 720p, no audio, ~1–2 MB) for each preview. The full file stays for the popup only.
+
 The ~17 MB in your PageSpeed test is the hero WebM, plus the background MP4, plus the popup's range requests, plus the images below. That adds up to a full-length hero download on a slow-throttled run.
 
 Fix: same files and same look.
@@ -77,7 +83,7 @@ Fix: same files and same look.
    - Set `preload="metadata"`.
    - Add a mobile encode of about 720p / 1.5–2 MB, chosen with `<source media>` or set by a repo module.
 2. Popup: set `preload="none"`, and set the `src` only when it's clicked. Move the inline popup-video script into a repo module (`popup-video.ts`) that serves Home, About and Careers.
-3. "Who we are" background video: start loading it only near the viewport. A `lazy-video` module would swap Webflow's Background Video `data-video-urls` in through IntersectionObserver, keeping the poster meanwhile.
+3. "Who we are" background video: start loading it only near the viewport. `lazy-background-video.ts` detaches below-fold Webflow Background Videos at boot. Measured on the live page, though, the 330 KB file has usually finished downloading before the bundle runs, so the module only helps on slow connections. The reliable fix is Webflow-side: a plain video embed with `preload="none"`, started by the module. That is part of the animation migration.
 4. Reduced motion: show the poster and don't autoplay. Add a pause control to the looping hero (WCAG 2.2.2).
 
 ### 2.3 Images
@@ -115,7 +121,7 @@ Fix, without changing which images are used:
 - **Our own bundle:** `terawulf@1.1.1/dist/index.js` is a **282 ms** long task on mobile. It comes from DottedCanvas's first paint: `getImageData` plus a per-dot `sqrt` × hotspot loop, all at load.
   - Fix in the repo (no Webflow change): start the canvas only when it's near the viewport, precompute the dot mask once per size, and drop the `_nocache` re-fetch.
   - The 200 ms polling was already removed in PR #1.
-- `/our-operations` reloads the whole page on width resize. On iOS the address bar collapsing changes the viewport, so this can reload mid-scroll. Replace it with a debounced `ScrollTrigger.refresh()` in a module, or remove it if the layout doesn't need it.
+- `/our-operations` reloads the whole page when the viewport **width** changes from its width at load (rotation, desktop window resize). The mobile address bar changes only the height, so it does not trigger it. Correction 2026-10-09: an earlier version of this audit said otherwise. It is probably there because that page's interactions don't recalculate on resize, so it was ported as-is (`resize-reload.ts`) and goes away with the animation migration.
 - jQuery 3.5.1 and webflow.js are Webflow-managed and can't be deferred from our side.
 
 ## 3. Schema (structured data)
@@ -255,7 +261,30 @@ Removing IX also removes the IX3 visibility gate, which is the main cause of the
    - Lazy background video
    - Remove the resize-reload from /our-operations, replaced by a module
    
-   Then install the new loader and remove the old snippets, the duplicate `theme-color`, the empty font preload and the Lenis CSS.
+   **1a, code only (done 2026-10-09).** Each module is built for speed, accessibility and SEO, not copied as-is:
+   - `dotted-canvas.ts`: starts near the viewport; draws all base dots as one path (each frame used to be thousands of separate fills); no cache-busted re-fetch; reduced motion keeps the dots still
+   - `popup-video.ts`: replaces the Home/About/Careers page scripts. The video file is only requested on click. Keyboard and screen-reader support: a trigger with no focusable element becomes a button; the close control gets a label; the popup is a dialog; focus moves to Close; Escape closes through Webflow's own close; focus returns to the trigger
+   - `autoplay-video.ts`: muted autoplay videos (hero, background videos, intro previews):
+     - below-fold ones load only when near
+     - every one pauses while off screen and resumes when back
+     - a visitor's own pause is respected
+     - reduced motion means no autoplay (WCAG 2.2.2)
+   - `resize-reload.ts`: replaces the /our-operations script, which reloaded on ANY width change. Tested live: within one breakpoint the page renders identically without a reload; across a breakpoint the scroll scene breaks (text blocks stack), and `ScrollTrigger.refresh()` doesn't fix it. So it now reloads only when 991/767/479 px is crossed, using matchMedia rather than a resize listener
+   - `hash-scroll.ts`: lands deep links on #anchors on every page, not just /about; no `querySelector('')` console error; skipped if the visitor has already scrolled
+   - `session-modal.ts`: dialog role, `aria-modal`, `aria-labelledby` and labelled close controls when Webflow lacks them; Enter/Space on a non-button close control
+   
+   Verified against the live pages, with the bundle swapped in a headless browser only:
+   - Home: the popup download is gone (−115 KB); load-time long tasks went from ~55 ms to none
+   - Dotted map: same canvas size and identical painted pixels. Dot-edge anti-aliasing differs by ≤ 23/255 alpha on ~4% of pixels, which is not visible
+   - Popup plays unmuted from the start; Escape closes it; no console errors from the bundle
+
+   **1b, Webflow (needs a go-ahead), all on staging first:**
+   1. Site settings → Head code: replace the old jsDelivr loader with piece 1 of `loader.html`, `RELEASE = "1.2.0"`. Keep a single `theme-color`. Remove the empty `<link rel="preload" href="">` and the Lenis `<style>`.
+   2. G | Embed Code component: replace the old `styles.css` link with Embeds 2a and 2b.
+   3. Site settings → Footer code: replace the old loader with piece 3.
+   4. Page custom code: remove the popup-video scripts (Home, About, Careers), the hash-scroll script (About) and the resize-reload script (Our Operations). The bundle does all of these now.
+   5. Home `img.interactive-canvas-image`: add the custom attribute `crossorigin="anonymous"`, so Map.webp downloads once.
+   6. Popup `<video>` elements (Home, About, Careers): `preload="none"`, so nothing is requested before the bundle runs.
 2. **Webflow, hero and LCP:**
    - Eager hero/nav logos with sizes
    - Hero video: MP4 first, poster, `preload=metadata`
