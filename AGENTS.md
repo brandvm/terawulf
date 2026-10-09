@@ -17,14 +17,14 @@ Adopted from `brandvm/wf-template` 0.1.0 (63bfb79) on 2026-10-09
 - Staging site: `https://terawulff.webflow.io` (double f)
 - Staging bundles: `https://brandvm.github.io/terawulf/`
 - Production domain: `https://www.terawulf.com` (apex redirects to www)
-- Production release: **`1.2.0`** (published 2026-10-09, batch 1), installed
-  with the template loader: `RELEASE` in head code + the `@1.2.0` in Embed 2a
+- Production release: **`1.3.0`** (published 2026-10-09, batch 6; 1.2.0 was batch 1), installed
+  with the template loader: `RELEASE` in head code + the `@1.3.0` in Embed 2a
   (G | Components). Previous release 1.1.1 with the old two-piece loader is
   saved in `docs/rollback/2026-10-09/`. Release plan: small batches, each
   staging → check → production (`docs/audit/STATUS.md`).
 - Global code component: **G | Components** (2026-10-09, wf-template
   shell): fixed 0×0 div, `aria-hidden="true"`, first child of `body` on all
-  15 pages, holding Embed 2a (icon CSS + `#wfc-css` pinned release) and
+  15 pages, holding Embed 2a (`#wfc-css` pinned release; Phosphor icons are inlined in styles.css since 1.3.0) and
   Embed 2b. It replaced **G | Embed Code**, whose definition is kept unused
   until production is confirmed, then deleted. G | Grid Guide was deleted.
 - Origin: migrated 2026-09-02 from CodeSandbox (`terawulf-main.js`,

@@ -20,7 +20,7 @@ Client rule: keep the approved design and all existing wording.
 | --- | --- | --- | --- |
 | A1 | Repo on wf-template 0.1.0 | ✅ | PR #1. Deviations on purpose: no `wfc-css-wait` body hiding (LCP), Embed 2a pins the release (one CSS fetch, PR #3), no `is-loading` scroll lock |
 | A2 | Modules optimized, not copied | ✅ | dotted-canvas, popup-video, autoplay-video, resize-reload, hash-scroll, session-modal |
-| A3 | Release v1.2.0 tagged | ✅ | **Live in production since 2026-10-09 (batch 1)** |
+| A3 | Release v1.2.0 tagged | ✅ | v1.3.0 live 2026-10-09 (batch 6). | **Live in production since 2026-10-09 (batch 1)** |
 | A4 | Rollback point | ✅ | Tag `rollback/2026-10-09-pre-cleanup`, `docs/rollback/2026-10-09/`, Webflow backup "Pre-cleanup 2026-10-09" |
 | A5 | GitHub protection | ✅ | `master` via PR with passing tests; `v*` and `rollback/*` tags permanent |
 | A6 | Finsweet through the repo recipe | ⬜ | /news and /careers load Finsweet v1 + v2 from a CDN; the template wants `recipes/finsweet/` bundled |
@@ -48,7 +48,7 @@ Client rule: keep the approved design and all existing wording.
 | C5 | Hero/first-screen images eager + `fetchpriority`; sizes on images | ✅ | Live 2026-10-09 (batch 4): hero preloads on Our Sites (−420 ms LCP), Our Operations, Our Impact. Home logo, WULF Compute, fonts tested and dropped (no gain). `batch-4/README.md` |
 | C6 | Compress the 2.8 MB nav PNG and the 850 KB JPG (same images) | ✅ | Live 2026-10-09. Nav PNG done in batch 3 (2.8 MB → 279 KB). Batch 4: Why Background 850 → 682 KB, Purpose-Built 985 → 310 KB |
 | C7 | Preload Satoshi | ✅ decided: no | Measured in batch 4: −20–40 ms LCP, +30–100 ms FCP (fonts already `swap`). Not added |
-| C8 | Phosphor icons: subset, not blocking | 🟡 in repo | Batch 6: 13-glyph subset inlined in styles.css (2 KB vs ~550 KB, 3 blocking CSS removed), pixel-identical. Ships as v1.3.0: merge, tag, Embed 2a edit |
+| C8 | Phosphor icons: subset, not blocking | ✅ | Live 2026-10-09 (v1.3.0). Batch 6: 13-glyph subset inlined in styles.css (2 KB vs ~550 KB, 3 blocking CSS removed), pixel-identical. Ships as v1.3.0: merge, tag, Embed 2a edit |
 | C9 | Animation: hero not hidden behind IX3; SplitText/ScrollTrigger cost | ⬜ | Done through B6 |
 | C10 | /our-operations resize reload | ✅ | Reloads only across breakpoints |
 | C11 | Lenis CSS removed | ✅ | |
@@ -79,9 +79,9 @@ Client rule: keep the approved design and all existing wording.
 | | Item | State | Notes |
 | --- | --- | --- | --- |
 | E1 | Popup + timed popup: keyboard and screen reader | ✅ | In the modules |
-| E2 | Skip link | 🟡 staged | Batch 6: in G \| Navigation, `#main` on every page; one `main` per page (card wrappers were `<main>`) |
-| E3 | Hero video pause control; reduced motion | 🟡 | Reduced motion in the module; the pause control needs a component |
-| E4 | Link names (cards, CTAs, icons), Connect select label, SplitText ARIA, contrast recheck | 🟡 staged | Batch 6: footer/Connect/share icons, menu button, CMS card links (bound to Title), all 6 Connect labels wired. Left: footer CTA buttons + SplitText ARIA/contrast → B6 |
+| E2 | Skip link | ✅ | Live 2026-10-09. Batch 6: in G \| Navigation, `#main` on every page; one `main` per page (card wrappers were `<main>`) |
+| E3 | Hero video pause control; reduced motion | ✅ | Live 2026-10-09 (v1.3.0, decided): round pause/play button above the stats bar, `video-toggle.ts`. Reduced motion in the module; the pause control needs a component |
+| E4 | Link names (cards, CTAs, icons), Connect select label, SplitText ARIA, contrast recheck | 🟡 | Live 2026-10-09: Batch 6: footer/Connect/share icons, menu button, CMS card links (bound to Title), all 6 Connect labels wired. Left: footer CTA buttons + SplitText ARIA/contrast → B6 |
 | E5 | **Components updated for performance and accessibility** (video, icon, interactive image, buttons/cards) | ⬜ | Asked for in the first message |
 
 ## F. Style guide
@@ -97,7 +97,7 @@ Client rule: keep the approved design and all existing wording.
 | --- | --- | --- | --- |
 | G0 | Visual baseline of production (`wf:baseline save --live`) + `wf:outline` | ✅ | `baselines/production-2026-10-09/` (13 pages × 3 widths, 97 MB, not committed yet). One H1 per page |
 | G1 | QA on staging for each batch: baseline compare, Lighthouse, axe, links, schema validators; navigation, video controls and forms still work | ✅ batch 1 | Visual (noise measured on production), outline, nav, mobile menu, popups, form, Lighthouse, CLS (staging-only shift from the stylesheet swap; production unchanged) |
-| G2 | Production publish per batch (`safe-publish`), with explicit confirmation | ✅ batches 1–5 | Published 2026-10-09 after a staging recheck (an unidentified 17:05 UTC Webflow save was included and rechecked); verified live |
+| G2 | Production publish per batch (`safe-publish`), with explicit confirmation | ✅ batches 1–6 | Published 2026-10-09 after a staging recheck (an unidentified 17:05 UTC Webflow save was included and rechecked); verified live |
 | G3 | Before/after report for the client: fresh crawl, mobile and desktop PageSpeed | ⬜ | Client checklist "Wrap-up"; the Ahrefs rerun is in the backlog |
 
 ## Backlog (by decision)
