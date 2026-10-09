@@ -272,11 +272,11 @@ Removing IX also removes the IX3 visibility gate, which is the main cause of the
    - Kerri Langlais single hop to `/news`
    - `/wulf-mining` link in the body
    - CEO letter presentations link
-   - Dead-link cards: unpublish + 301 to `/news` (after client approval, see CLIENT-APPROVALS.md)
+   - Dead-link cards: unpublish + 301 to `/news` (decision 2)
 9. **Accessibility:** link names, the select label, a skip link, the video pause control.
 10. **Style guide v2** at `/design/style-guide-v2`; take the current style guide and components pages out of the sitemap.
 
-Decisions so far: [`DECISIONS.md`](DECISIONS.md). Visible content changes wait for the client: [`CLIENT-APPROVALS.md`](CLIENT-APPROVALS.md).
+Decisions so far: [`DECISIONS.md`](DECISIONS.md). New AEO/GEO content waits for the client: [`CLIENT-APPROVALS.md`](CLIENT-APPROVALS.md).
 
 Before and after each step:
 - Lighthouse mobile and desktop on `/`, `/about`, `/our-sites` and `/news`;
