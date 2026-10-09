@@ -17,14 +17,20 @@ Adopted from `brandvm/wf-template` 0.1.0 (63bfb79) on 2026-10-09
 - Staging site: `https://terawulff.webflow.io` (double f)
 - Staging bundles: `https://brandvm.github.io/terawulf/`
 - Production domain: `https://www.terawulf.com` (apex redirects to www)
+- Webflow state (2026-10-09): the v1.2.0 loader, G | Components and the
+  removal of the old page scripts are saved in Webflow and published to
+  **terawulff.webflow.io only**. The next custom-domain publish ships them.
 - Production release: `1.1.1`, installed with the **old** two-piece loader
   (pinned CSS link in the G | Embed Code component + `VER` in footer code,
   `bv-dev` flags). `loader.html` in this repo is the template's three-piece
   loader, **not yet installed** — it ships with the next release, after
   approval (see Project notes). Until then, this file is the exception to
   "keep `loader.html` identical to what is installed".
-- Global embed component: **G | Embed Code** (the template calls it
-  G | Components). Embeds 2a/2b go there.
+- Global code component: **G | Components** (2026-10-09, wf-template
+  shell): fixed 0×0 div, `aria-hidden="true"`, first child of `body` on all
+  15 pages, holding Embed 2a (icon CSS + `#wfc-css` pinned release) and
+  Embed 2b. It replaced **G | Embed Code**, whose definition is kept unused
+  until production is confirmed, then deleted. G | Grid Guide was deleted.
 - Origin: migrated 2026-09-02 from CodeSandbox (`terawulf-main.js`,
   `terawulf-main.css`) plus the inline `<style>` of the global embed.
 

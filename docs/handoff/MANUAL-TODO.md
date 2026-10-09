@@ -24,4 +24,4 @@ mentioned in GOTCHAS or a commit stays unambiguous.
 
 | ID | Where (page › element or class) | Breakpoint | Set | Why the API can't | Done |
 | --- | --- | --- | --- | --- | --- |
-| A | | Desktop | | | ☐ |
+| A | Component C \| Interactive Image › image (class Interactive Canvas Image), used 5× incl. Home | All | Custom attribute `crossorigin` = `anonymous` (Map.webp then downloads once; dotted-canvas.ts uses the page's copy) | `set_attributes` on an Image element fails with an internal error (twice, Designer connected); Image settings expose no attributes key. If Webflow rejects the name in the Designer too, skip it: it saves one 15 KB request | ☐ |

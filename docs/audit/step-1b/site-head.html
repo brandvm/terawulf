@@ -1,0 +1,122 @@
+<!-- Global | Webflow Head Custom Code | Start -->
+
+<!-- Theme Color Browser -->
+<meta name="theme-color" content="#112135" />
+
+<!-- brandvm/terawulf loader, piece 1 of loader.html (RELEASE is the live version) -->
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+
+<script>
+  (function () {
+    var RELEASE = "1.2.0"; // the release tag, e.g. "1.0.0" — also update the @version in Embed 2a
+    var OWNER = "brandvm"; // the GitHub org or user that owns this repo
+    var SITE = "terawulf"; // this repo's name
+    var STAG = "https://" + OWNER + ".github.io/" + SITE + "/";
+    var DEV = "http://localhost:3000/";
+    var staging = /\.webflow\.io$/.test(location.hostname);
+    var q = new URLSearchParams(location.search);
+    var flag = staging && q.get("wfc-dev") === "1";
+    try {
+      if (staging && q.has("wfc-dev")) localStorage.setItem("wfc-dev", flag ? "1" : "0");
+      if (staging && !q.has("wfc-dev")) flag = localStorage.getItem("wfc-dev") === "1";
+    } catch (e) { /* An explicit URL flag still works without storage. */ }
+    var prod = RELEASE
+      ? "https://cdn.jsdelivr.net/gh/" + OWNER + "/" + SITE + "@" + RELEASE + "/dist/"
+      : STAG;
+    if (!staging && !RELEASE)
+      console.error("[wfc] RELEASE is not set in head code; serving the staging bundle. Tag a release and set RELEASE before launch.");
+    // Shared config — the Embed, the footer loader and the bundle read this.
+    window.WFC = {
+      staging: staging, dev: flag, devBase: DEV, stag: STAG,
+      release: RELEASE, prod: prod,
+      // One cache-buster for the Embed and the footer loader, so staging
+      // fetches styles.css once instead of once per snippet.
+      v: "?v=" + Date.now(),
+    };
+
+    // TeraWulf: no pre-paint scroll lock (template's html.is-loading). The
+    // bundle loads after Webflow's interaction scripts, so a lock would
+    // freeze scrolling for a second or more on phones, and nothing on this
+    // site needs it. src/index.ts still removes the class if present.
+  })();
+</script>
+
+<!-- Ahrefs Web Analytics -->
+<script src="https://analytics.ahrefs.com/analytics.js" data-key="8Zblbhg1dX0499bSpfQS5A" async></script>
+
+<!-- Preloading Fonts 
+<link rel="preload" href="" as="font" type="font/woff2" crossorigin> -->
+
+<!-- Global schema: Organization + WebSite -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://www.terawulf.com/#organization",
+      "name": "TeraWulf Inc.",
+      "alternateName": ["TeraWulf", "WULF"],
+      "legalName": "TeraWulf Inc.",
+      "url": "https://www.terawulf.com/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://cdn.prod.website-files.com/69cc1149c7144d8f6b6c386a/69cebe434853b818214d175b_Vertical%20Logo.svg"
+      },
+      "description": "TeraWulf develops and operates energy-secured digital infrastructure for AI and high-performance computing, with data center campuses in New York, Texas, Kentucky and Maryland.",
+      "foundingDate": "2021",
+      "founder": [
+        { "@type": "Person", "name": "Paul Prager" },
+        { "@type": "Person", "name": "Nazar Khan" }
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Easton",
+        "addressRegion": "MD",
+        "addressCountry": "US"
+      },
+      "tickerSymbol": "WULF",
+      "sameAs": [
+        "https://www.linkedin.com/company/terawulf/",
+        "https://x.com/terawulfinc",
+        "https://www.instagram.com/terawulf/",
+        "https://www.youtube.com/channel/UCE1jAE1nyqU6HedxgtdA4lQ",
+        "https://investors.terawulf.com/"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer support",
+        "email": "info@terawulf.com",
+        "url": "https://www.terawulf.com/connect"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://www.terawulf.com/#website",
+      "url": "https://www.terawulf.com/",
+      "name": "TeraWulf",
+      "publisher": { "@id": "https://www.terawulf.com/#organization" },
+      "inLanguage": "en-US"
+    }
+  ]
+}
+</script>
+
+<style>
+  /* Hiding Dev Supports */
+  .g-embed-code,
+  .g-components,
+  /* .g-grid-guide, */
+  .w-webflow-badge,
+  .cms-filter {
+    z-index: -99999 !important;
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+  }
+
+
+</style>
+
+<!-- Global | Webflow Head Custom Code | End -->
