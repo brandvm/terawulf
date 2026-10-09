@@ -43,6 +43,29 @@ Adopted from `brandvm/wf-template` 0.1.0 (63bfb79) on 2026-10-09
   Home/About/Careers popup-video scripts, Finsweet v1 + v2 on /news and
   /careers, a resize-reload on /our-operations, BlogPosting JSON-LD on the
   Resources template, Organization/WebSite JSON-LD in site head code.
+- **Animation: moving off Webflow interactions — all versions (classic IX,
+  IX2, IX3)** (decided 2026-10-09). New motion never goes into Webflow
+  Interactions. Existing interactions are rebuilt in the repo, keeping the
+  approved motion and timing, then removed from Webflow page by page:
+  1. CSS first: transitions/`@keyframes` on a class or `[data-state]` that a
+     module toggles (`js-state`), CSS scroll-driven animations
+     (`animation-timeline: view()`, behind `@supports`) for parallax-style
+     effects, `prefers-reduced-motion` in §07.
+  2. A repo module only where CSS can't: one shared IntersectionObserver
+     for reveals keyed by the existing `data-gsap="text-animate" | "para-in"`
+     attributes; GSAP (`pnpm add gsap`, only the plugins used) for
+     SplitText line/word reveals and scrubbed or pinned scenes.
+  3. Never hide first-screen content (hero logo, h1, CTA) with
+     `visibility: hidden` waiting for JS — that is today's IX3 gate and the
+     main mobile LCP cost. Hero motion starts from visible content.
+  4. When a page has no Webflow interactions left, it drops the IX3 gate
+     style; when the site has none, turn off Webflow's GSAP/IX site settings
+     so gsap, ScrollTrigger, SplitText and CustomEase stop loading.
+  Inventory as of 2026-10-09: IX3 on every page (`data-gsap` text/para
+  reveals, hero, page headers, parallax, stats, timeline overlays, smoke and
+  home-transition on desktop); IX2 on /about (`data-w-id` on
+  `.image-overlay.is_left`, Our Vision). Webflow components (nav, dropdown,
+  tabs) are not interactions and stay.
 - Installing the template loader: remove the old head/footer snippets and
   the old CSS link in G | Embed Code, keep the existing `theme-color` meta
   only once, set `RELEASE` to the new tag, paste 2a/2b into G | Embed Code.

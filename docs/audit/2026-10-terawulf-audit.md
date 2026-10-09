@@ -235,6 +235,19 @@ Also:
 - There is no GA4/GTM tag, and Webflow `googleTagIds` is empty.
 - Per your instruction, nothing is being added until the existing GA4 property under the relations@brandvm.com account has been found and inquiry tracking tested.
 
+## 9b. Animation approach (decided 2026-10-09)
+
+The site will move off Webflow interactions, every version: classic IX, IX2
+and IX3. Motion moves to CSS first, with repo modules only where CSS can't do
+it, and the approved motion and timing are kept. AGENTS.md › Project notes
+has the rules.
+
+Current inventory:
+- **IX3:** on every page. 35–37 `data-gsap="text-animate"` and 3–5 `"para-in"` per page, hero reveal, page headers, parallax images, stats, timeline overlays, and the desktop-only smoke and home-transition scenes.
+- **IX2:** one element on /about, `.image-overlay.is_left` in Our Vision.
+
+Removing IX also removes the IX3 visibility gate, which is the main cause of the mobile LCP delay. Once no interactions are left, Webflow's four GSAP scripts can be switched off.
+
 ## 10. Fix order (each needs your go-ahead)
 1. **Repo, next release `v1.2.0`, no visual change.** Merge PR #1 first.
    - Lazy DottedCanvas
@@ -245,19 +258,25 @@ Also:
    Then install the new loader and remove the old snippets, the duplicate `theme-color`, the empty font preload and the Lenis CSS.
 2. **Webflow, hero and LCP:**
    - Eager hero/nav logos with sizes
-   - Hero visible at load in IX3
    - Hero video: MP4 first, poster, `preload=metadata`
-3. **Images:** compress CMS covers and `Why Background.jpg`; add width/height.
-4. **Icons:** a Phosphor subset to replace the three blocking CSS files.
-5. **Schema:** Corporation, Careers URL, BlogPosting fallbacks, `og:url`. Then validate.
-6. **AEO/GEO:** robots.txt Sitemap line and AI-crawler policy, `llms.txt`, `knowsAbout`, campus `Place` data.
-7. **Redirects and links:**
-   - Kerri Langlais single hop
+3. **Animation migration (all IX versions → CSS / repo modules), page by page:**
+   - Inventory each interaction read-only first (trigger, targets, duration, ease, stagger, breakpoints)
+   - Rebuild it in the repo and compare on staging (`wf:film`, `wf:baseline`)
+   - Then remove it from Webflow. The hero comes first, because it is the LCP fix
+   - The SplitText ARIA failures go away with IX3
+4. **Images:** compress CMS covers and `Why Background.jpg`; add width/height.
+5. **Icons:** a Phosphor subset to replace the three blocking CSS files.
+6. **Schema:** Corporation (`NASDAQ: WULF`), Careers URL, BlogPosting fallbacks, `og:url`. Then validate.
+7. **AEO/GEO:** robots.txt Sitemap line and AI-crawler policy, `llms.txt`, `knowsAbout`, campus `Place` data.
+8. **Redirects and links:**
+   - Kerri Langlais single hop to `/news`
    - `/wulf-mining` link in the body
    - CEO letter presentations link
-   - Dead external links once you've decided on them
-8. **Accessibility:** SplitText ARIA, link names, the select label, a skip link, the video pause control.
-9. **Style guide v2** at `/design/style-guide-v2`; take the current style guide and components pages out of the sitemap.
+   - Dead-link cards: unpublish + 301 to `/news` (after client approval, see CLIENT-APPROVALS.md)
+9. **Accessibility:** link names, the select label, a skip link, the video pause control.
+10. **Style guide v2** at `/design/style-guide-v2`; take the current style guide and components pages out of the sitemap.
+
+Decisions so far: [`DECISIONS.md`](DECISIONS.md). Visible content changes wait for the client: [`CLIENT-APPROVALS.md`](CLIENT-APPROVALS.md).
 
 Before and after each step:
 - Lighthouse mobile and desktop on `/`, `/about`, `/our-sites` and `/news`;
