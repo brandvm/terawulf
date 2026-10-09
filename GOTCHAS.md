@@ -23,6 +23,20 @@ repos to improve `brandvm/wf-template`.
 
 ## This project
 
+### 2026-10-09 · Uploading a local image to Webflow without a public URL
+- Area: mcp
+- Scope: template-candidate
+- Symptom: `asset_tool › upload_image_by_url` only takes a public URL, so a
+  locally optimized image seemed to need a commit/push or a manual upload.
+- Cause: the Designer-side tool fetches remotely; the Data API path was not
+  obvious.
+- Fix: `data_assets_tool › create_asset` (file name + MD5 hex of the bytes)
+  returns `uploadUrl` + `uploadDetails`; POST them as multipart form fields
+  with `file=@…` via curl (expect 201). The asset is on the CDN at once.
+  Then set it on an image or component image prop (`string` value = asset id).
+- Status: fixed (batch 4)
+- Found by: claude
+
 <!-- Add new entries here, newest first. -->
 
 ### 2026-10-09 · CMS text bindings inside JSON-LD can break the schema
