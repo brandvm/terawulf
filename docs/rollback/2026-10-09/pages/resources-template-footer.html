@@ -1,0 +1,13 @@
+<script>
+document.querySelectorAll('[socialshare-element="email"]').forEach(el => {
+  el.addEventListener('click', e => {
+    e.preventDefault();
+    const subject = encodeURIComponent(document.title);
+    const body = encodeURIComponent(`Check this out: ${window.location.href}`);
+    window.open(
+      `https://mail.google.com/mail/?view=cm&fs=1&su=${subject}&body=${body}`,
+      '_blank'
+    );
+  });
+});
+</script>

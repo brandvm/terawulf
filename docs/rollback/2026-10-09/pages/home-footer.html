@@ -1,0 +1,37 @@
+<script>
+(function () {
+  function init() {
+    var trigger  = document.querySelector('.is_home-video-player');
+    var video    = document.querySelector('[data-popup-video]');
+    var closeBtn = document.querySelector('[data-popup-video-close]');
+
+    if (!trigger || !video) return;
+
+    // Open: rewind, unmute, play
+    trigger.addEventListener('click', function (e) {
+      e.preventDefault(); // stops the href="#" from jumping the page
+      try { video.currentTime = 0; } catch (err) {}
+      video.muted = false;
+      video.volume = 1;
+      var p = video.play();
+      if (p && typeof p.catch === 'function') {
+        p.catch(function (err) { console.warn('Popup video play blocked:', err); });
+      }
+    });
+
+    // Close: pause + reset to start
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function () {
+        video.pause();
+        try { video.currentTime = 0; } catch (err) {}
+      });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>

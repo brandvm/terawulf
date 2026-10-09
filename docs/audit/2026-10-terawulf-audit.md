@@ -83,7 +83,7 @@ Fix: same files and same look.
    - Set `preload="metadata"`.
    - Add a mobile encode of about 720p / 1.5–2 MB, chosen with `<source media>` or set by a repo module.
 2. Popup: set `preload="none"`, and set the `src` only when it's clicked. Move the inline popup-video script into a repo module (`popup-video.ts`) that serves Home, About and Careers.
-3. "Who we are" background video: start loading it only near the viewport. `lazy-background-video.ts` detaches below-fold Webflow Background Videos at boot. Measured on the live page, though, the 330 KB file has usually finished downloading before the bundle runs, so the module only helps on slow connections. The reliable fix is Webflow-side: a plain video embed with `preload="none"`, started by the module. That is part of the animation migration.
+3. "Who we are" background video: start loading it only near the viewport. `autoplay-video.ts` detaches below-fold autoplay videos at boot. Measured on the live page, though, the 330 KB file has usually finished downloading before the bundle runs, so the module only helps on slow connections. The reliable fix is Webflow-side: a plain video embed with `preload="none"`, started by the module. That is part of the animation migration.
 4. Reduced motion: show the poster and don't autoplay. Add a pause control to the looping hero (WCAG 2.2.2).
 
 ### 2.3 Images
@@ -107,7 +107,7 @@ Fix, without changing which images are used:
 - Three Phosphor CSS files load as render-blocking links in the body (regular, light and bold; 12 KB each). They pull 147 KB + 144 KB of icon fonts, about 2.0 s of estimated savings on mobile.
   - 455 instances use the E \| Icon component, which outputs `<i class="ph-bold ph-…">`.
   - Fix: self-host one subset woff2 with only the glyphs actually used, inlined in the 2a Embed CSS; or swap the icon component to inline SVG.
-- **A broken preload:** `<link rel="preload" href="" as="font">` in head code. Remove it, and preload the Satoshi Variable woff2 used above the fold.
+- No font is preloaded. Correction 2026-10-09: the empty `<link rel="preload" href="">` reported earlier sits inside an HTML comment in the head code, so it isn't live. Preload the Satoshi Variable woff2 used above the fold.
 - Lenis CSS ships in head code, but no Lenis JS is loaded anywhere. Remove it.
 - Webflow-hosted GSAP files and the background video are served with **no cache TTL** (`cache-insight`, about 484 KB). That is Webflow CDN behaviour; nothing to change on our side.
 
@@ -132,7 +132,7 @@ Fix, without changing which images are used:
 - **Careers page:** the `@id`/`url` is `https://www.terawulf.com/career#webpage`, but the page lives at **/careers**.
 - **Resources template BlogPosting:**
   - `description` is empty when the CMS description is empty. The 2023 letters, for example, have `"description": ""`. Fall back to `subheading`.
-  - Add `dateModified`, plus `publisher` → `#organization`.
+  - Add `dateModified`. `publisher` → `#organization` is already there.
   - Noindexed items still output BlogPosting. That's harmless.
 - **Canonical vs URL:** the canonical is `https://www.terawulf.com` with no slash; the JSON-LD URL has one. There's no `og:url`. Align them.
 - **Validation plan** after the change: Schema.org validator and Rich Results Test on `/`, `/about`, `/careers`, `/our-sites` (ItemList), `/wulf-compute` (Service) and two resource items (one indexed, one excluded).
@@ -279,7 +279,8 @@ Removing IX also removes the IX3 visibility gate, which is the main cause of the
    - Popup plays unmuted from the start; Escape closes it; no console errors from the bundle
 
    **1b, Webflow (needs a go-ahead), all on staging first:**
-   1. Site settings → Head code: replace the old jsDelivr loader with piece 1 of `loader.html`, `RELEASE = "1.2.0"`. Keep a single `theme-color`. Remove the empty `<link rel="preload" href="">` and the Lenis `<style>`.
+   0. Before anything: create a Webflow backup (`docs/rollback/2026-10-09/README.md`).
+   1. Site settings → Head code: add piece 1 of `loader.html` with `RELEASE = "1.2.0"`. Keep a single `theme-color`. Remove the commented-out preload and the Lenis CSS from the `<style>`.
    2. G | Embed Code component: replace the old `styles.css` link with Embeds 2a and 2b.
    3. Site settings → Footer code: replace the old loader with piece 3.
    4. Page custom code: remove the popup-video scripts (Home, About, Careers), the hash-scroll script (About) and the resize-reload script (Our Operations). The bundle does all of these now.

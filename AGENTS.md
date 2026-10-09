@@ -30,6 +30,7 @@ Adopted from `brandvm/wf-template` 0.1.0 (63bfb79) on 2026-10-09
 
 ## Project notes
 
+- **Rollback point:** `docs/rollback/2026-10-09/` (verbatim Webflow custom code and page schema) + tag `rollback/2026-10-09-pre-cleanup`. Make a new dated folder before any later round of Webflow changes.
 - **Live site — no Webflow change without explicit approval per item.**
   Stage on terawulff.webflow.io, check, then publish with `safe-publish`.
   Audit and fix plan: `docs/audit/`.

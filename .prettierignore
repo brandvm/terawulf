@@ -1,2 +1,3 @@
 # Production directory
-dist/
+dist/# Verbatim copies of what is installed in Webflow — never reformat
+docs/rollback/
