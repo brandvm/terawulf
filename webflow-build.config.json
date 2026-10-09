@@ -1,0 +1,8 @@
+{
+  "prototypeUrl": "http://127.0.0.1:5173",
+  "stagingUrl": "https://terawulff.webflow.io",
+  "repoDir": ".",
+  "bundlePattern": "brandvm\\.github\\.io/terawulf/(index\\.js|styles\\.css)",
+  "widths": [[1440, 900], [820, 1180], [390, 844]],
+  "pages": ["/", "/about", "/news", "/connect", "/our-operations", "/our-sites", "/wulf-compute", "/our-impact", "/our-expertise", "/careers", "/legal/privacy-policy"]
+}

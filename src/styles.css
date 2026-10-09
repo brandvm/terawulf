@@ -1,18 +1,48 @@
-/* ================================================
-TeraWulf — Global Styles
-Migrated 2026-09-02 from CodeSandbox (terawulf-main.css)
-+ the inline style block that lived in the global embed component.
-Source of truth is this file; released via jsDelivr pinned tags.
-================================================ */
+/* TeraWulf — global site styles. Source of truth for custom CSS.
+   Built to dist/styles.css (minified) and released via jsDelivr pinned tags.
+   Migrated 2026-09-02 from CodeSandbox (terawulf-main.css) plus the inline
+   <style> block of the global embed component; re-sectioned 2026-10-09 to
+   the wf-template layout with every rule kept as it was.
 
-/* ------------------------------------------------
-00. Webflow font-face override (Aeonik default ss02)
-Place here so it loads after Webflow CSS when added in Head code
------------------------------------------------- */
+   REPO-CSS POLICY — see AGENTS.md. If the Designer can express a style,
+   it belongs in the Designer, not here. Every rule here, or the section
+   header covering it, carries a reason comment starting "repo-css:"
+   with one tag — js-state, designer-cant, third-party, canvas-preview,
+   approved-base or override-webflow — then a short why.
+   override-webflow needs explicit approval and a GOTCHAS.md entry.
 
-/* ------------------------------------------------
-01. Token Hub
------------------------------------------------- */
+   CASCADE NOTES — read before adding rules.
+   1. On production (loader v1.1.1) this sheet is linked from the
+      G | Embed Code component in the body, so it lands after webflow.css.
+      Ties on specificity go to us.
+   2. That only works at EQUAL specificity. `:where()` (0-0-0) loses to
+      Webflow; use it only for a base layer Designer classes should beat.
+   3. Never wrap overrides in @layer. Webflow's CSS is unlayered, and
+      unlayered always beats layered regardless of order.
+   4. Section order IS the tiebreaker. Sections run broad to narrow:
+
+        01 TOKENS               variables (+ the legacy root scale), no rules
+        02 BASE                 our reset and element defaults
+        03 WEBFLOW INTERNALS    rich text and Webflow parts the Designer cannot select
+        04 DOCUMENT STATE       runtime classes on <html>, set by JS
+        05 COMPONENTS & MOTION  named things: link effects, loops, modal, site patterns
+        06 UTILITIES            single-purpose attributes, must beat components
+        07 ACCESSIBILITY        reduced-motion trumps
+        08 EDITOR & DEV SUPPORTS canvas-only escape hatches
+
+      Add rules to the section they belong to, not to the end of the file.
+   ============================================================ */
+
+/* ============================================================
+   01. TOKENS
+   ============================================================ */
+
+/* repo-css: override-webflow — legacy fluid scale on :root font-size and
+   aliases that read Webflow --_colors---* names. Predates the policy; kept
+   as-is because changing it resizes the whole live site (GOTCHAS
+   2026-09-02 "Repo CSS redefines Webflow colour variables and root
+   font-size"). The template scales body instead — do not mix the two. */
+
 :root {
   /* Scaling System */
   --size-unit: 16;
@@ -91,9 +121,10 @@ Place here so it loads after Webflow CSS when added in Head code
   }
 }
 
-/* ------------------------------------------------
-    02. Color System: OKLCH and Display-P3 Fallback
-    ------------------------------------------------ */
+/* repo-css: override-webflow — redefines Webflow colour variables in
+   OKLCH / Display-P3 (same GOTCHAS entry). A colour changed in the Designer
+   is overridden here on capable browsers. */
+
 @supports (color: oklch(50% 0.2 280)) {
   :root {
     /* Add OKLCH tokens here if needed */
@@ -161,9 +192,18 @@ Place here so it loads after Webflow CSS when added in Head code
   }
 }
 
-/* ------------------------------------------------
-    03. Reset & Box Model
-    ------------------------------------------------ */
+/* repo-css: designer-cant — custom property read by the SplitText mask rules in §05 */
+
+:root {
+  --padding-gsap-mask: 0.08em;
+}
+
+/* ============================================================
+   02. BASE
+   ============================================================ */
+
+/* repo-css: approved-base — universal reset, hidden scrollbars and element defaults migrated from the old global embed */
+
 *,
 *::before,
 *::after {
@@ -212,9 +252,12 @@ a {
   color: inherit;
 }
 
-/* ------------------------------------------------
-    04. Typography Utilities
-    ------------------------------------------------ */
+/* ============================================================
+   03. WEBFLOW INTERNALS
+   ============================================================ */
+
+/* repo-css: designer-cant — rich-text first/last child margins; the Designer cannot target :first-child inside a Rich Text block */
+
 /* Same behavior, lower specificity so Webflow overrides stay easy */
 .rte :where(:first-child, div:first-child > :first-child),
 .content-rte :where(:first-child, div:first-child > :first-child),
@@ -228,9 +271,239 @@ a {
   margin-bottom: 0 !important;
 }
 
-/* ------------------------------------------------
-    05. Utility Attributes
-    ------------------------------------------------ */
+/* ============================================================
+   04. DOCUMENT STATE
+   ============================================================ */
+
+/* repo-css: js-state — classes the loader and modules toggle on <html> */
+
+/* The head bootstrap in loader.html (template loader) adds .is-loading
+   before first paint. src/index.ts removes it when the bundle boots; the head
+   timeout provides a fallback if the bundle cannot load. Inert until the new
+   loader is installed. */
+html.is-loading,
+html.is-loading body {
+  overflow: hidden;
+  height: 100%;
+}
+
+/* Stops the page scrolling behind the session modal (session-modal.ts). */
+html.modal-open,
+html.modal-open body {
+  overflow: hidden;
+}
+
+/* ============================================================
+   05. COMPONENTS & MOTION
+   ============================================================ */
+
+/* repo-css: designer-cant — pseudo-element link effects */
+
+.link-underline {
+  position: relative;
+}
+
+.link-underline::after {
+  content: "";
+  position: absolute;
+  top: var(--underline-top);
+  left: 0%;
+  height: var(--underline-height);
+  width: 0%;
+  background: currentColor;
+  transition: width var(--dur-bbs) var(--ease-bbs);
+}
+
+.link-underline:hover::after {
+  width: 100%;
+}
+
+.link-underline:not(:hover)::after {
+  left: auto;
+  right: 0%;
+  width: 0%;
+}
+
+.inline-link-underline {
+  position: relative;
+}
+
+.inline-link-underline::after {
+  content: "";
+  position: absolute;
+  top: var(--underline-top);
+  left: 0%;
+  height: var(--underline-height);
+  width: 100%;
+  background: currentColor;
+  opacity: var(--inline-underline-opacity);
+  transition: opacity var(--dur-bbs) var(--ease-bbs);
+}
+
+.inline-link-underline:hover::after {
+  opacity: 1;
+}
+
+/* repo-css: designer-cant — @keyframes loops and SVG dash */
+
+@keyframes loopX {
+  from {
+    transform: translateX(0%);
+  }
+
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes loopY {
+  from {
+    transform: translateY(0%);
+  }
+
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+.loop-animate-x {
+  animation: loopX var(--loop-x-duration) linear infinite;
+  will-change: transform;
+}
+
+.loop-animate-y {
+  animation: loopY var(--loop-y-duration) linear infinite;
+  will-change: transform;
+}
+
+.loop-animate-x.reverse {
+  animation: loopX var(--loop-x-duration) linear infinite reverse;
+  will-change: transform;
+}
+
+.loop-animate-y.reverse {
+  animation: loopY var(--loop-y-duration) linear infinite reverse;
+  will-change: transform;
+}
+
+.svg-animate-line {
+  stroke-dasharray: 10 10 !important;
+  animation: svgDash var(--svg-dash-duration) linear infinite;
+}
+
+.svg-animate-line.reverse {
+  animation: svgDash var(--svg-dash-duration) linear infinite reverse;
+}
+
+@keyframes svgDash {
+  to {
+    stroke-dashoffset: var(--svg-dash-offset);
+  }
+}
+
+/* repo-css: designer-cant — descendant hover states and Webflow-generated
+   classes (w--redirected-checked) the Designer cannot style */
+
+.image-w img {
+  transition: transform var(--dur-bbs) var(--ease-bbs);
+}
+
+.image-w:hover img {
+  transform: scale(var(--image-zoom-scale));
+}
+
+.s-wrapper::before,
+.s-wrapper::after {
+  display: none;
+}
+
+.interactive-canvas-image.is-canvas-painted {
+  opacity: 0 !important;
+}
+
+.topics-item:last-child .topics-separator {
+  display: none;
+  visibility: none;
+}
+
+.filter-radio-button.w--redirected-checked ~ .label-highlight {
+  color: var(--_colors---text--light);
+}
+
+/* repo-css: js-state — session modal. Pairs with src/modules/session-modal.ts.
+   The wrapper is display:none in the Designer; JS flips it to flex, then adds
+   .is-open on the next frame so these transitions actually run. */
+
+[data-modal="site"] {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+[data-modal="site"].is-open {
+  opacity: 1;
+}
+
+[data-modal-card] {
+  transform: translateY(20px) scale(0.97);
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+[data-modal="site"].is-open [data-modal-card] {
+  transform: translateY(0) scale(1);
+}
+
+/* repo-css: designer-cant — site overrides migrated 2026-09-02 from the
+   global embed's inline <style>: parent-hover states and :first-child
+   variants. .gsap_split_* are classes SplitText (Webflow IX3) generates at
+   runtime, so the Designer never sees them. */
+
+.button-link:hover .button-outline {
+  height: calc(100% + 0.5em);
+  width: calc(100% + 0.5em);
+  opacity: 1;
+}
+
+/*.button-link:hover .button-icon-w {
+  transform: translateX(0.25em);
+}*/
+
+.news-hero-item:first-child .resources-card {
+  flex-direction: column !important;
+}
+
+.news-hero-item:first-child .resources-visual.is_horz {
+  max-width: none;
+}
+
+.team-card-visual:hover .team-card-plus-w {
+  opacity: 1;
+}
+
+.our-site-card:hover .our-site-card-overlay {
+  width: 20%;
+}
+
+.gsap_split_letter-mask,
+.gsap_split_word-mask,
+.gsap_split_line-mask {
+  padding-right: var(--padding-gsap-mask);
+  padding-left: var(--padding-gsap-mask);
+  margin-right: calc(-1 * var(--padding-gsap-mask));
+  margin-left: calc(-1 * var(--padding-gsap-mask));
+  padding-bottom: var(--padding-gsap-mask);
+  margin-bottom: calc(-1 * var(--padding-gsap-mask));
+}
+
+.e-map-dot:hover .e-map-dot-info {
+  opacity: 1;
+  transform: scale(1);
+}
+/* ============================================================
+   06. UTILITIES
+   ============================================================ */
+
+/* repo-css: designer-cant — attribute utilities, line clamp, ::selection with color-mix(), background-clip text */
+
 [scroll-show="false"] {
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -301,113 +574,12 @@ a {
   color: inherit;
 }
 
-/* ------------------------------------------------
-    06. Interactive Link Effects
-    ------------------------------------------------ */
-.link-underline {
-  position: relative;
-}
+/* ============================================================
+   07. ACCESSIBILITY
+   ============================================================ */
 
-.link-underline::after {
-  content: "";
-  position: absolute;
-  top: var(--underline-top);
-  left: 0%;
-  height: var(--underline-height);
-  width: 0%;
-  background: currentColor;
-  transition: width var(--dur-bbs) var(--ease-bbs);
-}
+/* repo-css: designer-cant — prefers-reduced-motion overrides */
 
-.link-underline:hover::after {
-  width: 100%;
-}
-
-.link-underline:not(:hover)::after {
-  left: auto;
-  right: 0%;
-  width: 0%;
-}
-
-.inline-link-underline {
-  position: relative;
-}
-
-.inline-link-underline::after {
-  content: "";
-  position: absolute;
-  top: var(--underline-top);
-  left: 0%;
-  height: var(--underline-height);
-  width: 100%;
-  background: currentColor;
-  opacity: var(--inline-underline-opacity);
-  transition: opacity var(--dur-bbs) var(--ease-bbs);
-}
-
-.inline-link-underline:hover::after {
-  opacity: 1;
-}
-
-/* ------------------------------------------------
-    07. Animations
-    ------------------------------------------------ */
-@keyframes loopX {
-  from {
-    transform: translateX(0%);
-  }
-
-  to {
-    transform: translateX(-100%);
-  }
-}
-
-@keyframes loopY {
-  from {
-    transform: translateY(0%);
-  }
-
-  to {
-    transform: translateY(-100%);
-  }
-}
-
-.loop-animate-x {
-  animation: loopX var(--loop-x-duration) linear infinite;
-  will-change: transform;
-}
-
-.loop-animate-y {
-  animation: loopY var(--loop-y-duration) linear infinite;
-  will-change: transform;
-}
-
-.loop-animate-x.reverse {
-  animation: loopX var(--loop-x-duration) linear infinite reverse;
-  will-change: transform;
-}
-
-.loop-animate-y.reverse {
-  animation: loopY var(--loop-y-duration) linear infinite reverse;
-  will-change: transform;
-}
-
-.svg-animate-line {
-  stroke-dasharray: 10 10 !important;
-  animation: svgDash var(--svg-dash-duration) linear infinite;
-}
-
-.svg-animate-line.reverse {
-  animation: svgDash var(--svg-dash-duration) linear infinite reverse;
-}
-
-@keyframes svgDash {
-  to {
-    stroke-dashoffset: var(--svg-dash-offset);
-  }
-}
-
-/* Motion respect */
 @media (prefers-reduced-motion: reduce) {
   .loop-animate-x,
   .loop-animate-y,
@@ -422,66 +594,6 @@ a {
   }
 }
 
-/* ------------------------------------------------
-    08. Components / Patterns
-    ------------------------------------------------ */
-.image-w img {
-  transition: transform var(--dur-bbs) var(--ease-bbs);
-}
-
-.image-w:hover img {
-  transform: scale(var(--image-zoom-scale));
-}
-
-.s-wrapper::before,
-.s-wrapper::after {
-  display: none;
-}
-
-.interactive-canvas-image.is-canvas-painted {
-  opacity: 0 !important;
-}
-
-.topics-item:last-child .topics-separator {
-  display: none;
-  visibility: none;
-}
-
-.filter-radio-button.w--redirected-checked ~ .label-highlight {
-  color: var(--_colors---text--light);
-}
-
-/* =============================================================================
-   SESSION MODAL
-   Pairs with the SessionModal module in the JS bundle.
-   The wrapper is display:none in the Designer; JS flips it to flex, then adds
-   .is-open on the next frame so these transitions actually run.
-   ============================================================================= */
-
-[data-modal="site"] {
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-[data-modal="site"].is-open {
-  opacity: 1;
-}
-
-[data-modal-card] {
-  transform: translateY(20px) scale(0.97);
-  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-[data-modal="site"].is-open [data-modal-card] {
-  transform: translateY(0) scale(1);
-}
-
-/* Stops the page scrolling behind the modal. */
-html.modal-open,
-html.modal-open body {
-  overflow: hidden;
-}
-
 @media (prefers-reduced-motion: reduce) {
   [data-modal="site"],
   [data-modal-card] {
@@ -489,52 +601,8 @@ html.modal-open body {
   }
 }
 
-/* ------------------------------------------------
-    09. Site overrides — migrated 2026-09-02 from the inline <style> block
-    in the global embed component ("staging only" TODO, finally done)
-    ------------------------------------------------ */
-.button-link:hover .button-outline {
-  height: calc(100% + 0.5em);
-  width: calc(100% + 0.5em);
-  opacity: 1;
-}
+/* ============================================================
+   08. EDITOR & DEV SUPPORTS
+   ============================================================ */
 
-/*.button-link:hover .button-icon-w {
-  transform: translateX(0.25em);
-}*/
-
-.news-hero-item:first-child .resources-card {
-  flex-direction: column !important;
-}
-
-.news-hero-item:first-child .resources-visual.is_horz {
-  max-width: none;
-}
-
-.team-card-visual:hover .team-card-plus-w {
-  opacity: 1;
-}
-
-.our-site-card:hover .our-site-card-overlay {
-  width: 20%;
-}
-
-:root {
-  --padding-gsap-mask: 0.08em;
-}
-
-.gsap_split_letter-mask,
-.gsap_split_word-mask,
-.gsap_split_line-mask {
-  padding-right: var(--padding-gsap-mask);
-  padding-left: var(--padding-gsap-mask);
-  margin-right: calc(-1 * var(--padding-gsap-mask));
-  margin-left: calc(-1 * var(--padding-gsap-mask));
-  padding-bottom: var(--padding-gsap-mask);
-  margin-bottom: calc(-1 * var(--padding-gsap-mask));
-}
-
-.e-map-dot:hover .e-map-dot-info {
-  opacity: 1;
-  transform: scale(1);
-}
+/* Nothing yet. */

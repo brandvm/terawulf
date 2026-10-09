@@ -1,70 +1,213 @@
 <!-- ============================================================
-Custom-code loading — two pieces. Replace terawulf (all occurrences)
-and set VER at each release.
+Custom-code loading — three pieces, pasted into three different places
+in Webflow (piece 2 is two Embeds, 2a and 2b). ORG/REPO are filled in for brandvm/terawulf. The release
+version lives in ONE place: RELEASE in piece 1.
 
-1) CSS base link — Site settings → Head code (or the site's global
-   embed component if one exists):
+  prod        = pinned jsDelivr tag (immutable)
+  webflow.io  = latest pushed staging bundle (JS + CSS)
+  dev flag    = the dev server on this machine (staging only)
 
-   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/brandvm/terawulf@1.1.1/dist/styles.css" />
+The bundle includes a compact Dev / Staging switcher in the bottom-left
+corner of *.webflow.io pages. Click the current mode to expand it.
 
-2) JS loader — Site settings → Footer code (below).
-   prod        = pinned jsDelivr tag (immutable)
-   webflow.io  = latest pushed staging bundle (JS + CSS override)
-   dev flag    = the dev machine's server (staging only)
+Dev flag — also available via URL param on the staging site:
+   ?wfc-dev=1   → dev mode on (persists in localStorage)
+   ?wfc-dev=0   → back to normal
+Console equivalent: localStorage.setItem('wfc-dev','1') / removeItem.
 
-Dev flag — set via URL params on the staging site (works on any
-device, no console needed):
-   ?bv-dev=1                          → dev mode on (persists)
-   ?bv-dev=1&bv-host=192.168.2.35:3000 → dev mode against the dev
-                                        machine over the LAN
-   ?bv-dev=0                          → back to normal
-Console equivalent: localStorage.setItem('bv-dev','1') / removeItem.
+Dev mode is localhost-only by design. http://localhost is a
+potentially-trustworthy origin, so an https page is allowed to load
+it; a LAN IP is not and gets blocked as mixed content. To check work
+on another device, git push and use the staging bundle (~1 min).
 
-LAN caveat: https staging + http LAN server is "mixed content" —
-browsers allow http://localhost but BLOCK http://192.168.x.x by
-default. On the testing device, allow insecure content for the
-webflow.io site (site settings → Insecure content → Allow), or just
-git push and use the staging bundle (~1 min).
+Everything that is not below lives in src/ and ships through the
+bundle. Resist adding site logic to any of these three snippets —
+they are bootstrap only, and they are the one part of the system
+that is not versioned, reviewable, or rollback-able. A push never
+updates them: any change here must be re-pasted into Webflow and
+published.
 
-At release: bump the @1.1.1 in BOTH the CSS link and VER below,
-then publish. Rollback = revert both strings.
+------------------------------------------------------------
+1) Head code — Site settings → Custom code → Head code.
+
+   Only things that must exist before the bundle does: the shared
+   config (window.WFC), meta tags the browser reads at parse time,
+   connection warming, and the pre-paint scroll lock.
+
+   RELEASE is null until the first tag exists. While it is null, a
+   page served from a custom domain uses the STAGING bundle and logs a
+   console error — so attaching a domain before the first release
+   shows the site instead of 404ing every asset. Set RELEASE to the
+   tag before launch; staging must never be what production runs on.
+
+   Site custom code is ignored by the Designer canvas, which is what
+   we want here — no scroll lock, no preloader while designing.
+------------------------------------------------------------ -->
+<meta name="theme-color" content="#112135" />
+
+<!-- Two lines on purpose: a stylesheet fetch and its font fetches are
+     CORS-different and open separate connections. -->
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+
+<script>
+  (function () {
+    var RELEASE = null; // the release tag, e.g. "1.0.0" — the only version string
+    var OWNER = "brandvm"; // the GitHub org or user that owns this repo
+    var SITE = "terawulf"; // this repo's name
+    var STAG = "https://" + OWNER + ".github.io/" + SITE + "/";
+    var DEV = "http://localhost:3000/";
+    var staging = /\.webflow\.io$/.test(location.hostname);
+    var q = new URLSearchParams(location.search);
+    var flag = staging && q.get("wfc-dev") === "1";
+    try {
+      if (staging && q.has("wfc-dev")) localStorage.setItem("wfc-dev", flag ? "1" : "0");
+      if (staging && !q.has("wfc-dev")) flag = localStorage.getItem("wfc-dev") === "1";
+    } catch (e) { /* An explicit URL flag still works without storage. */ }
+    var prod = RELEASE
+      ? "https://cdn.jsdelivr.net/gh/" + OWNER + "/" + SITE + "@" + RELEASE + "/dist/"
+      : STAG;
+    if (!staging && !RELEASE)
+      console.error("[wfc] RELEASE is not set in head code; serving the staging bundle. Tag a release and set RELEASE before launch.");
+    // Shared config — the Embed, the footer loader and the bundle read this.
+    window.WFC = {
+      staging: staging, dev: flag, devBase: DEV, stag: STAG,
+      release: RELEASE, prod: prod,
+      // One cache-buster for the Embed and the footer loader, so staging
+      // fetches styles.css once instead of once per snippet.
+      v: "?v=" + Date.now(),
+    };
+
+    // Paired with the html.is-loading rules in src/styles.css. The bundle
+    // removes this when it boots; the timeout is the safety net so a 404
+    // on the bundle never leaves a permanently scroll-locked page. A plain
+    // timeout, not one started on `load` — a slow image would otherwise
+    // keep the page locked far past 3 s.
+    var root = document.documentElement;
+    root.classList.add("is-loading");
+    setTimeout(function () { root.classList.remove("is-loading"); }, 3000);
+  })();
+</script>
+
+<!-- ============================================================
+2) CSS — TWO HTML Embed elements ON THE CANVAS, inside the component
+   that sits on every page (on TeraWulf: G | Embed Code; see the skill's
+   conventions.md §1), 2a first and 2b directly after it.
+   NOT Site settings → Head code.
+
+     2a  the <link> only
+     2b  the <script> only
+
+   Why two: the Designer canvas skips an Embed that contains a <script>
+   entirely, so a <link> in the same Embed never renders there and the
+   canvas shows no repo CSS. Order matters: 2b finds the link by id, so
+   it must come after 2a, with nothing that paints in between.
+
+   Why an Embed and not head code: the Designer canvas ignores site
+   custom code and never runs scripts, but it DOES render an Embed's
+   markup — so a real <link> tag is the only way to see our CSS while
+   designing. An icon font belongs here for the same reason: in head
+   code the canvas would show blank boxes where every icon should be.
+
+   The canvas shows the STAGING stylesheet: push, wait ~1 min, reload
+   the Designer tab. Everywhere else the 2b script rewrites the href
+   (pinned tag on prod, cache-busted staging on webflow.io) and adds
+   the localhost sheet only when the dev flag is on.
+
+   There is deliberately no static localhost <link> here. It used to
+   let the canvas show unsaved local CSS, but every public visitor's
+   browser then requested http://localhost:3000 before the script could
+   remove it — which can block rendering and triggers Chrome's
+   local-network-access prompt. To see local CSS on the canvas while
+   designing, add this link below wfc-css TEMPORARILY, with `pnpm dev`
+   running, and remove it before publishing:
+     <link id="wfc-css-dev" rel="stylesheet" href="http://localhost:3000/styles.css" />
+   While both are live they are ADDITIVE: deleting a rule locally does
+   not delete staging's copy of it. Deletions can only be verified
+   after a push.
+
+   GitHub Pages caches ~10 min; bump ?v=1 below to pull fresh staging
+   CSS into the canvas.
+
+   Placement: an Embed in the body loads after Webflow's own
+   stylesheet, so our rules win ties on specificity. That is exactly
+   why repo CSS must not restyle anything the Designer can — see the
+   CSS policy in AGENTS.md.
+------------------------------------------------------------ -->
+<link
+  id="wfc-css"
+  rel="stylesheet"
+  href="https://brandvm.github.io/terawulf/styles.css?v=1"
+/>
+
+<!-- ============================================================
+2b) Second HTML Embed, directly after 2a in the same component: this
+    script only. The canvas never runs it (2a still shows the staging
+    CSS there); on published pages it settles the stylesheet URL.
+------------------------------------------------------------ -->
+<script>
+  (function () {
+    var C = window.WFC;
+    var base = document.getElementById("wfc-css");
+    if (!C) return console.error("[wfc] Head code config missing; the stylesheet stays on staging.");
+    if (!base) return;
+    // Runs right after 2a, before anything paints, so the staging sheet
+    // never applies on prod — the href is settled before first paint.
+    base.href = C.staging ? C.stag + "styles.css" + C.v : C.prod + "styles.css";
+    if (C.dev && !document.getElementById("wfc-css-dev")) {
+      var dev = document.createElement("link");
+      dev.id = "wfc-css-dev";
+      dev.rel = "stylesheet";
+      dev.href = C.devBase + "styles.css";
+      base.parentNode.insertBefore(dev, base.nextSibling); // second, so it wins
+    }
+  })();
+</script>
+
+<!-- ============================================================
+3) JS loader — Site settings → Custom code → Footer code.
+
+Nothing else belongs in the footer. Third-party libraries go through
+`pnpm add` and get bundled: the loader appends its script tag
+dynamically, which makes it async, so a sibling <script defer> in the
+footer is no longer guaranteed to execute first and the bundle can
+find its global undefined.
+
+Rollback = set RELEASE in piece 1 back to the previous tag and publish.
 ============================================================ -->
 <script>
-(function () {
-  var VER      = '1.1.1';
-  var PROD_JS  = 'https://cdn.jsdelivr.net/gh/brandvm/terawulf@' + VER + '/dist/index.js';
-  var STAG     = 'https://brandvm.github.io/terawulf/';
-  var staging = /\.webflow\.io$/.test(location.hostname);
-  var flag = false, devHost = 'localhost:3000';
-  try {
-    var q = new URLSearchParams(location.search);
-    if (q.has('bv-dev')) localStorage.setItem('bv-dev', q.get('bv-dev'));
-    if (q.get('bv-host')) localStorage.setItem('bv-host', q.get('bv-host'));
-    flag = staging && localStorage.getItem('bv-dev') === '1';
-    devHost = localStorage.getItem('bv-host') || devHost;
-  } catch (e) {}
-  var DEV = 'http://' + devHost + '/';
-  function js(src, fallback) {
-    var s = document.createElement('script');
-    s.src = src;
-    if (fallback) s.onerror = fallback;
-    document.head.appendChild(s);
-  }
-  function css(href) {
-    var l = document.createElement('link');
-    l.rel = 'stylesheet';
-    l.href = href;
-    document.head.appendChild(l); // loads after the base link → overrides it
-  }
-  var v = '?v=' + Date.now();
-  if (flag) {
-    js(DEV + 'index.js', function () { js(STAG + 'index.js' + v); });
-    css(DEV + 'styles.css');
-  } else if (staging) {
-    js(STAG + 'index.js' + v, function () { js(PROD_JS); });
-    css(STAG + 'styles.css' + v);
-  } else {
-    js(PROD_JS);
-  }
-})();
+  (function () {
+    var C = window.WFC;
+    if (!C) return console.error("[wfc] Head code config missing; custom code not loaded.");
+    if (!document.getElementById("wfc-css"))
+      console.warn("[wfc] CSS embed not found on this page; styles are missing.");
+    function js(src, fallback) {
+      // Set before execution so the switcher sees the bundle that actually
+      // loads, including local -> staging and staging -> pinned fallbacks.
+      C.source = new URL(".", src).href;
+      if (C.source !== C.devBase) {
+        var devCSS = document.getElementById("wfc-css-dev");
+        if (devCSS) devCSS.remove();
+        var baseCSS = document.getElementById("wfc-css");
+        var next = C.source + "styles.css" + new URL(src).search;
+        // Every href write drops the sheet and fetches it again: only change it
+        // when the URL really differs.
+        if (baseCSS && baseCSS.href !== next) baseCSS.href = next;
+      }
+      var s = document.createElement("script");
+      s.src = src;
+      if (fallback) s.onerror = fallback;
+      document.head.appendChild(s);
+    }
+    var v = C.v || "?v=" + Date.now();
+    if (C.dev)
+      js(C.devBase + "index.js", function () {
+        js(C.stag + "index.js" + v);
+      });
+    else if (C.staging)
+      js(C.stag + "index.js" + v, C.release ? function () {
+        js(C.prod + "index.js");
+      } : null);
+    else js(C.prod + "index.js" + (C.release ? "" : v));
+  })();
 </script>
