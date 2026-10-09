@@ -16,3 +16,6 @@ playwright-report/
 
 # Harvest drafts from client repos (contain client details)
 .harvest/
+
+# Visual baselines (large PNGs; regenerate with pnpm wf:baseline save)
+baselines/

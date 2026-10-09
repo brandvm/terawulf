@@ -10,3 +10,4 @@ outcome in the Status column.
 | ID | What changes | Where | Why | Status |
 | --- | --- | --- | --- | --- |
 | A1 | New FAQ sections (4–6 questions each), drafted only from facts already on the site, with FAQPage schema | WULF Compute, Our Sites | AEO/GEO: plain, quotable answers for AI search | Draft not written yet |
+| A2 | New `llms.txt` file at www.terawulf.com/llms.txt: a plain-text guide for AI assistants, built only from wording already on the site (the page meta descriptions and the company schema). Draft: `docs/audit/batch-2/llms.txt` | Site root (not a visible page) | AEO/GEO: tells AI answer engines what TeraWulf is and which pages to cite | Draft ready |

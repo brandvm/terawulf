@@ -25,6 +25,20 @@ repos to improve `brandvm/wf-template`.
 
 <!-- Add new entries here, newest first. -->
 
+### 2026-10-09 · CMS text bindings inside JSON-LD can break the schema
+- Area: designer
+- Scope: template-candidate
+- Symptom: adding `"alternativeHeadline": "{{wf subheading}}"` to the
+  Resources BlogPosting made the JSON-LD invalid on items whose subheading
+  ends with a line break (staging only; caught by validating all pages).
+- Cause: Webflow inserts PlainText field values raw into custom code:
+  line breaks are not escaped (invalid JSON) and apostrophes become `&#39;`
+  (valid JSON, wrong text).
+- Fix: only bind single-line fields (name, slug, dates, image) in JSON-LD;
+  validate every CMS page after a schema change, not a sample.
+- Status: open (21 headlines still carry `&#39;`)
+- Found by: claude
+
 ### 2026-10-09 · Template Embed 2a makes production download the CSS twice
 - Area: loader, perf
 - Scope: template-candidate
