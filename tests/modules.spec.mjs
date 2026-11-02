@@ -326,3 +326,79 @@ test('video toggle: reduced motion starts paused with a Play label', async ({ pa
   await setup(page, hero, { init: fakeMedia });
   await expect(page.locator('[data-video-toggle]')).toHaveAttribute('aria-label', 'Play background video');
 });
+
+test('finsweet loader names match the bundled registry', () => {
+  const loader = readFileSync(new URL('../src/modules/finsweet-loader.ts', import.meta.url), 'utf8');
+  const registry = readFileSync(new URL('../src/modules/finsweet-registry.ts', import.meta.url), 'utf8');
+  const names = JSON.parse(loader.match(/FINSWEET_ATTRIBUTES = (\[[^\]]*\])/)[1].replace(/'/g, '"')).sort();
+  const bundled = [...registry.matchAll(/^\s+(\w+): \(\) => import/gm)].map((m) => m[1]).sort();
+  expect(names).toEqual(bundled);
+});
+
+test('finsweet bundle loads only where an attribute is used', async ({ page }) => {
+  const requested = [];
+  page.on('request', (r) => { if (r.url().includes('fs-bundle.js')) requested.push(r.url()); });
+  await setup(page, '<p>No Finsweet here</p>');
+  await page.waitForTimeout(200);
+  expect(requested).toEqual([]);
+});
+
+test('finsweet bundle stays off while a Finsweet CDN script is on the page', async ({ page }) => {
+  const requested = [];
+  page.on('request', (r) => { if (r.url().includes('fs-bundle.js')) requested.push(r.url()); });
+  await setup(page, '<div fs-selectcustom-element="dropdown"></div><script src="https://cdn.jsdelivr.net/npm/@finsweet/attributes-selectcustom@1/selectcustom.js"></script>');
+  await page.waitForTimeout(200);
+  expect(requested).toEqual([]);
+});
+
+test('bundled GSAP plugins never register on Webflow\'s window.gsap', async ({ page }) => {
+  // Stand-in for Webflow's GSAP while IX3 is still on.
+  const stub = () => {
+    window.__registered = 0;
+    window.gsap = { version: 'webflow', registerPlugin: () => { window.__registered++; } };
+  };
+  const errors = await setup(page, '<p>Page</p>', { init: stub });
+  await page.waitForTimeout(200);
+  expect(await page.evaluate(() => window.__registered)).toBe(0);
+  expect(await page.evaluate(() => window.gsap.version)).toBe('webflow');
+  expect(await page.evaluate(() => 'ScrollTrigger' in window || '__wfcGsap' in window)).toBe(false);
+  expect(errors).toEqual([]);
+});
+
+// About image overlays as Webflow publishes them (Designer style: absolute,
+// full height, no width), one in the first screen and one far below.
+const overlays = (wid = '') => `
+  <style>.image-overlay{position:absolute;inset:0 0 auto auto;height:100%;background:#fff}</style>
+  <div id="near" style="position:relative;width:400px;height:300px"><img src="/a.png"><div ${wid} class="image-overlay is_left"></div></div>
+  <div style="height:3000px"></div>
+  <div id="far" style="position:relative;width:400px;height:300px"><img src="/b.png"><div class="image-overlay is_left"></div></div>`;
+const overlayWidth = (page, id) => page.locator(`#${id} .image-overlay`).evaluate((el) => el.getBoundingClientRect().width);
+
+test('image overlay wipe: covers each image, then wipes it once in view (IX2 e-19 timing)', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  const errors = await setup(page, overlays());
+  await expect(page.locator('#far .image-overlay')).toHaveAttribute('data-wipe', 'armed');
+  expect(await overlayWidth(page, 'far')).toBe(400);
+  expect(await page.locator('#far .image-overlay').evaluate((el) => getComputedStyle(el).transition))
+    .toContain('width 2s cubic-bezier(0.64, 0.05, 0, 1)');
+  await expect(page.locator('#near .image-overlay')).toHaveAttribute('data-wipe', 'done');
+  await expect.poll(() => overlayWidth(page, 'near'), { timeout: 4000 }).toBe(0);
+  await page.locator('#far').scrollIntoViewIfNeeded();
+  await expect(page.locator('#far .image-overlay')).toHaveAttribute('data-wipe', 'done');
+  await expect.poll(() => overlayWidth(page, 'far'), { timeout: 4000 }).toBe(0);
+  expect(errors).toEqual([]);
+});
+
+test('image overlay wipe: stays off while the IX2 event is still published', async ({ page }) => {
+  await setup(page, overlays('data-w-id="6529e6da-ebda-ec47-5d22-502f4eace32d"'));
+  await page.waitForTimeout(200);
+  expect(await page.locator('.image-overlay[data-wipe]').count()).toBe(0);
+});
+
+test('image overlay wipe: reduced motion leaves the images uncovered', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await setup(page, overlays());
+  await page.waitForTimeout(200);
+  expect(await page.locator('.image-overlay[data-wipe]').count()).toBe(0);
+  expect(await overlayWidth(page, 'far')).toBe(0);
+});

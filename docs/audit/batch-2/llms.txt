@@ -1,22 +1,37 @@
 # TeraWulf
 
-> TeraWulf develops and operates energy-secured digital infrastructure for AI and high-performance computing, with data center campuses in New York, Texas, Kentucky and Maryland. TeraWulf Inc. is listed on Nasdaq as WULF.
+> TeraWulf develops and operates large-scale digital infrastructure designed for AI and high-performance computing workloads, with power-secured data center campuses in New York, Kentucky and Maryland. TeraWulf Inc. is listed on Nasdaq as WULF.
 
 ## Company
 
+- [Home](https://www.terawulf.com/): Energy infrastructure for next-generation AI and high-performance computing. TeraWulf delivers scalable, power-secured infrastructure for AI and HPC growth.
 - [About](https://www.terawulf.com/about): TeraWulf develops and operates large-scale digital infrastructure designed for AI and high-performance computing workloads.
+- [Leadership](https://www.terawulf.com/about#leadership): TeraWulf's management team and board of directors.
 - [Our Operations](https://www.terawulf.com/our-operations): TeraWulf develops and operates digital infrastructure for large-scale AI and high-performance computing, built on secured power and scalable design.
-- [Our Sites](https://www.terawulf.com/our-sites): TeraWulf's growing portfolio of power-secured data center campuses designed for scalable compute infrastructure and long-term expansion.
 - [WULF Compute](https://www.terawulf.com/wulf-compute): WULF Compute develops and operates high-density AI and HPC data campuses powered by energy-secured infrastructure.
-- [Our Impact](https://www.terawulf.com/our-impact): TeraWulf develops and operates digital infrastructure with a focus on responsible energy use, community partnership, and long-term economic impact.
 - [Our Expertise](https://www.terawulf.com/our-expertise): TeraWulf's energy infrastructure expertise, including Beowulf Energy & Data's role in developing, operating, and managing power and digital infrastructure assets.
+- [Our Impact](https://www.terawulf.com/our-impact): TeraWulf develops and operates digital infrastructure with a focus on responsible energy use, community partnership, and long-term economic impact.
+
+## Sites
+
+- [Our Sites](https://www.terawulf.com/our-sites): TeraWulf's growing portfolio of power-secured data center campuses designed for scalable compute infrastructure and long-term expansion.
+- [Lake Mariner Data](https://www.terawulf.com/our-sites#lake-mariner-data): TeraWulf's flagship campus in Barker, New York.
+- [Lake Hawkeye Data](https://www.terawulf.com/our-sites#lake-hawkeye-data): Campus in Lansing, New York.
+- [Justified Data](https://www.terawulf.com/our-sites#justified-data): Campus in Hawesville, Kentucky.
+- [Muskie Data](https://www.terawulf.com/our-sites#muskie-data): Campus in Eastern, Kentucky.
+- [Chesapeake Data & Energy](https://www.terawulf.com/our-sites#chesapeake-data-energy): Campus in Charles County, Maryland.
 
 ## News and investors
 
 - [News & Media](https://www.terawulf.com/news): Updates, announcements, and insights from TeraWulf, including company news, videos, blog posts, and media coverage.
-- [Investor Relations](https://investors.terawulf.com/): Press releases, presentations, filings and stock information.
+- [Investor Relations](https://investors.terawulf.com/): TeraWulf's investor resources, such as financial reports, SEC filings, governance documents, and company updates.
+- [Press Releases](https://investors.terawulf.com/news-events/press-releases): TeraWulf press releases on the investor portal.
 
 ## Contact
 
 - [Connect](https://www.terawulf.com/connect): Partnership opportunities, media inquiries, investor relations, or general questions.
-- [Careers](https://www.terawulf.com/careers): Career opportunities at TeraWulf.
+- [Careers](https://www.terawulf.com/careers): Career opportunities at TeraWulf, building energy-first infrastructure for AI and high-performance computing.
+
+## Optional
+
+- [CSR Report FY2025](https://d1io3yog0oux5.cloudfront.net/_286bff50c78a813f7d4e259725325763/terawulf/db/2386/21653/pdf/TeraWulf+CSR+Report+FY2025.pdf): TeraWulf's corporate social responsibility report, linked from the Our Impact page.

@@ -11,6 +11,9 @@ import { initDottedCanvas } from './modules/dotted-canvas';
 import { initPopupVideo } from './modules/popup-video';
 import { initAutoplayVideo } from './modules/autoplay-video';
 import { initVideoToggle } from './modules/video-toggle';
+import { initMotion } from './modules/motion';
+import { initImageOverlayWipe } from './modules/image-overlay-wipe';
+import { initFinsweetLoader } from './modules/finsweet-loader';
 import { initResizeReload } from './modules/resize-reload';
 import { initHashScroll } from './modules/hash-scroll';
 
@@ -35,6 +38,9 @@ function boot() {
   run('popup-video', initPopupVideo);
   run('autoplay-video', initAutoplayVideo);
   run('video-toggle', initVideoToggle);
+  run('motion', initMotion);
+  run('image-overlay-wipe', initImageOverlayWipe);
+  run('finsweet-loader', initFinsweetLoader); // last, as the recipe asks
   run('resize-reload', initResizeReload);
   run('hash-scroll', initHashScroll);
 }

@@ -33,11 +33,20 @@ published pages.
 | i-9e440da0 | Scroll / Beowulf Service | scroll, scrub 0.8 | Our Expertise | beowulf service |
 | i-2e7d5b07 | Scroll \| Impact Feature | scroll, scrub 0.8 | Our Impact | class 3fd5c3a8 |
 
-**IX2:**
-- `data-w-id` on `.image-overlay.is_left` (About, Our Vision).
-- The popup wrappers (`[data-popup-video-w]`) carry IX2-style inline initial
-  states (`display:none; opacity:0; scale 0.8`) on Home and About; the popup
-  open/close is an interaction.
+**IX2:** 15 events (corrected 2026-11-02 from the published Webflow chunk;
+the MCP cannot list IX2). Full table: `docs/rollback/2026-11-02/README.md`.
+- e-19 "Image Overlay \| Hide" on About `.image-overlay` (all 6): the one
+  that writes `data-w-id` on the first `.image-overlay.is_left`. Replaced
+  by `image-overlay-wipe.ts`; delete at the B6 cutover.
+- Stays in Webflow: nav dropdown and mobile menu drawer (G \| Navigation),
+  Deliver Card hover, stats "show more", Our Impact approach section in/out
+  view, About team pop-up open/close, Home/About video pop-up open/close
+  (the wrappers' inline `display:none; opacity:0; scale 0.8` is their
+  initial state).
+
+Status 2026-11-02: the 21 IX3 interactions above are unchanged (ids,
+triggers, timelines match `ix3-spec.json`; What We Do Stack now states the
+0.5 s default duration explicitly).
 
 **Removed 2026-10-09:**
 - the G \| Grid Guide component (0 instances, then unregistered);

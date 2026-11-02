@@ -23,8 +23,8 @@ Client rule: keep the approved design and all existing wording.
 | A3 | Release v1.2.0 tagged | ✅ | **Live in production since 2026-10-09 (batch 1)** |
 | A4 | Rollback point | ✅ | Tag `rollback/2026-10-09-pre-cleanup`, `docs/rollback/2026-10-09/`, Webflow backup "Pre-cleanup 2026-10-09" |
 | A5 | GitHub protection | ✅ | `master` via PR with passing tests; `v*` and `rollback/*` tags permanent |
-| A6 | Finsweet through the repo recipe | ⬜ | /news and /careers load Finsweet v1 + v2 from a CDN; the template wants `recipes/finsweet/` bundled |
-| A7 | Offer template-candidate GOTCHAS to wf-template | ⬜ | The template workflow asks for this |
+| A6 | Finsweet through the repo recipe | 🟡 code done | Bundled v2.7.1 (List, Custom Select, Social Share) as `fs-bundle.js`, loaded only where used. Webflow markup v1→v2 at cutover: `finsweet-v2-migration.md`. Careers loads v1 selectcustom for nothing | /news and /careers load Finsweet v1 + v2 from a CDN; the template wants `recipes/finsweet/` bundled |
+| A7 | Offer template-candidate GOTCHAS to wf-template | ✅ | brandvm/wf-template#3 (11 lessons, 2026-10-09); merge is theirs | The template workflow asks for this |
 
 ## B. Webflow structure → wf-template conventions
 
@@ -35,7 +35,7 @@ Client rule: keep the approved design and all existing wording.
 | B3 | Delete G \| Embed Code definition | ⬜ | After production is confirmed |
 | B4 | **Page shell as components** (G \| Page W: skip link › G \| Nav W › G \| Main W › `main#main` slot › G \| Footer W) | ⬜ | Asked for at 1b. Pages already have Page Wrapper › G \| Navigation W › G \| Main W (`main`) › G \| Footer W, so this is a conversion |
 | B5 | Structure audit against `conventions.md` (sections, naming, variables, style guide rules) | ⬜ | Part of the first request; only the code side was audited |
-| B6 | Move off all Webflow interactions (IX, IX2, IX3) | ⬜ | Inventory: `ix-inventory.md` (21 IX3 + IX2 pieces). Check whether scroll markers (`showMarkers: true`) render on published pages |
+| B6 | Move off all Webflow interactions (IX, IX2, IX3) | 🟡 code done | `b6-animations.md`: load motion in CSS, 19 scroll interactions replayed from the decoded IX3 spec (`motion.ts`). Cutover needs the connector | Inventory: `ix-inventory.md` (21 IX3 + IX2 pieces). Check whether scroll markers (`showMarkers: true`) render on published pages |
 
 ## C. Performance (Phase 3)
 
@@ -49,7 +49,7 @@ Client rule: keep the approved design and all existing wording.
 | C6 | Compress the 2.8 MB nav PNG and the 850 KB JPG (same images) | ✅ | Live 2026-10-09. Nav PNG done in batch 3 (2.8 MB → 279 KB). Batch 4: Why Background 850 → 682 KB, Purpose-Built 985 → 310 KB |
 | C7 | Preload Satoshi | ✅ decided: no | Measured in batch 4: −20–40 ms LCP, +30–100 ms FCP (fonts already `swap`). Not added |
 | C8 | Phosphor icons: subset, not blocking | 🟡 in repo | Batch 6: 13-glyph subset inlined in styles.css (2 KB vs ~550 KB, 3 blocking CSS removed), pixel-identical. Ships as v1.3.0: merge, tag, Embed 2a edit |
-| C9 | Animation: hero not hidden behind IX3; SplitText/ScrollTrigger cost | ⬜ | Done through B6 |
+| C9 | Animation: hero not hidden behind IX3; SplitText/ScrollTrigger cost | 🟡 code done | Via B6 | Done through B6 |
 | C10 | /our-operations resize reload | ✅ | Reloads only across breakpoints |
 | C11 | Lenis CSS removed | ✅ | |
 | C12 | `crossorigin` on the canvas image | ⬜ | MANUAL-TODO row A (the API can't set it) |
@@ -68,7 +68,7 @@ Client rule: keep the approved design and all existing wording.
 | D8 | 8 dead-link cards: unpublish + 301 to /news | ✅ | Live (batch 3) |
 | D9 | Duplicates: keep the clean slug, unpublish + 301 the others | ✅ | Decided, per-set list in DECISIONS |
 | D10 | Exclude all 88 Videos from Google | ✅ | Decided. The client's "don't change indexing rules" means pages; every affected page is listed for the client in `CLIENT-PAGE-LIST.md` |
-| D11 | FAQ draft (AEO/GEO new content) | ⬜ | Client approval, asked last |
+| D11 | FAQ draft (AEO/GEO new content) | 🟡 drafted | 12 Q&As + FAQPage JSON-LD in CLIENT-APPROVALS A1, waiting on client (10 points to confirm, incl. 2.3 vs 2.9 GW and Texas) | Client approval, asked last |
 | D12 | `/home` → `/` and `/leadership` → `/about#leadership`, trailing-slash versions too (one 301 each) | ✅ | From the client checklist. Both 404 today; `id="leadership"` exists on /about |
 | D13 | `/terawulf-charitable-foundation` (404) | ⏸ | Client checklist: on hold until a destination is decided |
 | D14 | Older resources 7–18 clicks deep | ⏸ | Client checklist: on hold until the approach is decided |
@@ -88,8 +88,8 @@ Client rule: keep the approved design and all existing wording.
 
 | | Item | State | Notes |
 | --- | --- | --- | --- |
-| F1 | Read the current /design/style-guide | ⬜ | |
-| F2 | Prototype → `/design/style-guide-v2` (new page, old one kept) | ⬜ | |
+| F1 | Read the current /design/style-guide | ✅ | | |
+| F2 | Prototype → `/design/style-guide-v2` (new page, old one kept) | 🟡 prototype | `../prototype` (all 569 classes); Webflow build needs the connector + approval of proposed fix P1 | |
 
 ## G. Release to production
 
@@ -98,7 +98,7 @@ Client rule: keep the approved design and all existing wording.
 | G0 | Visual baseline of production (`wf:baseline save --live`) + `wf:outline` | ✅ | `baselines/production-2026-10-09/` (13 pages × 3 widths, 97 MB, not committed yet). One H1 per page |
 | G1 | QA on staging for each batch: baseline compare, Lighthouse, axe, links, schema validators; navigation, video controls and forms still work | ✅ batch 1 | Visual (noise measured on production), outline, nav, mobile menu, popups, form, Lighthouse, CLS (staging-only shift from the stylesheet swap; production unchanged) |
 | G2 | Production publish per batch (`safe-publish`), with explicit confirmation | ✅ batches 1–5 | Published 2026-10-09 after a staging recheck (an unidentified 17:05 UTC Webflow save was included and rechecked); verified live |
-| G3 | Before/after report for the client: fresh crawl, mobile and desktop PageSpeed | ⬜ | Client checklist "Wrap-up"; the Ahrefs rerun is in the backlog |
+| G3 | Before/after report for the client: fresh crawl, mobile and desktop PageSpeed | ✅ interim | `2026-10-before-after.md` (Home mobile 59→73, FCP 4.5→1.8 s); rerun after B6 cutover | Client checklist "Wrap-up"; the Ahrefs rerun is in the backlog |
 
 ## Backlog (by decision)
 
