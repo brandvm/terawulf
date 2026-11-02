@@ -4,7 +4,7 @@ import { rm } from 'node:fs/promises';
 const dev = process.argv.includes('--dev');
 
 const config = {
-  entryPoints: ['src/index.ts', 'src/styles.css'],
+  entryPoints: ['src/index.ts', 'src/fs-bundle.ts', 'src/styles.css'],
   bundle: true,
   outdir: 'dist',
   minify: !dev,

@@ -18,12 +18,17 @@
     "wf:transitions": "node .claude/skills/webflow-build/scripts/transitions.mjs",
     "wf:a11y": "node .claude/skills/webflow-build/scripts/a11y.mjs",
     "wf:links": "node .claude/skills/webflow-build/scripts/links.mjs",
-    "wf:baseline": "node .claude/skills/webflow-build/scripts/baseline.mjs"
+    "wf:baseline": "node .claude/skills/webflow-build/scripts/baseline.mjs",
+    "finsweet": "node scripts/finsweet.mjs"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",
     "axe-core": "4.10.3",
     "esbuild": "^0.28.2",
     "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@finsweet/attributes": "2.7.1",
+    "gsap": "3.15.0"
   }
 }

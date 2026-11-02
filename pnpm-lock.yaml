@@ -4,9 +4,48 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  '@finsweet/attributes-accordion': '-'
+  '@finsweet/attributes-autovideo': '-'
+  '@finsweet/attributes-codehighlight': '-'
+  '@finsweet/attributes-combobox': '-'
+  '@finsweet/attributes-copyclip': '-'
+  '@finsweet/attributes-displayvalues': '-'
+  '@finsweet/attributes-favcustom': '-'
+  '@finsweet/attributes-formsubmit': '-'
+  '@finsweet/attributes-inject': '-'
+  '@finsweet/attributes-inputactive': '-'
+  '@finsweet/attributes-inputcounter': '-'
+  '@finsweet/attributes-list': '-'
+  '@finsweet/attributes-mirrorclick': '-'
+  '@finsweet/attributes-mirrorinput': '-'
+  '@finsweet/attributes-modal': '-'
+  '@finsweet/attributes-numbercount': '-'
+  '@finsweet/attributes-queryparam': '-'
+  '@finsweet/attributes-rangeslider': '-'
+  '@finsweet/attributes-readtime': '-'
+  '@finsweet/attributes-removequery': '-'
+  '@finsweet/attributes-safetriangles': '-'
+  '@finsweet/attributes-scrolldisable': '-'
+  '@finsweet/attributes-selectcustom': '-'
+  '@finsweet/attributes-sliderdots': '-'
+  '@finsweet/attributes-smartlightbox': '-'
+  '@finsweet/attributes-socialshare': '-'
+  '@finsweet/attributes-starrating': '-'
+  '@finsweet/attributes-toc': '-'
+  '@finsweet/attributes-utils': '-'
+  '@finsweet/attributes-videohls': '-'
+
 importers:
 
   .:
+    dependencies:
+      '@finsweet/attributes':
+        specifier: 2.7.1
+        version: 2.7.1
+      gsap:
+        specifier: 3.15.0
+        version: 3.15.0
     devDependencies:
       '@playwright/test':
         specifier: 1.63.0
@@ -179,6 +218,9 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@finsweet/attributes@2.7.1':
+    resolution: {integrity: sha512-AlniV6g+jtpBp3cXQN0yEEmUerR1sEKUzHh6jS6rc5qAEyNkcp9F7J9MTjxY9pB+U1+qsuNnNIlHBSp1AJbUEg==}
+
   '@playwright/test@1.63.0':
     resolution: {integrity: sha512-oxMK4vllB9RK5NQ2l1pq1IfOf2AvnEuj/vYGDj0H2nMtmtZpKtCwt/l00GEO6xjGfpBNAvjovvYdCm50dRQkpQ==}
     engines: {node: '>=20'}
@@ -313,6 +355,9 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
+  gsap@3.15.0:
+    resolution: {integrity: sha512-dMW4CWBTUK1AEEDeZc1g4xpPGIrSf9fJF960qbTZmN/QwZIWY5wgliS6JWl9/25fpTGJrMRtSjGtOmPnfjZB+A==}
+
   playwright-core@1.63.0:
     resolution: {integrity: sha512-rYCsBF/M5HjUch52bbtVONEFjv6Xu8sm8h72dNlR5bzIE1fvC/bxgspzkjSfU+MweEMmPM8KJebG6nnyxo5mCg==}
     engines: {node: '>=20'}
@@ -408,6 +453,8 @@ snapshots:
   '@esbuild/win32-x64@0.28.2':
     optional: true
 
+  '@finsweet/attributes@2.7.1': {}
+
   '@playwright/test@1.63.0':
     dependencies:
       playwright: 1.63.0
@@ -502,6 +549,8 @@ snapshots:
       '@esbuild/win32-arm64': 0.28.2
       '@esbuild/win32-ia32': 0.28.2
       '@esbuild/win32-x64': 0.28.2
+
+  gsap@3.15.0: {}
 
   playwright-core@1.63.0: {}
 

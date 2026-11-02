@@ -19,3 +19,4 @@ playwright-report/
 
 # Visual baselines (large PNGs; regenerate with pnpm wf:baseline save)
 baselines/
+.motion-compare/

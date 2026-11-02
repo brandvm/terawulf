@@ -356,6 +356,68 @@ html.modal-open body {
 .ph-bold.ph-caret-down:before { content: "\e136"; }
 .ph-bold.ph-pause:before { content: "\e39e"; } /* hero video toggle (video-toggle.ts) */
 
+/* repo-css: designer-cant — @keyframes. First-screen load motion, replacing
+   IX3 "Page Load / Home" (i-22814008) and "G | Page Header Load"
+   (i-c2567f92) with the same durations, delays and eases (decoded spec:
+   docs/audit/ix3-spec.json). CSS starts at first paint, so the hero and the
+   h1 no longer wait for IX3's JavaScript (the old visibility:hidden gate,
+   the main mobile LCP cost). Scroll motion is src/modules/motion.ts.
+   Gated on html:not(.w-mod-ix3): while Webflow's IX3 still runs, it owns
+   these elements and this never shows. Individual translate/scale
+   properties so Designer transforms are not overwritten.
+   One deliberate difference: page header titles fade/slide as one block
+   instead of word by word (a word split needs JS, which is what made the
+   h1 wait). Eases: power1.inOut = cubic-bezier(.455,.03,.515,.955);
+   IX3 custom curve = cubic-bezier(.65,.045,0,1). */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes wfc-rise-in {
+    from { opacity: 0; translate: 0 -25%; scale: 0.9; }
+  }
+  @keyframes wfc-stats-in {
+    from { translate: 0 100%; scale: 0.9; }
+  }
+  @keyframes wfc-header-bg-in {
+    from { opacity: 0; translate: 0 -4em; scale: 1.2; }
+  }
+  @keyframes wfc-header-text-in {
+    from { opacity: 0; translate: 0 0.5em; }
+  }
+
+  /* Home hero: logo and CTA from the edges first, then the text (stagger
+     0.24 s "from edges"); the stats bar rises with them. 0.735 s. */
+  html:not(.w-mod-ix3)[data-wf-page="69cc114bc7144d8f6b6c38b4"] .s-page-hero :is(.home-terawulf-logo-w, .max-width, .grouped-cta-w) {
+    animation: wfc-rise-in 0.735s cubic-bezier(0.455, 0.03, 0.515, 0.955) both;
+  }
+  html:not(.w-mod-ix3)[data-wf-page="69cc114bc7144d8f6b6c38b4"] .s-page-hero .max-width {
+    animation-delay: 0.24s;
+  }
+  html:not(.w-mod-ix3)[data-wf-page="69cc114bc7144d8f6b6c38b4"] .section-stats-w {
+    animation: wfc-stats-in 0.735s cubic-bezier(0.455, 0.03, 0.515, 0.955) both;
+  }
+
+  /* Page headers: background 3 s, title at 0.8 s, CTA at 1.6 s (1.2 s each). */
+  html:not(.w-mod-ix3) .section.s-page-header .s-bg-w.is_page-header {
+    animation: wfc-header-bg-in 3s cubic-bezier(0.65, 0.045, 0, 1) both;
+  }
+  html:not(.w-mod-ix3) .section.s-page-header :is(.page-header-titles, .grouped-cta-w) {
+    animation: wfc-header-text-in 1.2s cubic-bezier(0.65, 0.045, 0, 1) 0.8s both;
+  }
+  html:not(.w-mod-ix3) .section.s-page-header .grouped-cta-w {
+    animation-delay: 1.6s;
+  }
+}
+
+/* repo-css: js-state — [data-wipe] set by image-overlay-wipe.ts. Replaces
+   IX2 "Image Overlay | Hide" on About: the overlay covers its image, then
+   shrinks to 0 over 2 s once in view (same duration and curve as IX2). */
+.image-overlay[data-wipe] {
+  width: 100%;
+  transition: width 2s cubic-bezier(0.64, 0.05, 0, 1);
+}
+.image-overlay[data-wipe="done"] {
+  width: 0%;
+}
+
 /* repo-css: designer-cant — pseudo-element link effects */
 
 .link-underline {
@@ -655,7 +717,8 @@ html.modal-open body {
 
 @media (prefers-reduced-motion: reduce) {
   [data-modal="site"],
-  [data-modal-card] {
+  [data-modal-card],
+  .image-overlay[data-wipe] {
     transition-duration: 0.01ms !important;
   }
 }
