@@ -37,7 +37,24 @@ repos to improve `brandvm/wf-template`.
 - Fix: `motion.ts › split()` sets the same display/position after
   splitting (test "split text pieces are inline blocks…"). SSIM now
   1.000 / 0.998 on mobile Home / About.
-- Status: fixed in v1.4.1 (pending release)
+- Status: fixed in v1.4.1
+- Found by: claude
+
+### 2026-11-02 · A line split cuts a not-yet-split heading into several h2s
+- Area: js
+- Scope: template-candidate
+- Symptom: on v1.4.1, mobile About's second "Wulf value" header was 14 px
+  shorter than production on some loads only (harness 0.998 one run,
+  0.714 the next), and the DOM held 2–3 `<h2>`s for one heading.
+- Cause: lazy building made the order of nested splits depend on scroll
+  timing. When the "Wulf Section" line split (`words,lines`) ran before
+  the `text-animate` char split of the h2 inside it, SplitText broke the
+  h2 at each line break into separate h2 elements. IX3 always split the
+  inner heading first.
+- Fix: `motion.ts › build()` builds any pending split nested inside a line
+  split's trigger before splitting lines (test "a heading inside a line
+  reveal is split first…"). Harness stable over 3 runs.
+- Status: fixed in v1.4.2 (pending release)
 - Found by: claude
 
 ### 2026-11-02 · IX2 is invisible to the MCP; `data-w-id` is not an attribute

@@ -114,8 +114,14 @@ which was the mobile Home/About shift below. Fixed for **v1.4.1**:
 harness SSIM vs production, 1440 / 390 mean (min) — Home 1.000 (1.000) /
 1.000 (0.998), About 0.998 (0.993) / 0.998 (0.988), Our Operations 0.994
 (0.948) / 0.995 (0.959), Our Impact 0.988 (0.873) / 0.995 (0.945). Our
-Impact's lowest frame is the open parallax item. Production waits for
-v1.4.1 (RELEASE and Embed 2a then move to 1.4.1).
+Impact's lowest frame is the open parallax item. v1.4.1 tagged (35b9533);
+RELEASE and Embed 2a set to 1.4.1 through the MCP.
+
+**Found on v1.4.1:** mobile About varied run to run (0.998 / 0.714): a
+line reveal could split before the heading inside it and cut that h2 into
+2–3 h2 elements (GOTCHAS 2026-11-02). Fixed for **v1.4.2** (inner splits
+build first); harness 3 runs, all identical: Home 1.000 / 1.000 (0.991),
+About 0.998 / 0.998 (0.988). Production waits for v1.4.2.
 
 1. Merge, tag **v1.4.0** (also carries the Finsweet bundle — see
    `finsweet-v2-migration.md`; do both in the same publish or ship Finsweet

@@ -154,7 +154,19 @@ function queueRefresh() {
     ScrollTrigger.refresh();
   });
 }
+// Triggers observed but not built yet, so a line split can build the splits
+// nested inside it first (see build()).
+type Pending = { spec: MotionSpec; trigger: Element; run: () => void };
+const pending = new Set<Pending>();
+const splits = (spec: MotionSpec) => spec.actions.some((a) => a.split);
+
 function build(spec: MotionSpec, trigger: Element) {
+  // IX3 split nested text (e.g. a text-animate h2 inside a line reveal)
+  // before the line split around it. Split the other way round, SplitText
+  // cuts the h2 at its line break into two h2 elements (duplicate heading,
+  // different height), so build those inner splits first.
+  if (spec.actions.some((a) => a.split?.type === 'lines'))
+    for (const p of [...pending]) if (p.trigger !== trigger && trigger.contains(p.trigger) && splits(p.spec)) p.run();
   built.push(spec.id);
   const range = {
     trigger,
@@ -190,24 +202,38 @@ export function initMotion(): void {
     if (!allowed) continue;
 
     mm.add(allowed, () => {
+      const own = new Map<Element, Pending>();
       const io = new IntersectionObserver(
         (entries) => {
           for (const e of entries) {
-            if (!e.isIntersecting) continue;
-            io.unobserve(e.target);
+            const p = own.get(e.target);
+            if (!e.isIntersecting || !p) continue;
             // Lines depend on the final font metrics.
-            const go = () => {
-              build(spec, e.target);
-              queueRefresh();
-            };
-            if (spec.actions.some((a) => a.split?.type === 'lines')) document.fonts.ready.then(go);
-            else go();
+            if (spec.actions.some((a) => a.split?.type === 'lines')) document.fonts.ready.then(p.run);
+            else p.run();
           }
         },
         { rootMargin: NEAR },
       );
-      triggers.forEach((t) => io.observe(t));
-      return () => io.disconnect();
+      for (const trigger of triggers) {
+        const p: Pending = {
+          spec,
+          trigger,
+          run: () => {
+            if (!pending.delete(p)) return; // already built
+            io.unobserve(trigger);
+            build(spec, trigger);
+            queueRefresh();
+          },
+        };
+        own.set(trigger, p);
+        pending.add(p);
+        io.observe(trigger);
+      }
+      return () => {
+        own.forEach((p) => pending.delete(p));
+        io.disconnect();
+      };
     });
   }
 }
