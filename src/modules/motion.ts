@@ -88,6 +88,15 @@ function split(el: Element, a: Action): Element[] {
     linesClass: 'gsap_split_line++',
     aria: 'none',
   });
+  // With tag 'span', GSAP 3.15 leaves every piece display:inline. IX3 writes
+  // these inline styles itself; without them words wrap differently (page
+  // heights shift on mobile) and transforms on lines do nothing.
+  const set = (els: Element[], display: string) =>
+    els.forEach((e) => Object.assign((e as HTMLElement).style, { position: 'relative', display }));
+  set(r.words, 'inline-block');
+  set(r.chars, 'inline-block');
+  set(r.lines, 'block');
+  for (const m of r.masks) set([m], m.className.includes('line') ? 'block' : 'inline-block');
   return s.type === 'chars' ? r.chars : s.type === 'words' ? r.words : r.lines;
 }
 

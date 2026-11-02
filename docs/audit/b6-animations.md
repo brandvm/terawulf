@@ -92,6 +92,31 @@ by side, before "publish".
 
 ## Cutover steps (needs the connector)
 
+Progress: v1.4.0 tagged 2026-11-02 (c90288e). Step 2 IX3 part done
+2026-11-02: all 21 deleted through `webflow-terawulf` (list now empty),
+saved in Webflow, **not published**. Step 2 IX2 part done in the Designer
+the same day ("Image Overlay | Hide" deleted; site saved 17:05 UTC); the
+`data-w-id` removal is confirmed only after the staging publish. Step 3:
+GSAP turned off in Webflow by the user, 2026-11-02 (check on staging that
+gsap/ScrollTrigger/SplitText/CustomEase no longer load and IX2 still runs).
+Step 4 done through the MCP: head `RELEASE = "1.4.0"`, Embed 2a `@1.4.0`;
+read back, only those two lines differ from `docs/rollback/2026-11-02/`.
+Staging published 17:09 UTC (custom domains untouched). Checked on
+staging: Webflow GSAP/plugins and the IX3 gate gone, no `data-w-id`, IX2
+"Image Overlay | Hide" gone from the published chunk and the other 14
+work (nav dropdown, mobile menu, team and video pop-ups, Deliver Card
+hover; stats "show more" behaves as on production), overlay wipe runs,
+reduced motion and keyboard fine, mobile lab TBT 115–143 ms → 0 and LCP
+Home/Our Operations ~1.3–1.5 s → ~0.5 s.
+
+**Found on staging:** v1.4.0 left split text inline (GOTCHAS 2026-11-02),
+which was the mobile Home/About shift below. Fixed for **v1.4.1**:
+harness SSIM vs production, 1440 / 390 mean (min) — Home 1.000 (1.000) /
+1.000 (0.998), About 0.998 (0.993) / 0.998 (0.988), Our Operations 0.994
+(0.948) / 0.995 (0.959), Our Impact 0.988 (0.873) / 0.995 (0.945). Our
+Impact's lowest frame is the open parallax item. Production waits for
+v1.4.1 (RELEASE and Embed 2a then move to 1.4.1).
+
 1. Merge, tag **v1.4.0** (also carries the Finsweet bundle — see
    `finsweet-v2-migration.md`; do both in the same publish or ship Finsweet
    first).

@@ -23,6 +23,23 @@ repos to improve `brandvm/wf-template`.
 
 ## This project
 
+### 2026-11-02 · SplitText with `tag: 'span'` leaves pieces inline (IX3 did not)
+- Area: js
+- Scope: template-candidate
+- Symptom: after the B6 cutover on staging, mobile Home and About sat
+  24–47 px lower than production from the first split heading down
+  (harness SSIM 0.67 / 0.57), and line slide-ins did not move.
+- Cause: Webflow's IX3 writes `position: relative; display: inline-block`
+  on split words/chars and `display: block` on lines and line masks.
+  GSAP 3.15 `SplitText.create({ tag: 'span' })` adds neither, so words
+  wrap differently and transforms on inline spans are ignored. The
+  harness blamed IX3's inline start styles; it was this.
+- Fix: `motion.ts › split()` sets the same display/position after
+  splitting (test "split text pieces are inline blocks…"). SSIM now
+  1.000 / 0.998 on mobile Home / About.
+- Status: fixed in v1.4.1 (pending release)
+- Found by: claude
+
 ### 2026-11-02 · IX2 is invisible to the MCP; `data-w-id` is not an attribute
 - Area: mcp, designer
 - Scope: template-candidate
