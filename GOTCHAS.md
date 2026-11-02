@@ -23,6 +23,23 @@ repos to improve `brandvm/wf-template`.
 
 ## This project
 
+### 2026-11-02 · Deleting an IX2 event also deletes its inline start state
+- Area: designer
+- Scope: template-candidate
+- Symptom: none yet; found while planning B7. Elements that look hidden
+  or collapsed on the live site (mobile menu, pop-ups, stats panel at
+  80 px) are hidden by IX2, not by their class.
+- Cause: Webflow publishes each IX2 event's first-group state as inline
+  `style` on the element. Delete the event and the inline style goes, so
+  the Designer style decides what shows (the stats panel would open fully).
+- Fix: before deleting IX2, compare each target's Designer style with its
+  inline start state; give the repo a first-paint rule where they differ
+  (B7: `.section-stats:not([data-wfc-open]):has(.is_show-more)`). Note that
+  `:has()` adds its argument's specificity, so an "open" override needs the
+  `:not()` form.
+- Status: fixed in B7 (pending release)
+- Found by: claude
+
 ### 2026-11-02 · SplitText with `tag: 'span'` leaves pieces inline (IX3 did not)
 - Area: js
 - Scope: template-candidate

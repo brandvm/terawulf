@@ -418,6 +418,103 @@ html.modal-open body {
   width: 0%;
 }
 
+/* repo-css: js-state — state set by the modules that replace Webflow's
+   classic IX2 interactions (nav-dropdown, nav-menu, team-popup,
+   popup-video, deliver-card, approach-scale, stats-more). Each attribute
+   only appears once that IX2 event is deleted in Webflow, so these rules
+   never fight IX2's inline styles. Values are the published IX2 ones:
+   0.74 s, cubic-bezier(.64,.05,0,1) (dropdown: .064). */
+
+/* Nav dropdown: keep the list shown while it animates closed; turn the icon. */
+.g-nav-drop-list[data-wfc-closing] {
+  display: block;
+}
+.g-nav-drop[data-wfc-dropdown] .icon.is_g-nav-icon {
+  transition: rotate 0.74s cubic-bezier(0.064, 0.05, 0, 1);
+}
+.g-nav-drop[data-wfc-dropdown] .w--open .icon.is_g-nav-icon {
+  rotate: 135deg;
+}
+
+/* Mobile menu: open state and the open/close icon swap. */
+@media screen and (max-width: 991px) {
+  .g-nav-menu-w[data-wfc-open] {
+    display: flex;
+  }
+  .g-nav-menu-drawer[aria-expanded="true"] .g-nav-menu-drawer-open {
+    display: none;
+  }
+  .g-nav-menu-drawer[aria-expanded="true"] .g-nav-menu-drawer-close {
+    display: flex;
+  }
+}
+
+/* Team and video pop-ups. */
+.team-card-pop-up[data-wfc-open] {
+  display: flex;
+}
+.home-video-pu[data-wfc-open] {
+  display: block;
+}
+
+/* Deliver Card (Our Impact, 768 px and up): centre image on hover/focus.
+   visibility instead of display so it can transition; the element is
+   absolutely positioned and pointer-events: none in the Designer. */
+@media screen and (min-width: 768px) {
+  .deliver-card[data-wfc-hover] .deliver-card-center {
+    display: flex;
+    visibility: hidden;
+    opacity: 0;
+    translate: 0 2em;
+    transition:
+      opacity 0.74s cubic-bezier(0.64, 0.05, 0, 1),
+      translate 0.74s cubic-bezier(0.64, 0.05, 0, 1),
+      visibility 0s 0.74s;
+  }
+  .deliver-card[data-wfc-hover]:is(:hover, :focus-within) .deliver-card-center {
+    visibility: visible;
+    opacity: 1;
+    translate: 0 0;
+    transition:
+      opacity 0.74s cubic-bezier(0.64, 0.05, 0, 1),
+      translate 0.74s cubic-bezier(0.64, 0.05, 0, 1),
+      visibility 0s;
+  }
+}
+
+/* Approach section (Our Impact): background zooms in while in view. */
+.section.s-approach[data-wfc-scale] .parallax-w {
+  transition: scale 1.2s cubic-bezier(0.64, 0.05, 0, 1);
+}
+.section.s-approach[data-wfc-in] .parallax-w {
+  scale: 1.2;
+}
+
+/* Stats "show more": collapsed at first paint (Webflow wrote this as an
+   inline start state while IX2 owned it; inline still wins until then),
+   "less" label hidden; open state from stats-more.ts. */
+.section-stats:not([data-wfc-open]):has(.section-stat.is_show-more) {
+  height: 80px;
+}
+.section-stat.is_show-more .text-less {
+  opacity: 0;
+}
+.section-stat.is_show-more :is(.text-more, .text-less) {
+  transition: opacity 0.5s cubic-bezier(0.64, 0.05, 0, 1);
+}
+.section-stat.is_show-more .icon._10 {
+  transition: rotate 0.74s cubic-bezier(0.64, 0.05, 0, 1);
+}
+.section-stat.is_show-more[aria-expanded="true"] .text-more {
+  opacity: 0;
+}
+.section-stat.is_show-more[aria-expanded="true"] .text-less {
+  opacity: 1;
+}
+.section-stat.is_show-more[aria-expanded="true"] .icon._10 {
+  rotate: 45deg;
+}
+
 /* repo-css: designer-cant — pseudo-element link effects */
 
 .link-underline {
@@ -731,8 +828,13 @@ video:not([controls])::-webkit-media-controls-overlay-play-button {
 @media (prefers-reduced-motion: reduce) {
   [data-modal="site"],
   [data-modal-card],
-  .image-overlay[data-wipe] {
+  .image-overlay[data-wipe],
+  .g-nav-drop[data-wfc-dropdown] .icon.is_g-nav-icon,
+  .deliver-card[data-wfc-hover] .deliver-card-center,
+  .section.s-approach[data-wfc-scale] .parallax-w,
+  .section-stat.is_show-more :is(.text-more, .text-less, .icon._10) {
     transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
   }
 }
 

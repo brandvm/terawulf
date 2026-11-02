@@ -9,8 +9,8 @@
 //                             .about-intro-visual-w (About, Careers), or any
 //                             element with [data-popup-video-open]
 //
-// Opening and closing the popup itself is still a Webflow interaction; this
-// module only handles playback.
+// It also shows and hides the popup with IX2's motion once the Webflow IX2
+// events are deleted (until then IX2 does it; see below).
 //
 // Accessibility (added; nothing changes visually):
 //   - a trigger with no focusable element inside becomes a keyboard button
@@ -26,6 +26,7 @@
 // download) and puts it back on the first click, inside the click so the
 // unmuted play() is still allowed. With preload="none" and data-src on the
 // <source> in Webflow, nothing is requested before the click at all.
+import { tween, unlessWebflowIx2 } from '../lib/ix2';
 
 const TRIGGERS = '[data-popup-video-open], .is_home-video-player, .about-intro-visual-w';
 const FOCUSABLE = 'a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])';
@@ -100,9 +101,27 @@ export function initPopupVideo(): void {
   }
   let returnFocus: HTMLElement | null = null;
 
+  // Showing and hiding the popup replaces Webflow IX2 "Home Video Pop Up |
+  // Open / Close" (e-15, e-21 / e-17): display block, opacity 0 -> 1 and
+  // scale 0.8 -> 1 over 0.74 s, reversed on close. Until those IX2 events
+  // are deleted in Webflow, IX2 still does it and this stays off.
+  let ownsDisplay = false;
+  let shown = false;
+  unlessWebflowIx2(['.button-link.is_home-video-player', '.about-intro-visual-w', '.home-video-pu-close'], () => {
+    ownsDisplay = !!popup;
+  });
+  const HIDDEN = { opacity: 0, transform: 'scale(0.8)' };
+  const SHOWN = { opacity: 1, transform: 'scale(1)' };
+
   // Open: attach the source (first time), rewind, unmute, play.
   trigger.addEventListener('click', (e) => {
     e.preventDefault(); // stops href="#" from jumping the page
+    if (ownsDisplay && popup) {
+      shown = true;
+      popup.getAnimations().forEach((a) => a.cancel());
+      popup.setAttribute('data-wfc-open', '');
+      tween(popup, [HIDDEN, SHOWN]);
+    }
     returnFocus = (document.activeElement as HTMLElement) || trigger;
     attach();
     try {
@@ -124,7 +143,15 @@ export function initPopupVideo(): void {
   });
 
   // Close: pause + reset to start.
-  closeBtn?.addEventListener('click', () => {
+  closeBtn?.addEventListener('click', (e) => {
+    if (ownsDisplay && popup) {
+      e.preventDefault();
+      popup.getAnimations().forEach((a) => a.cancel());
+      shown = false;
+      tween(popup, [SHOWN, HIDDEN]).then(() => {
+        if (!shown) popup.removeAttribute('data-wfc-open');
+      });
+    }
     video.pause();
     try {
       video.currentTime = 0;
