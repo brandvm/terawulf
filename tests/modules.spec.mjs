@@ -421,3 +421,22 @@ test('motion: split text pieces are inline blocks and block lines, as IX3 wrote 
   expect(await style('.wulf-value-left .gsap_split_line:not([class*="mask"])')).toEqual(['block', 'relative']);
   expect(errors).toEqual([]);
 });
+
+test('motion: a heading inside a line reveal is split first and stays one heading', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  // The section is in range at load, its h2 only later: the line reveal
+  // must still split the h2 first (as IX3 did) instead of cutting it in two.
+  const errors = await setup(page, `<script>document.documentElement.setAttribute('data-wf-page','69ceb1e6dace149b16d5387b')</script>
+    <div style="height:1000px"></div>
+    <section class="section s-wulf-value"><div class="wulf-value-left">
+      <div style="height:1900px"></div>
+      <div><h2 data-gsap="text-animate" style="font-size:29px;width:200px">Unmatched Energy Expertise</h2></div>
+    </div></section>
+    <div style="height:2000px"></div>`);
+  await expect.poll(() => page.locator('[class*="gsap_split_line"]').count()).toBeGreaterThan(0);
+  await page.locator('h2').first().scrollIntoViewIfNeeded();
+  await page.waitForTimeout(300);
+  expect(await page.locator('h2').count()).toBe(1);
+  expect(await page.locator('h2').first().textContent()).toContain('Unmatched Energy Expertise');
+  expect(errors).toEqual([]);
+});
