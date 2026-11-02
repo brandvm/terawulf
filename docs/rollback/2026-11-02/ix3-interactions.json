@@ -1,0 +1,4132 @@
+{
+  "site": "69cc1149c7144d8f6b6c386a",
+  "read": "2026-11-02 via webflow-terawulf data_interactions_tool get_interaction",
+  "interactions": [
+    {
+      "id": "i-0066fb3b",
+      "name": "Whats | Next Scroll",
+      "pageId": "69ceb222d82c6f1496d6b49c",
+      "scope": {
+        "type": "pages",
+        "value": [
+          "69ceb222d82c6f1496d6b49c"
+        ]
+      },
+      "triggers": [
+        {
+          "extensionKey": "wf:scroll",
+          "config": {
+            "controlType": "scroll",
+            "scrollTriggerConfig": {
+              "showMarkers": true,
+              "clamp": true,
+              "start": "top top",
+              "end": "bottom bottom",
+              "scrub": 0.8,
+              "enter": "play",
+              "leave": "none",
+              "enterBack": "none",
+              "leaveBack": "none"
+            }
+          },
+          "target": {
+            "extensionKey": "wf:class",
+            "value": [
+              "721e58d9-3ef8-1519-71b7-b4ec78da8ec3"
+            ],
+            "filterContext": {
+              "relationship": "none",
+              "filterBy": [
+                "wf:class",
+                []
+              ],
+              "firstMatchOnly": false
+            }
+          }
+        }
+      ],
+      "timelines": [
+        {
+          "id": "t-5215e8bd",
+          "pageId": "69ceb222d82c6f1496d6b49c",
+          "actions": [
+            {
+              "id": "ta-82bc6a76",
+              "name": "Scroll | Track",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "76d787ec-b26d-4fc2-cc52-e7e951d6abe7"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "ease": 0
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "opacity": null,
+                  "x": [
+                    "0%",
+                    "-100%"
+                  ],
+                  "y": null,
+                  "scale": null
+                }
+              }
+            }
+          ],
+          "version": 5
+        }
+      ],
+      "version": 4
+    },
+    {
+      "id": "i-092acefe",
+      "name": "Scroll / Timeline Item",
+      "pageId": "69ceb222d82c6f1496d6b49c",
+      "scope": {
+        "type": "component",
+        "componentId": "33b593a6-8c8d-3db9-5542-dda8786eefd4"
+      },
+      "triggers": [
+        {
+          "extensionKey": "wf:scroll",
+          "config": {
+            "controlType": "scroll",
+            "scrollTriggerConfig": {
+              "showMarkers": true,
+              "clamp": true,
+              "start": "top 50%",
+              "end": "50% 50%",
+              "scrub": null,
+              "enter": "play",
+              "leave": "none",
+              "enterBack": "play",
+              "leaveBack": "reverse"
+            }
+          },
+          "target": {
+            "extensionKey": "wf:class",
+            "value": [
+              "94a23c3b-632a-410e-e5f9-8b8e7f29dadb"
+            ],
+            "filterContext": {
+              "relationship": "none",
+              "filterBy": [
+                "wf:class",
+                []
+              ],
+              "firstMatchOnly": false
+            }
+          }
+        }
+      ],
+      "timelines": [
+        {
+          "id": "t-4657122f",
+          "pageId": "69ceb222d82c6f1496d6b49c",
+          "actions": [
+            {
+              "id": "ta-81773bbf",
+              "name": "Change | Icon",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "14a7316b-8481-1069-dab4-2e406a5d0844"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 1,
+                "position": 0,
+                "ease": 12
+              },
+              "tt": 0,
+              "properties": {
+                "wf:class": {},
+                "wf:transform": {},
+                "wf:style": {
+                  "backgroundColor": [
+                    null,
+                    "#112135"
+                  ],
+                  "color": [
+                    null,
+                    "#ebf0f5"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-3babb857",
+              "name": "Animate | Image Overlay",
+              "color": "blue",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "d70a1c1b-9be4-709d-bf9a-162fc2acbb66"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 1,
+                "ease": 12
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "width": [
+                    "100%",
+                    "0%"
+                  ]
+                }
+              }
+            }
+          ],
+          "version": 25
+        }
+      ],
+      "version": 12
+    },
+    {
+      "id": "i-0d1f3428",
+      "name": "Scroll Smoke",
+      "pageId": "69cc12bf412b3713f0762311",
+      "scope": {
+        "type": "site"
+      },
+      "triggers": [
+        {
+          "extensionKey": "wf:scroll",
+          "config": {
+            "controlType": "scroll",
+            "scrollTriggerConfig": {
+              "showMarkers": true,
+              "clamp": false,
+              "start": "top bottom",
+              "end": "bottom top",
+              "scrub": 0.8,
+              "enter": "play",
+              "leave": "none",
+              "enterBack": "none",
+              "leaveBack": "none"
+            }
+          },
+          "target": {
+            "extensionKey": "wf:class",
+            "value": [
+              "bc01a3d6-f149-cdf0-8def-d154b2846eef"
+            ],
+            "filterContext": {
+              "relationship": "none",
+              "filterBy": [
+                "wf:class",
+                []
+              ],
+              "firstMatchOnly": false
+            }
+          }
+        }
+      ],
+      "timelines": [
+        {
+          "id": "t-bb6dbd7e",
+          "pageId": "69cc12bf412b3713f0762311",
+          "actions": [
+            {
+              "id": "ta-4b1d3ee4",
+              "name": "Animate Out - Smoke",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:trigger-only",
+                  "value": "",
+                  "filterContext": {
+                    "relationship": "none",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "bc01a3d6-f149-cdf0-8def-d154b2846eef"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "ease": 0
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "opacity": null,
+                  "x": null,
+                  "y": [
+                    "0%",
+                    "-30%"
+                  ],
+                  "scale": null
+                }
+              }
+            }
+          ],
+          "version": 14
+        }
+      ],
+      "conditionalPlayback": [
+        {
+          "type": "breakpoint",
+          "behavior": "dont-animate",
+          "breakpoints": [
+            "medium",
+            "small",
+            "tiny"
+          ]
+        }
+      ],
+      "version": 8
+    },
+    {
+      "id": "i-1033166a",
+      "name": "Scroll Home Transition",
+      "pageId": "69cc114bc7144d8f6b6c38b4",
+      "scope": {
+        "type": "pages",
+        "value": [
+          "69cc114bc7144d8f6b6c38b4"
+        ]
+      },
+      "triggers": [
+        {
+          "extensionKey": "wf:scroll",
+          "config": {
+            "controlType": "scroll",
+            "scrollTriggerConfig": {
+              "showMarkers": true,
+              "clamp": true,
+              "start": "top top",
+              "end": "bottom bottom",
+              "scrub": 2,
+              "enter": "play",
+              "leave": "none",
+              "enterBack": "none",
+              "leaveBack": "none"
+            }
+          },
+          "target": {
+            "extensionKey": "wf:class",
+            "value": [
+              "c38237e6-8591-6034-f63f-814b46434501"
+            ],
+            "filterContext": {
+              "relationship": "none",
+              "filterBy": [
+                "wf:class",
+                []
+              ],
+              "firstMatchOnly": false
+            }
+          }
+        }
+      ],
+      "timelines": [
+        {
+          "id": "t-5eaf1668",
+          "pageId": "69cc114bc7144d8f6b6c38b4",
+          "actions": [
+            {
+              "id": "ta-7c74f99d",
+              "name": "Fade Out Filled Logo",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "59dce2c1-0296-e404-aee5-620fb8cceab1",
+                    "1a981ebf-c0a8-1799-f2f8-0682ca010079"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 1.6,
+                "position": 0,
+                "ease": 12
+              },
+              "tt": 0,
+              "properties": {
+                "wf:transform": {
+                  "opacity": [
+                    null,
+                    "0%"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-ca60edb0",
+              "name": "Zoom In / Empty Logo",
+              "color": "blue",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "59dce2c1-0296-e404-aee5-620fb8cceab1"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 2,
+                "position": 0.13,
+                "ease": 12
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "scale": [
+                    1,
+                    190
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-35ea518d",
+              "name": "Move Clude Right",
+              "color": "orange",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "ecb054cb-79f4-0a8f-a75b-694cf157a115",
+                    "9bae6f24-b564-9376-da76-31d1b4bdb4a4"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.64,
+                "ease": 6
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "opacity": null,
+                  "x": [
+                    "0%",
+                    "100%"
+                  ],
+                  "y": null,
+                  "scale": null
+                }
+              }
+            },
+            {
+              "id": "ta-2cb37dca",
+              "name": "Move Clude Right Copy",
+              "color": "orange",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "ecb054cb-79f4-0a8f-a75b-694cf157a115",
+                    "d0a2c3dc-27a1-9576-d22d-0d2ff9cf0ccb"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.64,
+                "ease": 6
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "opacity": null,
+                  "x": [
+                    "0%",
+                    "-100%"
+                  ],
+                  "y": null,
+                  "scale": null
+                }
+              }
+            }
+          ],
+          "version": 39
+        }
+      ],
+      "conditionalPlayback": [
+        {
+          "type": "breakpoint",
+          "behavior": "dont-animate",
+          "breakpoints": [
+            "small",
+            "tiny",
+            "medium"
+          ]
+        }
+      ],
+      "version": 5
+    },
+    {
+      "id": "i-115d5f85",
+      "name": "Scroll / Wulf Section",
+      "pageId": "69ceb1e6dace149b16d5387b",
+      "scope": {
+        "type": "pages",
+        "value": [
+          "69ceb1e6dace149b16d5387b"
+        ]
+      },
+      "triggers": [
+        {
+          "extensionKey": "wf:scroll",
+          "config": {
+            "controlType": "scroll",
+            "scrollTriggerConfig": {
+              "showMarkers": true,
+              "clamp": true,
+              "start": "top 80%",
+              "end": "bottom 60%",
+              "scrub": null,
+              "enter": "play",
+              "leave": "reverse",
+              "enterBack": "play",
+              "leaveBack": "reverse"
+            }
+          },
+          "target": {
+            "extensionKey": "wf:class",
+            "value": [
+              "157c956c-9948-c282-ac11-d1cf7ef93e28",
+              "6585fd15-8c0e-84f4-49c3-95743aa8580f"
+            ],
+            "filterContext": {
+              "relationship": "none",
+              "filterBy": [
+                "wf:class",
+                []
+              ],
+              "firstMatchOnly": false
+            }
+          }
+        }
+      ],
+      "timelines": [
+        {
+          "id": "t-a01d9aee",
+          "pageId": "69ceb1e6dace149b16d5387b",
+          "actions": [
+            {
+              "id": "ta-ef6d8c16",
+              "name": "Animate In / Content",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "8293930e-38be-b66e-f9b3-c5134bcee1ec"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                },
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "755bf449-6365-ef91-fde4-248384d5b073"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.4,
+                "position": 0,
+                "stagger": {
+                  "each": 0.032
+                },
+                "ease": 0
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "opacity": [
+                    "0%",
+                    "100%"
+                  ],
+                  "y": [
+                    "2em",
+                    "0em"
+                  ]
+                }
+              },
+              "splitText": {
+                "type": "lines",
+                "mask": "lines"
+              }
+            },
+            {
+              "id": "ta-09bd3ba5",
+              "name": "Animate In / Image",
+              "color": "blue",
+              "hidden": true,
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "70033845-cf42-ce25-96bc-842a76279d1d"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.24,
+                "position": 0,
+                "ease": 0
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "width": [
+                    "0%",
+                    "100%"
+                  ]
+                }
+              }
+            }
+          ],
+          "version": 47
+        }
+      ],
+      "version": 18
+    },
+    {
+      "id": "i-22814008",
+      "name": "Page Load / Home",
+      "pageId": "69cc114bc7144d8f6b6c38b4",
+      "scope": {
+        "type": "pages",
+        "value": [
+          "69cc114bc7144d8f6b6c38b4"
+        ]
+      },
+      "triggers": [
+        {
+          "extensionKey": "wf:load",
+          "config": {
+            "controlType": "load"
+          }
+        }
+      ],
+      "timelines": [
+        {
+          "id": "t-4225c5c3",
+          "pageId": "69cc114bc7144d8f6b6c38b4",
+          "actions": [
+            {
+              "id": "ta-e809ea55",
+              "name": "Animate In / Page Links",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "f8b8b43d-8975-8c3c-9763-7c11a63bc714"
+                  ],
+                  "filterContext": {
+                    "relationship": "none",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "bc746b39-b9e6-7a4f-9936-a9ba4eaa1d1a"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.735,
+                "stagger": {
+                  "each": 0.032,
+                  "from": "edges"
+                },
+                "ease": 3
+              },
+              "tt": 1,
+              "properties": {
+                "wf:transform": {
+                  "opacity": null,
+                  "x": null,
+                  "y": [
+                    "100%",
+                    null
+                  ],
+                  "scale": [
+                    0.9,
+                    null
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-d9a9c4e3",
+              "name": "Animate In / Header",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "af943a13-2d71-332e-896a-df38fa0c30ae"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                        "1d0084eb-418f-f4c4-ba8d-155641ad56fa"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                },
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "49c38247-b4c1-dad2-4179-ecad39f710e7"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                        "1d0084eb-418f-f4c4-ba8d-155641ad56fa"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                },
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "6103717e-ca4e-5b13-4872-d427eb8857ac"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                        "1d0084eb-418f-f4c4-ba8d-155641ad56fa"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.735,
+                "stagger": {
+                  "amount": 0.24,
+                  "from": "edges"
+                },
+                "ease": 3
+              },
+              "tt": 1,
+              "properties": {
+                "wf:transform": {
+                  "opacity": [
+                    "0%",
+                    null
+                  ],
+                  "x": null,
+                  "y": [
+                    "-25%",
+                    null
+                  ],
+                  "scale": [
+                    0.9,
+                    null
+                  ]
+                }
+              }
+            }
+          ],
+          "version": 44
+        }
+      ],
+      "version": 2
+    },
+    {
+      "id": "i-27137dc6",
+      "name": "Scroll / Para",
+      "pageId": "69ceb1e6dace149b16d5387b",
+      "scope": {
+        "type": "site"
+      },
+      "triggers": [
+        {
+          "extensionKey": "wf:scroll",
+          "config": {
+            "controlType": "scroll",
+            "scrollTriggerConfig": {
+              "showMarkers": true,
+              "clamp": true,
+              "start": "top bottom",
+              "end": "top 40%",
+              "scrub": 0.8,
+              "enter": "play",
+              "leave": "none",
+              "enterBack": "none",
+              "leaveBack": "none"
+            }
+          },
+          "target": {
+            "extensionKey": "wf:attribute",
+            "value": "[data-gsap=\"para-in\"]",
+            "filterContext": {
+              "relationship": "none",
+              "filterBy": [
+                "wf:class",
+                []
+              ],
+              "firstMatchOnly": false
+            }
+          }
+        }
+      ],
+      "timelines": [
+        {
+          "id": "t-511c69ef",
+          "pageId": "69ceb1e6dace149b16d5387b",
+          "actions": [
+            {
+              "id": "ta-5f26b065",
+              "name": "Animate In / Words",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:trigger-only",
+                  "value": "",
+                  "filterContext": {
+                    "relationship": "none",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "755bf449-6365-ef91-fde4-248384d5b073"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "stagger": {
+                  "each": 0.032
+                },
+                "ease": 0
+              },
+              "tt": 1,
+              "properties": {
+                "wf:transform": {
+                  "opacity": [
+                    "20%",
+                    null
+                  ],
+                  "x": null,
+                  "y": null,
+                  "scale": null
+                }
+              },
+              "splitText": {
+                "type": "words"
+              }
+            }
+          ],
+          "version": 8
+        }
+      ],
+      "version": 6
+    },
+    {
+      "id": "i-2e7d5b07",
+      "name": "Scroll | Impact Feature",
+      "pageId": "69ceb2d630bb2ca9b8831bec",
+      "scope": {
+        "type": "pages",
+        "value": [
+          "69ceb2d630bb2ca9b8831bec"
+        ]
+      },
+      "triggers": [
+        {
+          "extensionKey": "wf:scroll",
+          "config": {
+            "controlType": "scroll",
+            "scrollTriggerConfig": {
+              "showMarkers": true,
+              "clamp": true,
+              "start": "top top",
+              "end": "bottom bottom",
+              "scrub": 0.8,
+              "enter": "play",
+              "leave": "none",
+              "enterBack": "none",
+              "leaveBack": "none"
+            }
+          },
+          "target": {
+            "extensionKey": "wf:class",
+            "value": [
+              "3fd5c3a8-dec2-9c5d-4347-4efcca4f7d1c"
+            ],
+            "filterContext": {
+              "relationship": "none",
+              "filterBy": [
+                "wf:class",
+                []
+              ],
+              "firstMatchOnly": false
+            }
+          }
+        }
+      ],
+      "timelines": [
+        {
+          "id": "t-23ea9692",
+          "pageId": "69ceb2d630bb2ca9b8831bec",
+          "actions": [
+            {
+              "id": "ta-1d11be62",
+              "name": "Pointers None / 1",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                    "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                    "233c2c7d-bae0-dc46-168b-f1409321aa3d"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0,
+                "position": 0.17,
+                "ease": 0
+              },
+              "tt": 3,
+              "properties": {
+                "wf:class": {},
+                "wf:transform": {},
+                "wf:style": {
+                  "pointerEvents": [
+                    null,
+                    "none"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-1212b45b",
+              "name": "Animate Out / Second Header 1",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "cc493d7b-d7f3-692e-23e4-5d5730440865"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                        "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                        "233c2c7d-bae0-dc46-168b-f1409321aa3d"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.18,
+                "position": 0,
+                "ease": 12
+              },
+              "tt": 0,
+              "properties": {
+                "wf:transform": {
+                  "opacity": [
+                    "0%",
+                    "0%"
+                  ],
+                  "y": [
+                    "2em",
+                    "-2em"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-f5399057",
+              "name": "Animate Out / Image 1",
+              "color": "blue",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "547d1bcc-c587-7df7-87e9-9f98edf2fb68"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                        "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                        "233c2c7d-bae0-dc46-168b-f1409321aa3d"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.18,
+                "position": 0,
+                "ease": 12
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "width": [
+                    null,
+                    "0%"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-c997e015",
+              "name": "Animate Out / Cards 1",
+              "color": "orange",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "3c836b3c-635c-7254-6ab3-5e2ece9c0797"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                        "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                        "233c2c7d-bae0-dc46-168b-f1409321aa3d"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.18,
+                "position": 0,
+                "stagger": {
+                  "amount": 0.12
+                },
+                "ease": 12
+              },
+              "tt": 0,
+              "properties": {
+                "wf:transform": {
+                  "y": [
+                    null,
+                    "-1em"
+                  ],
+                  "opacity": [
+                    null,
+                    "0%"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-658e3099",
+              "name": "Pointers Auto / 2",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                    "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                    "643f17bc-2f3c-f933-fa9e-a47b2652dc8d"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0,
+                "position": 0.1,
+                "ease": 0
+              },
+              "tt": 3,
+              "properties": {
+                "wf:class": {},
+                "wf:transform": {},
+                "wf:style": {
+                  "pointerEvents": [
+                    null,
+                    "auto"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-5378a273",
+              "name": "Animate In / Second Header 2",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "cc493d7b-d7f3-692e-23e4-5d5730440865"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                        "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                        "643f17bc-2f3c-f933-fa9e-a47b2652dc8d"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.32,
+                "position": 0.1,
+                "ease": 12
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "opacity": [
+                    "0%",
+                    "100%"
+                  ],
+                  "y": [
+                    "2em",
+                    "0em"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-2210d1c4",
+              "name": "Animate In / Image 2",
+              "color": "blue",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "547d1bcc-c587-7df7-87e9-9f98edf2fb68"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                        "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                        "643f17bc-2f3c-f933-fa9e-a47b2652dc8d"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.32,
+                "position": 0.1,
+                "ease": 12
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "width": [
+                    "0%",
+                    "30%"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-773086f4",
+              "name": "Animate In / Cards 2",
+              "color": "orange",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "3c836b3c-635c-7254-6ab3-5e2ece9c0797"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                        "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                        "643f17bc-2f3c-f933-fa9e-a47b2652dc8d"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.32,
+                "position": 0.1,
+                "stagger": {
+                  "amount": 0.12
+                },
+                "ease": 12
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "y": [
+                    "1em",
+                    "0em"
+                  ],
+                  "opacity": [
+                    "0%",
+                    "100%"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-068a849f",
+              "name": "Pointers None / 2",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                    "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                    "643f17bc-2f3c-f933-fa9e-a47b2652dc8d"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0,
+                "position": 0.68,
+                "ease": 0
+              },
+              "tt": 3,
+              "properties": {
+                "wf:class": {},
+                "wf:transform": {},
+                "wf:style": {
+                  "pointerEvents": [
+                    null,
+                    "none"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-d156c632",
+              "name": "Animate Out / Second Header 2",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "cc493d7b-d7f3-692e-23e4-5d5730440865"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                        "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                        "643f17bc-2f3c-f933-fa9e-a47b2652dc8d"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.18,
+                "position": 0.5,
+                "ease": 12
+              },
+              "tt": 0,
+              "properties": {
+                "wf:transform": {
+                  "opacity": [
+                    "0%",
+                    "0%"
+                  ],
+                  "y": [
+                    "2em",
+                    "-2em"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-d13f32aa",
+              "name": "Animate Out / Image 2",
+              "color": "blue",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "547d1bcc-c587-7df7-87e9-9f98edf2fb68"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                        "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                        "643f17bc-2f3c-f933-fa9e-a47b2652dc8d"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.18,
+                "position": 0.5,
+                "ease": 12
+              },
+              "tt": 0,
+              "properties": {
+                "wf:transform": {
+                  "width": [
+                    null,
+                    "0%"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-6c6a0100",
+              "name": "Animate Out / Cards 2",
+              "color": "orange",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "3c836b3c-635c-7254-6ab3-5e2ece9c0797"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                        "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                        "643f17bc-2f3c-f933-fa9e-a47b2652dc8d"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.18,
+                "position": 0.5,
+                "stagger": {
+                  "amount": 0.12
+                },
+                "ease": 12
+              },
+              "tt": 0,
+              "properties": {
+                "wf:transform": {
+                  "y": [
+                    "100%",
+                    "-1em"
+                  ],
+                  "opacity": [
+                    null,
+                    "0%"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-d69ff31c",
+              "name": "Pointers Auto / 3",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                    "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                    "a2e8869a-3776-462b-429b-96ec1da59643"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0,
+                "position": 0.6,
+                "ease": 0
+              },
+              "tt": 3,
+              "properties": {
+                "wf:class": {},
+                "wf:transform": {},
+                "wf:style": {
+                  "pointerEvents": [
+                    null,
+                    "auto"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-0a54a9ba",
+              "name": "Animate In / Second Header 3",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "cc493d7b-d7f3-692e-23e4-5d5730440865"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                        "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                        "a2e8869a-3776-462b-429b-96ec1da59643"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.32,
+                "position": 0.6,
+                "ease": 12
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "opacity": [
+                    "0%",
+                    "100%"
+                  ],
+                  "y": [
+                    "2em",
+                    "0em"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-208a48b4",
+              "name": "Animate In / Image 3",
+              "color": "blue",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "547d1bcc-c587-7df7-87e9-9f98edf2fb68"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                        "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                        "a2e8869a-3776-462b-429b-96ec1da59643"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.32,
+                "position": 0.6,
+                "ease": 12
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "width": [
+                    "0%",
+                    "30%"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-dff39fbf",
+              "name": "Animate In / Cards 3",
+              "color": "orange",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "3c836b3c-635c-7254-6ab3-5e2ece9c0797"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                        "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                        "a2e8869a-3776-462b-429b-96ec1da59643"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.32,
+                "position": 0.6,
+                "stagger": {
+                  "amount": 0.12
+                },
+                "ease": 12
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "y": [
+                    "1em",
+                    "0em"
+                  ],
+                  "opacity": [
+                    "0%",
+                    "100%"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-58e78e07",
+              "name": "Pointers None / 3",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                    "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                    "a2e8869a-3776-462b-429b-96ec1da59643"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0,
+                "position": 1.17,
+                "ease": 0
+              },
+              "tt": 3,
+              "properties": {
+                "wf:class": {},
+                "wf:transform": {},
+                "wf:style": {
+                  "pointerEvents": [
+                    null,
+                    "none"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-7de8e654",
+              "name": "Animate Out / Second Header 3",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "cc493d7b-d7f3-692e-23e4-5d5730440865"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                        "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                        "a2e8869a-3776-462b-429b-96ec1da59643"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.18,
+                "position": 1,
+                "ease": 12
+              },
+              "tt": 0,
+              "properties": {
+                "wf:transform": {
+                  "opacity": [
+                    "0%",
+                    "0%"
+                  ],
+                  "y": [
+                    "2em",
+                    "-2em"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-5b72bee1",
+              "name": "Animate Out / Image 3",
+              "color": "blue",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "547d1bcc-c587-7df7-87e9-9f98edf2fb68"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                        "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                        "a2e8869a-3776-462b-429b-96ec1da59643"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.18,
+                "position": 1,
+                "ease": 12
+              },
+              "tt": 0,
+              "properties": {
+                "wf:transform": {
+                  "width": [
+                    null,
+                    "0%"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-ef4ad6ac",
+              "name": "Animate Out / Cards 3",
+              "color": "orange",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "3c836b3c-635c-7254-6ab3-5e2ece9c0797"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                        "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                        "a2e8869a-3776-462b-429b-96ec1da59643"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.18,
+                "position": 1,
+                "stagger": {
+                  "amount": 0.12
+                },
+                "ease": 12
+              },
+              "tt": 0,
+              "properties": {
+                "wf:transform": {
+                  "y": [
+                    null,
+                    "-1em"
+                  ],
+                  "opacity": [
+                    null,
+                    "0%"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-f6541fd4",
+              "name": "Pointers Auto / 4",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                    "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                    "322b17a8-5edf-d8e3-813b-2979bb2842db"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0,
+                "position": 1.1,
+                "ease": 0
+              },
+              "tt": 3,
+              "properties": {
+                "wf:class": {},
+                "wf:transform": {},
+                "wf:style": {
+                  "pointerEvents": [
+                    null,
+                    "auto"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-0cd09abe",
+              "name": "Animate In / Second Header 4",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "cc493d7b-d7f3-692e-23e4-5d5730440865"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                        "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                        "322b17a8-5edf-d8e3-813b-2979bb2842db"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.32,
+                "position": 1.1,
+                "ease": 12
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "opacity": [
+                    "0%",
+                    "100%"
+                  ],
+                  "y": [
+                    "2em",
+                    "0em"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-77a90922",
+              "name": "Animate In / Image 4",
+              "color": "blue",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "547d1bcc-c587-7df7-87e9-9f98edf2fb68"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                        "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                        "322b17a8-5edf-d8e3-813b-2979bb2842db"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.32,
+                "position": 1.1,
+                "ease": 12
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "width": [
+                    "0%",
+                    "30%"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-4686ebce",
+              "name": "Animate In / Cards 4",
+              "color": "orange",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "3c836b3c-635c-7254-6ab3-5e2ece9c0797"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                        "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                        "322b17a8-5edf-d8e3-813b-2979bb2842db"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.32,
+                "position": 1.1,
+                "stagger": {
+                  "amount": 0.12
+                },
+                "ease": 12
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "y": [
+                    "1em",
+                    "0em"
+                  ],
+                  "opacity": [
+                    "0%",
+                    "100%"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-f9e83073",
+              "name": "Pointers None / 4",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                    "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                    "322b17a8-5edf-d8e3-813b-2979bb2842db"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0,
+                "position": 1.68,
+                "ease": 0
+              },
+              "tt": 3,
+              "properties": {
+                "wf:class": {},
+                "wf:transform": {},
+                "wf:style": {
+                  "pointerEvents": [
+                    null,
+                    "none"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-b7175a5e",
+              "name": "Animate Out / Second Header 4",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "cc493d7b-d7f3-692e-23e4-5d5730440865"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                        "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                        "322b17a8-5edf-d8e3-813b-2979bb2842db"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.18,
+                "position": 1.5,
+                "ease": 12
+              },
+              "tt": 0,
+              "properties": {
+                "wf:transform": {
+                  "opacity": [
+                    "0%",
+                    "0%"
+                  ],
+                  "y": [
+                    "2em",
+                    "-2em"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-c7ff0bcf",
+              "name": "Animate Out / Image 4",
+              "color": "blue",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "547d1bcc-c587-7df7-87e9-9f98edf2fb68"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                        "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                        "322b17a8-5edf-d8e3-813b-2979bb2842db"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.18,
+                "position": 1.5,
+                "ease": 12
+              },
+              "tt": 0,
+              "properties": {
+                "wf:transform": {
+                  "width": [
+                    null,
+                    "0%"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-13fc9291",
+              "name": "Animate Out / Cards 4",
+              "color": "orange",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "3c836b3c-635c-7254-6ab3-5e2ece9c0797"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                        "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                        "322b17a8-5edf-d8e3-813b-2979bb2842db"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.18,
+                "position": 1.5,
+                "stagger": {
+                  "amount": 0.12
+                },
+                "ease": 12
+              },
+              "tt": 0,
+              "properties": {
+                "wf:transform": {
+                  "y": [
+                    null,
+                    "-1em"
+                  ],
+                  "opacity": [
+                    null,
+                    "0%"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-a7eb2c72",
+              "name": "Pointers Auto / 5",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                    "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                    "f5dc9f00-5008-103d-dfc7-c341b6de39c0"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0,
+                "position": 1.6,
+                "ease": 0
+              },
+              "tt": 3,
+              "properties": {
+                "wf:class": {},
+                "wf:transform": {},
+                "wf:style": {
+                  "pointerEvents": [
+                    null,
+                    "auto"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-6e91f303",
+              "name": "Animate In / Second Header 5",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "cc493d7b-d7f3-692e-23e4-5d5730440865"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                        "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                        "f5dc9f00-5008-103d-dfc7-c341b6de39c0"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.32,
+                "position": 1.6,
+                "ease": 12
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "opacity": [
+                    "0%",
+                    "100%"
+                  ],
+                  "y": [
+                    "2em",
+                    "0em"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-010d85db",
+              "name": "Animate In / Image 5",
+              "color": "blue",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "547d1bcc-c587-7df7-87e9-9f98edf2fb68"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                        "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                        "f5dc9f00-5008-103d-dfc7-c341b6de39c0"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.32,
+                "position": 1.6,
+                "ease": 12
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "width": [
+                    "0%",
+                    "30%"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-0433a5b8",
+              "name": "Animate In / Cards 5",
+              "color": "orange",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "3c836b3c-635c-7254-6ab3-5e2ece9c0797"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                        "e4f4be97-0672-a303-383e-7654ad4f42fa",
+                        "f5dc9f00-5008-103d-dfc7-c341b6de39c0"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.32,
+                "position": 1.6,
+                "stagger": {
+                  "amount": 0.12
+                },
+                "ease": 12
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "y": [
+                    "1em",
+                    "0em"
+                  ],
+                  "opacity": [
+                    "0%",
+                    "100%"
+                  ]
+                }
+              }
+            }
+          ],
+          "version": 164
+        }
+      ],
+      "conditionalPlayback": [
+        {
+          "type": "breakpoint",
+          "behavior": "dont-animate",
+          "breakpoints": [
+            "tiny",
+            "small",
+            "medium"
+          ]
+        }
+      ],
+      "version": 4
+    },
+    {
+      "id": "i-310abe23",
+      "name": "Scroll | What Next",
+      "pageId": "69ceb222d82c6f1496d6b49c",
+      "scope": {
+        "type": "pages",
+        "value": [
+          "69ceb222d82c6f1496d6b49c"
+        ]
+      },
+      "triggers": [
+        {
+          "extensionKey": "wf:scroll",
+          "config": {
+            "controlType": "scroll",
+            "scrollTriggerConfig": {
+              "showMarkers": true,
+              "clamp": true,
+              "start": "top 50%",
+              "end": "bottom 50%",
+              "scrub": 2,
+              "enter": "play",
+              "leave": "none",
+              "enterBack": "none",
+              "leaveBack": "none",
+              "pin": false
+            }
+          },
+          "target": {
+            "extensionKey": "wf:class",
+            "value": [
+              "157c956c-9948-c282-ac11-d1cf7ef93e28",
+              "a372aa4e-a825-53bb-c612-dd8463493c48"
+            ],
+            "filterContext": {
+              "relationship": "none",
+              "filterBy": [
+                "wf:class",
+                []
+              ],
+              "firstMatchOnly": false
+            }
+          }
+        }
+      ],
+      "timelines": [
+        {
+          "id": "t-c3f8e113",
+          "pageId": "69ceb222d82c6f1496d6b49c",
+          "actions": [
+            {
+              "id": "ta-680738e4",
+              "name": "Animate In — Title",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "755bf449-6365-ef91-fde4-248384d5b05a"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.24,
+                "stagger": {
+                  "amount": 0.24
+                },
+                "ease": 0
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "opacity": [
+                    "0%",
+                    "100%"
+                  ],
+                  "x": null,
+                  "y": null,
+                  "scale": null
+                }
+              },
+              "splitText": {
+                "type": "words"
+              }
+            },
+            {
+              "id": "ta-35ec18d6",
+              "name": "Animate In — Para",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "755bf449-6365-ef91-fde4-248384d5b073"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.24,
+                "position": 0.24,
+                "stagger": {
+                  "amount": 0.24
+                },
+                "ease": 0
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "opacity": [
+                    "0%",
+                    "100%"
+                  ],
+                  "x": null,
+                  "y": null,
+                  "scale": null
+                }
+              },
+              "splitText": {
+                "type": "words"
+              }
+            },
+            {
+              "id": "ta-02f34759",
+              "name": "Animate In — Button",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "6103717e-ca4e-5b13-4872-d427eb8857ac"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.24,
+                "position": 0.48,
+                "ease": 0
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "opacity": [
+                    "0%",
+                    "100%"
+                  ],
+                  "scale": null
+                }
+              }
+            },
+            {
+              "id": "ta-7405e725",
+              "name": "Animate Out — Title",
+              "color": "blue",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "755bf449-6365-ef91-fde4-248384d5b05a"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.24,
+                "position": 0.8,
+                "stagger": {
+                  "amount": 0.24
+                },
+                "ease": 0
+              },
+              "tt": 0,
+              "properties": {
+                "wf:transform": {
+                  "opacity": [
+                    null,
+                    "0%"
+                  ]
+                }
+              },
+              "splitText": {
+                "type": "words"
+              }
+            },
+            {
+              "id": "ta-c2232b83",
+              "name": "Animate Out — Para",
+              "color": "blue",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "755bf449-6365-ef91-fde4-248384d5b073"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.24,
+                "position": 1.04,
+                "stagger": {
+                  "amount": 0.24
+                },
+                "ease": 0
+              },
+              "tt": 0,
+              "properties": {
+                "wf:transform": {
+                  "opacity": [
+                    "0%",
+                    "0%"
+                  ],
+                  "x": null,
+                  "y": null,
+                  "scale": null
+                }
+              },
+              "splitText": {
+                "type": "words"
+              }
+            },
+            {
+              "id": "ta-981947b8",
+              "name": "Animate Out — Button",
+              "color": "blue",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "6103717e-ca4e-5b13-4872-d427eb8857ac"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.24,
+                "position": 1.28,
+                "ease": 0
+              },
+              "tt": 0,
+              "properties": {
+                "wf:transform": {
+                  "opacity": [
+                    "0%",
+                    "0%"
+                  ]
+                }
+              }
+            }
+          ],
+          "version": 30
+        }
+      ],
+      "version": 24
+    },
+    {
+      "id": "i-5283cd32",
+      "name": "Scroll / Parallax",
+      "pageId": "69cc114bc7144d8f6b6c38b4",
+      "scope": {
+        "type": "site"
+      },
+      "triggers": [
+        {
+          "extensionKey": "wf:scroll",
+          "config": {
+            "controlType": "scroll",
+            "scrollTriggerConfig": {
+              "showMarkers": true,
+              "clamp": true,
+              "start": "top bottom",
+              "end": "bottom top",
+              "scrub": 1,
+              "enter": "play",
+              "leave": "none",
+              "enterBack": "none",
+              "leaveBack": "none"
+            }
+          },
+          "target": {
+            "extensionKey": "wf:class",
+            "value": [
+              "016079e5-2e8d-52b8-5a78-d81595688acb"
+            ],
+            "filterContext": {
+              "relationship": "none",
+              "filterBy": [
+                "wf:class",
+                []
+              ],
+              "firstMatchOnly": false
+            }
+          }
+        }
+      ],
+      "timelines": [
+        {
+          "id": "t-fa5af07f",
+          "pageId": "69cc114bc7144d8f6b6c38b4",
+          "actions": [
+            {
+              "id": "ta-95f5ff74",
+              "name": "Parallax / Content",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "2a517a66-26f1-5228-77e0-e38c3f5b07d1"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "ease": 3
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "opacity": null,
+                  "x": null,
+                  "y": [
+                    "-4%",
+                    "4%"
+                  ],
+                  "scale": [
+                    1,
+                    1.1
+                  ]
+                }
+              }
+            }
+          ],
+          "version": 13
+        }
+      ],
+      "version": 5
+    },
+    {
+      "id": "i-90ace60a",
+      "name": "Scroll / Wulf Value Header",
+      "pageId": "69ceb1e6dace149b16d5387b",
+      "scope": {
+        "type": "pages",
+        "value": [
+          "69ceb1e6dace149b16d5387b"
+        ]
+      },
+      "triggers": [
+        {
+          "extensionKey": "wf:scroll",
+          "config": {
+            "controlType": "scroll",
+            "scrollTriggerConfig": {
+              "showMarkers": true,
+              "clamp": true,
+              "start": "top 50%",
+              "end": "top top",
+              "scrub": null,
+              "enter": "play",
+              "leave": "none",
+              "enterBack": "play",
+              "leaveBack": "reverse",
+              "pin": false
+            }
+          },
+          "target": {
+            "extensionKey": "wf:class",
+            "value": [
+              "0478abfe-2f04-11c7-64a1-4e277f8eed30"
+            ],
+            "filterContext": {
+              "relationship": "none",
+              "filterBy": [
+                "wf:class",
+                []
+              ],
+              "firstMatchOnly": false
+            }
+          }
+        }
+      ],
+      "timelines": [
+        {
+          "id": "t-25b2cd6a",
+          "pageId": "69ceb1e6dace149b16d5387b",
+          "actions": [
+            {
+              "id": "ta-37449acb",
+              "name": "Fade Out / Tera",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "5e817eed-2e45-d0f5-70b0-21c3454d3a59"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 1.2,
+                "position": 0,
+                "ease": 12
+              },
+              "tt": 0,
+              "properties": {
+                "wf:transform": {
+                  "opacity": [
+                    null,
+                    "0%"
+                  ],
+                  "x": null,
+                  "y": null,
+                  "scale": null,
+                  "width": null
+                }
+              }
+            },
+            {
+              "id": "ta-431a1773",
+              "name": "Fade Out / Tera Copy",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "f8a7d030-3067-9546-aebb-9243a0c6a0d9"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 1.2,
+                "position": 0.12,
+                "ease": 12
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "height": [
+                    "6.25em",
+                    "4em"
+                  ],
+                  "x": [
+                    "0%",
+                    "-50%"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-88551be7",
+              "name": "Fade Out / Links",
+              "color": "orange",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "342a6feb-cb84-b46d-a376-bedc5ec9e986"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 1.2,
+                "position": 0.12,
+                "ease": 12
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "opacity": [
+                    "100%",
+                    "48%"
+                  ]
+                }
+              }
+            }
+          ],
+          "version": 33
+        }
+      ],
+      "conditionalPlayback": [
+        {
+          "type": "breakpoint",
+          "behavior": "dont-animate",
+          "breakpoints": [
+            "small",
+            "medium",
+            "tiny"
+          ]
+        }
+      ],
+      "version": 13
+    },
+    {
+      "id": "i-9824863c",
+      "name": "Scroll / Wulf Value Header Mobile",
+      "pageId": "69ceb1e6dace149b16d5387b",
+      "scope": {
+        "type": "pages",
+        "value": [
+          "69ceb1e6dace149b16d5387b"
+        ]
+      },
+      "triggers": [
+        {
+          "extensionKey": "wf:scroll",
+          "config": {
+            "controlType": "scroll",
+            "scrollTriggerConfig": {
+              "showMarkers": true,
+              "clamp": true,
+              "start": "top 50%",
+              "end": "top top",
+              "scrub": null,
+              "enter": "play",
+              "leave": "none",
+              "enterBack": "play",
+              "leaveBack": "reverse",
+              "pin": false
+            }
+          },
+          "target": {
+            "extensionKey": "wf:class",
+            "value": [
+              "0478abfe-2f04-11c7-64a1-4e277f8eed30"
+            ],
+            "filterContext": {
+              "relationship": "none",
+              "filterBy": [
+                "wf:class",
+                []
+              ],
+              "firstMatchOnly": false
+            }
+          }
+        }
+      ],
+      "timelines": [
+        {
+          "id": "t-3d2abf48",
+          "pageId": "69ceb1e6dace149b16d5387b",
+          "actions": [
+            {
+              "id": "ta-edabd93d",
+              "name": "Fade Out / Tera",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "5e817eed-2e45-d0f5-70b0-21c3454d3a59"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 1.2,
+                "position": 0,
+                "ease": 12
+              },
+              "tt": 0,
+              "properties": {
+                "wf:transform": {
+                  "opacity": [
+                    null,
+                    "0%"
+                  ],
+                  "x": null,
+                  "y": null,
+                  "scale": null,
+                  "width": null
+                }
+              }
+            },
+            {
+              "id": "ta-84a6f64b",
+              "name": "Fade Out / Tera Copy",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "f8a7d030-3067-9546-aebb-9243a0c6a0d9"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 1.2,
+                "position": 0.12,
+                "ease": 12
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "height": [
+                    "2em",
+                    "2em"
+                  ],
+                  "x": [
+                    "0%",
+                    "-20%"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-e215c5ed",
+              "name": "Fade Out / Links",
+              "color": "orange",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "342a6feb-cb84-b46d-a376-bedc5ec9e986"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 1.2,
+                "position": 0.12,
+                "ease": 12
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "opacity": [
+                    "100%",
+                    "48%"
+                  ]
+                }
+              }
+            }
+          ],
+          "version": 37
+        }
+      ],
+      "conditionalPlayback": [
+        {
+          "type": "breakpoint",
+          "behavior": "dont-animate",
+          "breakpoints": [
+            "main"
+          ]
+        }
+      ],
+      "version": 16
+    },
+    {
+      "id": "i-9e440da0",
+      "name": "Scroll / Beowulf Service",
+      "pageId": "69f4fea6f3b60d251e8fd018",
+      "scope": {
+        "type": "pages",
+        "value": [
+          "69f4fea6f3b60d251e8fd018"
+        ]
+      },
+      "triggers": [
+        {
+          "extensionKey": "wf:scroll",
+          "config": {
+            "controlType": "scroll",
+            "scrollTriggerConfig": {
+              "showMarkers": true,
+              "clamp": true,
+              "start": "top top",
+              "end": "bottom bottom",
+              "scrub": 0.8,
+              "enter": "play",
+              "leave": "none",
+              "enterBack": "none",
+              "leaveBack": "none"
+            }
+          },
+          "target": {
+            "extensionKey": "wf:class",
+            "value": [
+              "157c956c-9948-c282-ac11-d1cf7ef93e28",
+              "3dce0d8b-bbb4-e12a-51a1-6fdd5aec0d81"
+            ],
+            "filterContext": {
+              "relationship": "none",
+              "filterBy": [
+                "wf:class",
+                []
+              ],
+              "firstMatchOnly": false
+            }
+          }
+        }
+      ],
+      "timelines": [
+        {
+          "id": "t-bd77eda0",
+          "pageId": "69f4fea6f3b60d251e8fd018",
+          "actions": [
+            {
+              "id": "ta-d359aea6",
+              "name": "Beowulf Track",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "58d2af35-0b0b-c9d0-ed6e-570ebff72a0a"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "ease": 0
+              },
+              "properties": {
+                "wf:transform": {
+                  "opacity": null,
+                  "x": [
+                    null,
+                    "-100%"
+                  ],
+                  "y": null,
+                  "scale": null
+                }
+              }
+            }
+          ],
+          "version": 4
+        }
+      ],
+      "version": 3
+    },
+    {
+      "id": "i-c0784607",
+      "name": "Scroll / Section Stats",
+      "pageId": "69cc114bc7144d8f6b6c38b4",
+      "scope": {
+        "type": "site"
+      },
+      "triggers": [
+        {
+          "extensionKey": "wf:scroll",
+          "config": {
+            "controlType": "scroll",
+            "scrollTriggerConfig": {
+              "showMarkers": true,
+              "clamp": false,
+              "start": "top bottom",
+              "end": "bottom top",
+              "scrub": null,
+              "enter": "play",
+              "leave": "none",
+              "enterBack": "play",
+              "leaveBack": "reverse"
+            }
+          },
+          "target": {
+            "extensionKey": "wf:class",
+            "value": [
+              "f8b8b43d-8975-8c3c-9763-7c11a63bc714"
+            ],
+            "filterContext": {
+              "relationship": "none",
+              "filterBy": [
+                "wf:class",
+                []
+              ],
+              "firstMatchOnly": false
+            }
+          }
+        }
+      ],
+      "timelines": [
+        {
+          "id": "t-e9b9dece",
+          "pageId": "69cc114bc7144d8f6b6c38b4",
+          "actions": [
+            {
+              "id": "ta-42c47765",
+              "name": "Animate In / Stats",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "1393ffa1-b70d-cfe0-8225-bd2833ff1412"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 1.2,
+                "ease": {
+                  "type": "customEase",
+                  "bezierCurve": "M0,160 C102.4,152 0,0 160,0 "
+                }
+              },
+              "tt": 1,
+              "properties": {
+                "wf:transform": {
+                  "opacity": null,
+                  "x": null,
+                  "y": [
+                    "100%",
+                    null
+                  ],
+                  "scale": [
+                    0.9,
+                    null
+                  ]
+                }
+              }
+            }
+          ],
+          "version": 9
+        }
+      ],
+      "version": 5
+    },
+    {
+      "id": "i-c2567f92",
+      "name": "G | Page Header Load",
+      "pageId": "69fba78de64eea9c41e9fe5e",
+      "scope": {
+        "type": "site"
+      },
+      "triggers": [
+        {
+          "extensionKey": "wf:load",
+          "config": {
+            "controlType": "load"
+          }
+        }
+      ],
+      "timelines": [
+        {
+          "id": "t-145fb5f7",
+          "pageId": "69fba78de64eea9c41e9fe5e",
+          "actions": [
+            {
+              "id": "ta-74bef184",
+              "name": "Animate In | Background",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "e5c5bf10-bc9d-0158-d4d2-43e79f6b553a",
+                    "b888a637-1b2b-feab-d2e5-434f7962ca0d"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                        "25306132-0d2a-7218-3577-a59abbb538c5"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 3,
+                "position": 0,
+                "ease": {
+                  "type": "customEase",
+                  "bezierCurve": "M0,160 C104,152.8 0,0 160,0 "
+                }
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "opacity": [
+                    "0%",
+                    "100%"
+                  ],
+                  "y": [
+                    "-4em",
+                    "0em"
+                  ],
+                  "scale": [
+                    1.2,
+                    1
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-1ab97c74",
+              "name": "Animate In | Main Content",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "362337da-64dc-5a15-6922-bec724c5a883"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                        "25306132-0d2a-7218-3577-a59abbb538c5"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 1.2,
+                "position": 0.8,
+                "stagger": {
+                  "amount": 0.4
+                },
+                "ease": {
+                  "type": "customEase",
+                  "bezierCurve": "M0,160 C104,152.8 0,0 160,0 "
+                }
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "opacity": [
+                    "0%",
+                    "100%"
+                  ],
+                  "x": null,
+                  "y": [
+                    "0.5em",
+                    "0em"
+                  ]
+                }
+              },
+              "splitText": {
+                "type": "words",
+                "mask": "words"
+              }
+            },
+            {
+              "id": "ta-e00160eb",
+              "name": "Animate In | CTA",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "6103717e-ca4e-5b13-4872-d427eb8857ac"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:class",
+                      [
+                        "157c956c-9948-c282-ac11-d1cf7ef93e28",
+                        "25306132-0d2a-7218-3577-a59abbb538c5"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 1.2,
+                "position": 1.6,
+                "ease": {
+                  "type": "customEase",
+                  "bezierCurve": "M0,160 C104,152.8 0,0 160,0 "
+                }
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "opacity": [
+                    "0%",
+                    "100%"
+                  ],
+                  "x": null,
+                  "y": [
+                    "0.5em",
+                    "0em"
+                  ]
+                }
+              }
+            }
+          ],
+          "version": 65
+        }
+      ],
+      "version": 4
+    },
+    {
+      "id": "i-c395b50a",
+      "name": "Scroll | Page Header",
+      "pageId": "69fba78de64eea9c41e9fe5e",
+      "scope": {
+        "type": "component",
+        "componentId": "4822c4c0-4560-9571-03b4-2bc9ef510728"
+      },
+      "triggers": [
+        {
+          "extensionKey": "wf:scroll",
+          "config": {
+            "controlType": "scroll",
+            "scrollTriggerConfig": {
+              "showMarkers": true,
+              "clamp": true,
+              "start": "bottom 90%",
+              "end": "bottom 50%",
+              "scrub": null,
+              "enter": "play",
+              "leave": "none",
+              "enterBack": "play",
+              "leaveBack": "reverse"
+            }
+          },
+          "target": {
+            "extensionKey": "wf:class",
+            "value": [
+              "157c956c-9948-c282-ac11-d1cf7ef93e28",
+              "25306132-0d2a-7218-3577-a59abbb538c5"
+            ],
+            "filterContext": {
+              "relationship": "none",
+              "filterBy": [
+                "wf:class",
+                []
+              ],
+              "firstMatchOnly": false
+            }
+          }
+        }
+      ],
+      "timelines": [
+        {
+          "id": "t-a2f99fa7",
+          "pageId": "69fba78de64eea9c41e9fe5e",
+          "actions": [
+            {
+              "id": "ta-e62f47c6",
+              "name": "Animate Out | Header Main",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "746682cd-17a2-9379-323e-e12ef0cea90d"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 1.2,
+                "position": 0,
+                "ease": {
+                  "type": "customEase",
+                  "bezierCurve": "M0,160 C104,152.8 0,0 160,0 "
+                }
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "opacity": [
+                    "100%",
+                    "0%"
+                  ],
+                  "scale": [
+                    1,
+                    1.05
+                  ]
+                }
+              }
+            }
+          ],
+          "version": 27
+        }
+      ],
+      "version": 11
+    },
+    {
+      "id": "i-ca872f25",
+      "name": "Scroll /What We Do Stack",
+      "pageId": "69cc114bc7144d8f6b6c38b4",
+      "scope": {
+        "type": "site"
+      },
+      "triggers": [
+        {
+          "extensionKey": "wf:scroll",
+          "config": {
+            "controlType": "scroll",
+            "scrollTriggerConfig": {
+              "showMarkers": true,
+              "clamp": true,
+              "start": "top top",
+              "end": "bottom bottom",
+              "scrub": 0.8,
+              "enter": "play",
+              "leave": "none",
+              "enterBack": "play",
+              "leaveBack": "reverse"
+            }
+          },
+          "target": {
+            "extensionKey": "wf:class",
+            "value": [
+              "157c956c-9948-c282-ac11-d1cf7ef93e28",
+              "efd739c0-d105-b8c9-01ac-1f9210ed3f71"
+            ],
+            "filterContext": {
+              "relationship": "none",
+              "filterBy": [
+                "wf:class",
+                []
+              ],
+              "firstMatchOnly": false
+            }
+          }
+        }
+      ],
+      "timelines": [
+        {
+          "id": "t-feb51896",
+          "pageId": "69cc114bc7144d8f6b6c38b4",
+          "actions": [
+            {
+              "id": "ta-8466299d",
+              "name": "Fade Out / Card",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "5185863d-2254-675a-ed96-d16e9d63f584",
+                    "93946326-12c8-d6bc-365c-fa0f643abf5f"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.5,
+                "position": 0
+              },
+              "properties": {
+                "wf:transform": {
+                  "y": [
+                    null,
+                    "-2em"
+                  ],
+                  "scale": [
+                    null,
+                    0.9
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-cb7e2fa5",
+              "name": "Fade Out / Card 2",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "5185863d-2254-675a-ed96-d16e9d63f584",
+                    "0f5d48af-7f0d-da17-211a-443cd1e40d53"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.5,
+                "position": 0
+              },
+              "properties": {
+                "wf:transform": {
+                  "y": [
+                    null,
+                    "-2em"
+                  ],
+                  "scale": [
+                    null,
+                    0.95
+                  ]
+                }
+              }
+            },
+            {
+              "id": "ta-369d2c77",
+              "name": "Fade Out / Card 3",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "5185863d-2254-675a-ed96-d16e9d63f584",
+                    "04ef7a3a-3c63-da6b-44d9-735fabc9c4e3"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "duration": 0.5,
+                "position": 0
+              },
+              "properties": {
+                "wf:transform": {
+                  "y": [
+                    null,
+                    "-2em"
+                  ],
+                  "scale": [
+                    null,
+                    1
+                  ]
+                }
+              }
+            }
+          ],
+          "version": 25
+        }
+      ],
+      "version": 12
+    },
+    {
+      "id": "i-d34c4117",
+      "name": "Scroll What's Next | Section",
+      "pageId": "69ceb222d82c6f1496d6b49c",
+      "scope": {
+        "type": "pages",
+        "value": [
+          "69ceb222d82c6f1496d6b49c"
+        ]
+      },
+      "triggers": [
+        {
+          "extensionKey": "wf:scroll",
+          "config": {
+            "controlType": "scroll",
+            "scrollTriggerConfig": {
+              "showMarkers": true,
+              "clamp": true,
+              "start": "50% bottom",
+              "end": "50% 50%",
+              "scrub": null,
+              "enter": "play",
+              "leave": "reverse",
+              "enterBack": "play",
+              "leaveBack": "reverse"
+            }
+          },
+          "target": {
+            "extensionKey": "wf:class",
+            "value": [
+              "3a40be7c-c5c9-ceac-318a-3dc882fed8ab"
+            ],
+            "filterContext": {
+              "relationship": "none",
+              "filterBy": [
+                "wf:class",
+                []
+              ],
+              "firstMatchOnly": false
+            }
+          }
+        }
+      ],
+      "timelines": [
+        {
+          "id": "t-b056a048",
+          "pageId": "69ceb222d82c6f1496d6b49c",
+          "actions": [
+            {
+              "id": "ta-570b266f",
+              "name": "Custom Animation",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "755bf449-6365-ef91-fde4-248384d5b05a"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                },
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "755bf449-6365-ef91-fde4-248384d5b073"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "stagger": {
+                  "amount": 0.24
+                },
+                "ease": 0
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "opacity": [
+                    "0%",
+                    "100%"
+                  ],
+                  "x": null,
+                  "y": [
+                    "0.5em",
+                    "0em"
+                  ],
+                  "scale": null
+                }
+              },
+              "splitText": {
+                "type": "words"
+              }
+            },
+            {
+              "id": "ta-e5801621",
+              "name": "Custom Animation Copy",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "6103717e-ca4e-5b13-4872-d427eb8857ac"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "stagger": {
+                  "amount": 0.24
+                },
+                "ease": 0
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "opacity": [
+                    "0%",
+                    "100%"
+                  ],
+                  "x": null,
+                  "y": [
+                    "0.5em",
+                    "0em"
+                  ],
+                  "scale": null
+                }
+              }
+            }
+          ],
+          "version": 7
+        }
+      ],
+      "version": 12
+    },
+    {
+      "id": "i-db73fe76",
+      "name": "Scroll / Text Animate",
+      "pageId": "69cc114bc7144d8f6b6c38b4",
+      "scope": {
+        "type": "site"
+      },
+      "triggers": [
+        {
+          "extensionKey": "wf:scroll",
+          "config": {
+            "controlType": "scroll",
+            "scrollTriggerConfig": {
+              "showMarkers": true,
+              "clamp": false,
+              "start": "top bottom",
+              "end": "top 50%",
+              "scrub": null,
+              "enter": "play",
+              "leave": "none",
+              "enterBack": "play",
+              "leaveBack": "reverse"
+            }
+          },
+          "target": {
+            "extensionKey": "wf:attribute",
+            "value": "[data-gsap=\"text-animate\"]",
+            "filterContext": {
+              "relationship": "none",
+              "filterBy": [
+                "wf:class",
+                []
+              ],
+              "firstMatchOnly": false
+            }
+          }
+        }
+      ],
+      "timelines": [
+        {
+          "id": "t-6f7045c7",
+          "pageId": "69cc114bc7144d8f6b6c38b4",
+          "actions": [
+            {
+              "id": "ta-1d9e535c",
+              "name": "Animate Text",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:trigger-only",
+                  "value": "",
+                  "filterContext": {
+                    "relationship": "none",
+                    "filterBy": [
+                      "wf:inst",
+                      [
+                        "466ddff4-2ec8-9e66-fe15-1b9c7e62eecf",
+                        "466ddff4-2ec8-9e66-fe15-1b9c7e62eed5"
+                      ]
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "position": 0.4,
+                "stagger": {
+                  "amount": 0.4
+                },
+                "ease": 12
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "opacity": [
+                    "20%",
+                    "100%"
+                  ],
+                  "x": null,
+                  "y": null,
+                  "scale": null
+                }
+              },
+              "splitText": {
+                "type": "chars"
+              }
+            }
+          ],
+          "version": 15
+        }
+      ],
+      "version": 14
+    },
+    {
+      "id": "i-f72f480a",
+      "name": "Smoke Scroll In",
+      "pageId": "69cc114bc7144d8f6b6c38b4",
+      "scope": {
+        "type": "site"
+      },
+      "triggers": [
+        {
+          "extensionKey": "wf:scroll",
+          "config": {
+            "controlType": "scroll",
+            "scrollTriggerConfig": {
+              "showMarkers": true,
+              "clamp": true,
+              "start": "top bottom",
+              "end": "bottom top",
+              "scrub": 0.8,
+              "enter": "play",
+              "leave": "none",
+              "enterBack": "none",
+              "leaveBack": "none"
+            }
+          },
+          "target": {
+            "extensionKey": "wf:attribute",
+            "value": "[data-smoke-bottom]",
+            "filterContext": {
+              "relationship": "none",
+              "filterBy": [
+                "wf:class",
+                []
+              ],
+              "firstMatchOnly": false
+            }
+          }
+        }
+      ],
+      "timelines": [
+        {
+          "id": "t-8e5e5fc9",
+          "pageId": "69cc114bc7144d8f6b6c38b4",
+          "actions": [
+            {
+              "id": "ta-4687592d",
+              "name": "Animate In | Smoke",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:class",
+                  "value": [
+                    "99962d16-0252-67a7-e239-1f6556cc2edf"
+                  ],
+                  "filterContext": {
+                    "relationship": "within",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "ease": 0
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "opacity": null,
+                  "x": null,
+                  "y": [
+                    "40%",
+                    "0%"
+                  ],
+                  "scale": null
+                }
+              }
+            }
+          ],
+          "version": 3
+        }
+      ],
+      "version": 6
+    },
+    {
+      "id": "i-ff7d39ee",
+      "name": "Scroll Beowulf Who Track",
+      "pageId": "69f4fea6f3b60d251e8fd018",
+      "scope": {
+        "type": "pages",
+        "value": [
+          "69f4fea6f3b60d251e8fd018"
+        ]
+      },
+      "triggers": [
+        {
+          "extensionKey": "wf:scroll",
+          "config": {
+            "controlType": "scroll",
+            "scrollTriggerConfig": {
+              "showMarkers": true,
+              "clamp": true,
+              "start": "top top",
+              "end": "bottom bottom",
+              "scrub": 0.8,
+              "enter": "play",
+              "leave": "none",
+              "enterBack": "none",
+              "leaveBack": "none"
+            }
+          },
+          "target": {
+            "extensionKey": "wf:class",
+            "value": [
+              "ab083580-6751-e3bc-5aa4-35265364e862"
+            ],
+            "filterContext": {
+              "relationship": "none",
+              "filterBy": [
+                "wf:class",
+                []
+              ],
+              "firstMatchOnly": false
+            }
+          }
+        }
+      ],
+      "timelines": [
+        {
+          "id": "t-b915b76b",
+          "pageId": "69f4fea6f3b60d251e8fd018",
+          "actions": [
+            {
+              "id": "ta-84c2688a",
+              "name": "Scale Image",
+              "color": "pink",
+              "targets": [
+                {
+                  "extensionKey": "wf:trigger-only",
+                  "value": "",
+                  "filterContext": {
+                    "relationship": "none",
+                    "filterBy": [
+                      "wf:trigger-only",
+                      ""
+                    ],
+                    "firstMatchOnly": false
+                  }
+                }
+              ],
+              "timing": {
+                "ease": 0
+              },
+              "tt": 2,
+              "properties": {
+                "wf:transform": {
+                  "opacity": null,
+                  "x": null,
+                  "y": null,
+                  "scale": null,
+                  "width": [
+                    "50%",
+                    "100%"
+                  ]
+                }
+              }
+            }
+          ],
+          "version": 5
+        }
+      ],
+      "conditionalPlayback": [
+        {
+          "type": "breakpoint",
+          "behavior": "dont-animate",
+          "breakpoints": [
+            "small",
+            "tiny"
+          ]
+        }
+      ],
+      "version": 7
+    }
+  ]
+}

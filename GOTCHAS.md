@@ -23,6 +23,23 @@ repos to improve `brandvm/wf-template`.
 
 ## This project
 
+### 2026-11-02 · IX2 is invisible to the MCP; `data-w-id` is not an attribute
+- Area: mcp, designer
+- Scope: template-candidate
+- Symptom: the B6 plan said "remove the IX2 `data-w-id`" on one About
+  element, but `query_elements` finds no such attribute, and
+  `data_interactions_tool` lists only IX3. The inventory had 1 IX2 item;
+  the site has 15 (nav dropdown and menu, pop-ups, hovers).
+- Cause: `data-w-id` is the element's own Webflow id, written at publish
+  only because an IX2 event targets it. The MCP has no IX2 read or write.
+- Fix: read IX2 from the published `webflow.achunk.*.js` that contains
+  `eventTypeId` (events, selectors, `originalId` page|element, action
+  lists). Removing an IX2 event is a Designer step (Interactions panel).
+  Class-scoped events (`appliesTo: "CLASS"`) animate every element with
+  the class, not just the one carrying `data-w-id`.
+- Status: open (Designer step at the B6 cutover)
+- Found by: claude
+
 ### 2026-10-09 · Uploading a local image to Webflow without a public URL
 - Area: mcp
 - Scope: template-candidate

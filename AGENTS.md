@@ -14,13 +14,15 @@ Adopted from `brandvm/wf-template` 0.1.0 (63bfb79) on 2026-10-09
 - Webflow site ID: `69cc1149c7144d8f6b6c386a` (workspace
   `67d43a7ab8bacff8137b6bb3`). A legacy "Terawulf (2025)" site
   `66ec3b11f11d4b8b14e1f1e9` also exists — never edit it.
+- Webflow MCP server: `webflow-terawulf` (`.mcp.json`)
 - Staging site: `https://terawulff.webflow.io` (double f)
 - Staging bundles: `https://brandvm.github.io/terawulf/`
 - Production domain: `https://www.terawulf.com` (apex redirects to www)
-- Production release: **`1.2.0`** (published 2026-10-09, batch 1), installed
-  with the template loader: `RELEASE` in head code + the `@1.2.0` in Embed 2a
-  (G | Components). Previous release 1.1.1 with the old two-piece loader is
-  saved in `docs/rollback/2026-10-09/`. Release plan: small batches, each
+- Production release: **`1.3.1`** (live in the 2026-10-13 publish; checked
+  2026-11-02), installed with the template loader: `RELEASE` in head code +
+  the `@1.3.1` in Embed 2a (G | Components). Rollback copies:
+  `docs/rollback/2026-10-09/` (1.1.1, old two-piece loader) and
+  `docs/rollback/2026-11-02/` (1.3.1, before the B6 cutover). Release plan: small batches, each
   staging → check → production (`docs/audit/STATUS.md`).
 - Global code component: **G | Components** (2026-10-09, wf-template
   shell): fixed 0×0 div, `aria-hidden="true"`, first child of `body` on all
@@ -66,9 +68,10 @@ Adopted from `brandvm/wf-template` 0.1.0 (63bfb79) on 2026-10-09
      so gsap, ScrollTrigger, SplitText and CustomEase stop loading.
   Inventory as of 2026-10-09: IX3 on every page (`data-gsap` text/para
   reveals, hero, page headers, parallax, stats, timeline overlays, smoke and
-  home-transition on desktop); IX2 on /about (`data-w-id` on
-  `.image-overlay.is_left`, Our Vision). Webflow components (nav, dropdown,
-  tabs) are not interactions and stay.
+  home-transition on desktop); IX2: 15 events (corrected 2026-11-02,
+  `docs/audit/ix-inventory.md`) — only the About image-overlay wipe moves
+  to the repo in B6; the nav dropdown/menu, pop-ups and hovers stay IX2
+  for now.
 - **Release = two strings** (TeraWulf loader): `RELEASE` in head code AND
   the `@x.y.z` in Embed 2a's href (G | Embed Code). 2a pins the release so
   production downloads the CSS once (GOTCHAS 2026-10-09). 2b logs a console
@@ -192,6 +195,21 @@ touches `dist/`.
 Release as the README describes: tag a commit whose CI passed, then set
 `RELEASE` in the head snippet — the only version string. Never move a pushed
 tag; cut the next patch. Never use `@latest` or a branch URL in production.
+
+## Webflow MCP connection
+
+Each client repo has its own MCP server name, `webflow-<slug>` in
+`.mcp.json`, so each keeps its own Webflow sign-in on the machine. The
+sign-in (OAuth token) never goes in the repo: these repos are public.
+
+- Use only the server named in Project facts. Never write to Webflow
+  through another client's server or the account-wide claude.ai Webflow
+  connector, which may reach other clients' sites.
+- Before the first write in a session, list the sites the server reaches
+  and check the site ID matches Project facts. A mismatch or extra sites →
+  stop and ask the user to re-authorise with only this site ticked.
+- The cloud (claude.ai/code) can't run the OAuth sign-in; Webflow MCP work
+  happens in a local Claude Code session opened in this repo.
 
 ## Webflow MCP limits
 
