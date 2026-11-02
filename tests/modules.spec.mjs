@@ -153,6 +153,25 @@ test('a visitor pause is respected (no auto-resume)', async ({ page }) => {
   expect(await page.evaluate(() => window.__resumed)).toBe(0);
 });
 
+test('autoplay refused (Low Power Mode): starts on the first tap, not before', async ({ page }) => {
+  const refuse = () => {
+    window.__allow = false; window.__played = 0;
+    HTMLMediaElement.prototype.play = function () {
+      if (!window.__allow) return Promise.reject(new DOMException('blocked', 'NotAllowedError'));
+      window.__played++; return Promise.resolve();
+    };
+  };
+  const errors = await setup(page, bgVideo('top'), { init: refuse });
+  await page.waitForTimeout(300);
+  expect(await page.evaluate(() => window.__played)).toBe(0);
+  await page.evaluate(() => { window.__allow = true; });
+  await page.locator('body').click({ position: { x: 5, y: 5 } });
+  await expect.poll(() => page.evaluate(() => window.__played)).toBe(1);
+  await page.locator('body').click({ position: { x: 5, y: 5 } });
+  expect(await page.evaluate(() => window.__played)).toBe(1);
+  expect(errors).toEqual([]);
+});
+
 test('dotted canvas waits until it is near the viewport', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await setup(page, `<div style="height:4000px"></div>

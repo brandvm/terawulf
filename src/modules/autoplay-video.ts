@@ -12,10 +12,30 @@
 //    sees, which frees the main thread and the battery while scrolling.
 // 3. prefers-reduced-motion: no autoplay; the poster or first frame stays
 //    (WCAG 2.2.2). Visitors without that setting see no difference.
+// 4. Autoplay refused (iOS Low Power Mode, data saver): the poster stays and
+//    the video starts on the visitor's first tap, click or key press. The
+//    native play glyph Safari paints over a refused video is hidden in
+//    styles.css — these videos have pointer-events: none, so it cannot be used.
 
 const NEAR = '100% 0px'; // start loading about one screen ahead
 
-type Video = HTMLVideoElement & { _wfcPausing?: boolean; _wfcUserPaused?: boolean };
+type Video = HTMLVideoElement & { _wfcPausing?: boolean; _wfcUserPaused?: boolean; _wfcWanted?: boolean };
+
+const GESTURES = ['touchend', 'click', 'keydown'];
+const blocked = new Set<Video>();
+
+// A gesture lifts the block: start every refused video that is still on screen.
+function retryBlocked() {
+  GESTURES.forEach((type) => document.removeEventListener(type, retryBlocked, true));
+  const videos = Array.from(blocked);
+  blocked.clear();
+  for (const v of videos) if (v._wfcWanted && v.paused) play(v);
+}
+
+function onBlocked(video: Video) {
+  if (!blocked.size) GESTURES.forEach((type) => document.addEventListener(type, retryBlocked, true));
+  blocked.add(video);
+}
 
 function isNear(el: Element): boolean {
   const r = el.getBoundingClientRect();
@@ -24,6 +44,7 @@ function isNear(el: Element): boolean {
 }
 
 function pause(video: Video) {
+  video._wfcWanted = false;
   if (video.paused) return;
   video._wfcPausing = true;
   video.pause();
@@ -31,8 +52,13 @@ function pause(video: Video) {
 
 function play(video: Video) {
   if (video._wfcUserPaused) return; // someone pressed pause: leave it paused
+  video._wfcWanted = true;
   const p = video.play();
-  if (p && typeof p.catch === 'function') p.catch(() => {});
+  if (p && typeof p.catch === 'function') {
+    p.catch((err) => {
+      if (err && err.name === 'NotAllowedError') onBlocked(video);
+    });
+  }
 }
 
 function detach(video: Video): () => void {
