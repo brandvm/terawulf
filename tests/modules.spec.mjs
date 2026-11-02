@@ -402,3 +402,22 @@ test('image overlay wipe: reduced motion leaves the images uncovered', async ({ 
   expect(await page.locator('.image-overlay[data-wipe]').count()).toBe(0);
   expect(await overlayWidth(page, 'far')).toBe(0);
 });
+
+test('motion: split text pieces are inline blocks and block lines, as IX3 wrote them', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  // About page id, so the page-scoped "Wulf Section" line reveal applies too.
+  const errors = await setup(page, `<script>document.documentElement.setAttribute('data-wf-page','69ceb1e6dace149b16d5387b')</script>
+    <h2 data-gsap="text-animate" style="font-size:29px">Energy first infrastructure</h2>
+    <div style="height:2000px"></div>
+    <section class="section s-wulf-value"><div class="wulf-value-left"><p>Power secured campuses built for scale and long term growth</p></div></section>
+    <div style="height:2000px"></div>`);
+  await expect.poll(() => page.locator('.gsap_split_letter').count()).toBeGreaterThan(0);
+  const style = (sel) => page.locator(sel).first().evaluate((e) => [getComputedStyle(e).display, getComputedStyle(e).position]);
+  expect(await style('.gsap_split_word')).toEqual(['inline-block', 'relative']);
+  expect(await style('.gsap_split_letter')).toEqual(['inline-block', 'relative']);
+  await page.locator('.s-wulf-value').scrollIntoViewIfNeeded();
+  await expect.poll(() => page.locator('[class*="gsap_split_line"]').count()).toBeGreaterThan(0);
+  expect(await style('.gsap_split_line-mask')).toEqual(['block', 'relative']);
+  expect(await style('.wulf-value-left .gsap_split_line:not([class*="mask"])')).toEqual(['block', 'relative']);
+  expect(errors).toEqual([]);
+});
