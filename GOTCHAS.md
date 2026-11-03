@@ -37,7 +37,7 @@ repos to improve `brandvm/wf-template`.
 - Fix: `motion.ts › split()` sets the same display/position after
   splitting (test "split text pieces are inline blocks…"). SSIM now
   1.000 / 0.998 on mobile Home / About.
-- Status: fixed in v1.4.1
+- Status: harvested into wf-template 0.15.0; fixed in v1.4.1
 - Found by: claude
 
 ### 2026-11-02 · A line split cuts a not-yet-split heading into several h2s
@@ -54,7 +54,7 @@ repos to improve `brandvm/wf-template`.
 - Fix: `motion.ts › build()` builds any pending split nested inside a line
   split's trigger before splitting lines (test "a heading inside a line
   reveal is split first…"). Harness stable over 3 runs.
-- Status: fixed in v1.4.2 (pending release)
+- Status: harvested into wf-template 0.15.0; fixed in v1.4.2 (pending release)
 - Found by: claude
 
 ### 2026-11-02 · IX2 is invisible to the MCP; `data-w-id` is not an attribute
@@ -71,7 +71,7 @@ repos to improve `brandvm/wf-template`.
   lists). Removing an IX2 event is a Designer step (Interactions panel).
   Class-scoped events (`appliesTo: "CLASS"`) animate every element with
   the class, not just the one carrying `data-w-id`.
-- Status: open (Designer step at the B6 cutover)
+- Status: harvested into wf-template 0.15.0; open (Designer step at the B6 cutover)
 - Found by: claude
 
 ### 2026-10-09 · Uploading a local image to Webflow without a public URL
