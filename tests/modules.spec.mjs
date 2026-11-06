@@ -440,3 +440,149 @@ test('motion: a heading inside a line reveal is split first and stays one headin
   expect(await page.locator('h2').first().textContent()).toContain('Unmatched Energy Expertise');
   expect(errors).toEqual([]);
 });
+
+// ---- Webflow IX2 replacements (nav, menu, pop-ups, hover, approach, stats).
+// Designer styles these modules rely on, as published.
+const ix2Css = `<style>
+  .g-nav-drop-list{display:none;overflow:hidden}.g-nav-drop-list.w--open{display:block}
+  @media (max-width:991px){.g-nav-menu-w{display:none;max-height:50vh;overflow:scroll}}
+  .g-nav-menu-drawer-close{display:none}
+  .team-card-pop-up{display:none;position:fixed;inset:0}
+  .home-video-pu{display:none;position:fixed;inset:0}
+  .deliver-card{display:flex;position:relative;height:200px}.deliver-card-center{display:none;position:absolute;pointer-events:none}
+  .section-stats{overflow:hidden;height:auto}
+</style>`;
+// Stand-in for Webflow's IX2 store with the given event selectors.
+const webflowIx2 = (selectors) => `window.Webflow={require:(m)=>m==='ix2'?{store:{getState:()=>({ixData:{events:Object.fromEntries(${JSON.stringify(selectors)}.map((s,i)=>['e-'+i,{target:{selector:s}}]))}})}}:undefined};`;
+
+test('ix2: nav dropdown animates open and stays shown while it closes', async ({ page }) => {
+  const errors = await setup(page, ix2Css + `<div class="g-nav-drop"><div class="w-dropdown-toggle"><svg class="icon is_g-nav-icon" width="10" height="10"></svg>About</div>
+    <nav class="g-nav-drop-list"><a href="#">One</a><a href="#">Two</a></nav></div>`);
+  const list = page.locator('.g-nav-drop-list');
+  await expect(page.locator('.g-nav-drop')).toHaveAttribute('data-wfc-dropdown', '');
+  await page.evaluate(() => document.querySelectorAll('.w-dropdown-toggle, .g-nav-drop-list').forEach((e) => e.classList.add('w--open')));
+  await expect.poll(() => list.evaluate((e) => e.getAnimations().length)).toBe(1);
+  await expect.poll(() => page.locator('.icon').evaluate((e) => getComputedStyle(e).rotate), { timeout: 3000 }).toBe('135deg');
+  await page.evaluate(() => document.querySelectorAll('.w--open').forEach((e) => e.classList.remove('w--open')));
+  await expect(list).toHaveAttribute('data-wfc-closing', '');
+  expect(await list.evaluate((e) => getComputedStyle(e).display)).toBe('block');
+  await expect(list).not.toHaveAttribute('data-wfc-closing', /.*/, { timeout: 3000 });
+  await expect(list).toBeHidden();
+  expect(errors).toEqual([]);
+});
+
+test('ix2: mobile menu opens and closes with aria-expanded and Escape', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const errors = await setup(page, ix2Css + `<a href="#" class="g-nav-menu-drawer" aria-label="Menu"><div class="g-nav-menu-drawer-open">=</div><div class="g-nav-menu-drawer-close">x</div></a>
+    <div class="g-nav-menu-w"><a href="/about">About</a></div>`);
+  const drawer = page.locator('.g-nav-menu-drawer'), menu = page.locator('.g-nav-menu-w');
+  await expect(drawer).toHaveAttribute('aria-expanded', 'false');
+  await drawer.click();
+  await expect(drawer).toHaveAttribute('aria-expanded', 'true');
+  await expect(menu).toBeVisible();
+  await expect(page.locator('.g-nav-menu-drawer-close')).toBeVisible();
+  await expect(page.locator('.g-nav-menu-drawer-open')).toBeHidden();
+  expect(await drawer.getAttribute('aria-controls')).toBe(await menu.getAttribute('id'));
+  await page.keyboard.press('Escape');
+  await expect(drawer).toHaveAttribute('aria-expanded', 'false');
+  await expect(menu).toBeHidden({ timeout: 3000 });
+  await expect(drawer).toBeFocused();
+  expect(page.url()).not.toContain('#');
+  expect(errors).toEqual([]);
+});
+
+test('ix2: team pop-up opens from its card (also after being moved), focus and Escape', async ({ page }) => {
+  const errors = await setup(page, ix2Css + `<div class="wrap"><div class="team-card"><div class="team-card-info">Jane Doe</div></div>
+    <div class="team-card-pop-up"><div class="tpu-pu-close">x</div><p>Bio one</p></div></div>
+    <div class="wrap"><div class="team-card"><div class="team-card-info">John Roe</div></div></div>
+    <div class="team-card-pop-up" id="moved"><div class="tpu-pu-close">x</div><p>Bio two</p></div>`);
+  const cards = page.locator('.team-card');
+  await expect(cards.nth(1)).toHaveAttribute('role', 'button');
+  await cards.nth(1).click();
+  await expect(page.locator('#moved')).toBeVisible();
+  await expect(page.locator('#moved')).toHaveAttribute('aria-label', 'John Roe');
+  await expect(page.locator('#moved .tpu-pu-close')).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#moved')).toBeHidden({ timeout: 3000 });
+  await expect(cards.nth(1)).toBeFocused();
+  await cards.nth(0).click();
+  await expect(page.locator('.wrap .team-card-pop-up')).toBeVisible();
+  await page.locator('.wrap .tpu-pu-close').click();
+  await expect(page.locator('.wrap .team-card-pop-up')).toBeHidden({ timeout: 3000 });
+  expect(errors).toEqual([]);
+});
+
+test('ix2: video pop-up shows on its trigger and hides on close', async ({ page }) => {
+  const errors = await setup(page, ix2Css + `<a href="#" class="button-link is_home-video-player">Watch</a>
+    <div class="home-video-pu" data-popup-video-w><video data-popup-video><source src="https://cdn.example/v.mp4"></video><div class="home-video-pu-close" data-popup-video-close>x</div></div>`, { init: spyMedia });
+  const pu = page.locator('.home-video-pu');
+  await page.waitForTimeout(200);
+  await page.click('.is_home-video-player');
+  await expect(pu).toBeVisible();
+  await expect.poll(() => pu.evaluate((e) => +getComputedStyle(e).opacity), { timeout: 3000 }).toBe(1);
+  await page.click('.home-video-pu-close');
+  await expect(pu).toBeHidden({ timeout: 3000 });
+  expect(errors).toEqual([]);
+});
+
+test('ix2: Deliver Card centre shows on hover and keyboard focus (768 px and up)', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  const errors = await setup(page, ix2Css + `<a href="#" class="deliver-card"><div class="deliver-card-center">image</div><p>Text</p></a><p id="away">Away</p>`);
+  const center = page.locator('.deliver-card-center');
+  await expect(page.locator('.deliver-card')).toHaveAttribute('data-wfc-hover', '');
+  await expect(center).toBeHidden();
+  await page.hover('.deliver-card');
+  await expect.poll(() => center.evaluate((e) => +getComputedStyle(e).opacity), { timeout: 3000 }).toBe(1);
+  await page.hover('#away');
+  await expect(center).toBeHidden({ timeout: 3000 });
+  await page.focus('.deliver-card');
+  await expect(center).toBeVisible({ timeout: 3000 });
+  expect(errors).toEqual([]);
+});
+
+test('ix2: approach section zooms in view and resets out of view', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  const errors = await setup(page, `<div style="height:2000px"></div><section class="section s-approach" style="height:600px;overflow:hidden"><div class="parallax-w" style="height:100%"></div></section><div style="height:2000px"></div>`);
+  const s = page.locator('.s-approach');
+  await expect(s).not.toHaveAttribute('data-wfc-in', /.*/);
+  await s.evaluate((e) => window.scrollTo(0, e.offsetTop - 200));
+  await expect(s).toHaveAttribute('data-wfc-in', '');
+  await expect.poll(() => page.locator('.parallax-w').evaluate((e) => getComputedStyle(e).scale), { timeout: 3000 }).toBe('1.2');
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await expect(s).not.toHaveAttribute('data-wfc-in', /.*/);
+  expect(errors).toEqual([]);
+});
+
+test('ix2: stats "show more" starts collapsed, expands and collapses', async ({ page }) => {
+  const errors = await setup(page, ix2Css + `<div class="section-stats"><div style="height:60px">Row</div>
+    <a href="#" class="section-stat link-underline is_show-more"><span class="text-more">More</span><span class="text-less">Less</span></a>
+    <div style="height:300px">More rows</div></div>`);
+  const panel = page.locator('.section-stats'), btn = page.locator('.is_show-more');
+  expect(await panel.evaluate((e) => e.getBoundingClientRect().height)).toBe(80);
+  await expect(btn).toHaveAttribute('aria-expanded', 'false');
+  await btn.click();
+  await expect(btn).toHaveAttribute('aria-expanded', 'true');
+  await expect.poll(() => panel.evaluate((e) => Math.round(e.getBoundingClientRect().height)), { timeout: 3000 }).toBeGreaterThan(300);
+  await btn.click();
+  await expect.poll(() => panel.evaluate((e) => Math.round(e.getBoundingClientRect().height)), { timeout: 3000 }).toBe(80);
+  expect(page.url()).not.toContain('#');
+  expect(errors).toEqual([]);
+});
+
+test('ix2: every replacement stays off while Webflow IX2 still runs it', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const live = ['.g-nav-drop', '.g-nav-menu-drawer', '.team-card', '.tpu-pu-close', '.deliver-card', '.section.s-approach', '.section-stat.link-underline.is_show-more', '.button-link.is_home-video-player', '.about-intro-visual-w', '.home-video-pu-close'];
+  const errors = await setup(page, `<script>${webflowIx2(live)}</script>` + ix2Css + `
+    <div class="g-nav-drop"><nav class="g-nav-drop-list"></nav></div>
+    <a href="#x" class="g-nav-menu-drawer">M</a><div class="g-nav-menu-w">menu</div>
+    <div class="team-card">c</div><div class="team-card-pop-up"></div>
+    <div class="deliver-card"><div class="deliver-card-center"></div></div>
+    <section class="section s-approach"><div class="parallax-w"></div></section>
+    <div class="section-stats"><a href="#y" class="section-stat link-underline is_show-more">m</a></div>`);
+  await page.waitForTimeout(300);
+  const marks = await page.evaluate(() => document.querySelectorAll('[data-wfc-dropdown],[data-wfc-hover],[data-wfc-scale],[aria-expanded],[role="dialog"]').length);
+  expect(marks).toBe(0);
+  await page.click('.g-nav-menu-drawer');
+  await expect(page.locator('.g-nav-menu-w')).toBeHidden();
+  expect(errors).toEqual([]);
+});

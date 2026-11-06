@@ -38,11 +38,10 @@ the MCP cannot list IX2). Full table: `docs/rollback/2026-11-02/README.md`.
 - e-19 "Image Overlay \| Hide" on About `.image-overlay` (all 6): the one
   that writes `data-w-id` on the first `.image-overlay.is_left`. Replaced
   by `image-overlay-wipe.ts`; delete at the B6 cutover.
-- Stays in Webflow: nav dropdown and mobile menu drawer (G \| Navigation),
-  Deliver Card hover, stats "show more", Our Impact approach section in/out
-  view, About team pop-up open/close, Home/About video pop-up open/close
-  (the wrappers' inline `display:none; opacity:0; scale 0.8` is their
-  initial state).
+- The other 14 (nav dropdown and mobile menu drawer, Deliver Card hover,
+  stats "show more", Our Impact approach section in/out view, About team
+  pop-up, Home/About video pop-up) are rebuilt in the repo for B7:
+  `ix2-to-repo.md`. They stay in Webflow until that cutover.
 
 Status 2026-11-02: the 21 IX3 interactions above are unchanged (ids,
 triggers, timelines match `ix3-spec.json`; What We Do Stack now states the

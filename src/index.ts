@@ -13,6 +13,12 @@ import { initAutoplayVideo } from './modules/autoplay-video';
 import { initVideoToggle } from './modules/video-toggle';
 import { initMotion } from './modules/motion';
 import { initImageOverlayWipe } from './modules/image-overlay-wipe';
+import { initNavDropdown } from './modules/nav-dropdown';
+import { initNavMenu } from './modules/nav-menu';
+import { initTeamPopup } from './modules/team-popup';
+import { initDeliverCard } from './modules/deliver-card';
+import { initApproachScale } from './modules/approach-scale';
+import { initStatsMore } from './modules/stats-more';
 import { initFinsweetLoader } from './modules/finsweet-loader';
 import { initResizeReload } from './modules/resize-reload';
 import { initHashScroll } from './modules/hash-scroll';
@@ -40,6 +46,12 @@ function boot() {
   run('video-toggle', initVideoToggle);
   run('motion', initMotion);
   run('image-overlay-wipe', initImageOverlayWipe);
+  run('nav-dropdown', initNavDropdown);
+  run('nav-menu', initNavMenu);
+  run('team-popup', initTeamPopup);
+  run('deliver-card', initDeliverCard);
+  run('approach-scale', initApproachScale);
+  run('stats-more', initStatsMore);
   run('finsweet-loader', initFinsweetLoader); // last, as the recipe asks
   run('resize-reload', initResizeReload);
   run('hash-scroll', initHashScroll);

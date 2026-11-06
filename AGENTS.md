@@ -69,9 +69,9 @@ Adopted from `brandvm/wf-template` 0.1.0 (63bfb79) on 2026-10-09
   Inventory as of 2026-10-09: IX3 on every page (`data-gsap` text/para
   reveals, hero, page headers, parallax, stats, timeline overlays, smoke and
   home-transition on desktop); IX2: 15 events (corrected 2026-11-02,
-  `docs/audit/ix-inventory.md`) — only the About image-overlay wipe moves
-  to the repo in B6; the nav dropdown/menu, pop-ups and hovers stay IX2
-  for now.
+  `docs/audit/ix-inventory.md`) — the About image-overlay wipe moved in
+  B6, the other 14 (nav dropdown/menu, pop-ups, hovers, stats) in B7
+  (`docs/audit/ix2-to-repo.md`).
 - **Release = two strings** (TeraWulf loader): `RELEASE` in head code AND
   the `@x.y.z` in Embed 2a's href (G | Embed Code). 2a pins the release so
   production downloads the CSS once (GOTCHAS 2026-10-09). 2b logs a console
