@@ -7,7 +7,7 @@ source of agent rules — edit this file, never a copy of it.
 ## Project facts
 
 Adopted from `brandvm/wf-template` 0.1.0 (63bfb79) on 2026-10-09; skills,
-tooling and loader updated to template **1.0.0** on 2026-11-20
+tooling and loader updated to template **1.0.1** on 2026-11-20
 (`.wf-template.json`). The repo predates the template layout.
 
 - Client / site: TeraWulf (live, SEO/AEO/GEO retainer)
