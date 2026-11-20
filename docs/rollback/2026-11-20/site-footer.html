@@ -1,0 +1,37 @@
+<!-- brandvm/terawulf loader, piece 3 of loader.html -->
+<script>
+  (function () {
+    var C = window.WFC;
+    if (!C) return console.error("[wfc] Head code config missing; custom code not loaded.");
+    if (!document.getElementById("wfc-css"))
+      console.warn("[wfc] CSS embed not found on this page; styles are missing.");
+    function js(src, fallback) {
+      // Set before execution so the switcher sees the bundle that actually
+      // loads, including local -> staging and staging -> pinned fallbacks.
+      C.source = new URL(".", src).href;
+      if (C.source !== C.devBase) {
+        var devCSS = document.getElementById("wfc-css-dev");
+        if (devCSS) devCSS.remove();
+        var baseCSS = document.getElementById("wfc-css");
+        var next = C.source + "styles.css" + new URL(src).search;
+        // Every href write drops the sheet and fetches it again: only change it
+        // when the URL really differs.
+        if (baseCSS && baseCSS.href !== next) baseCSS.href = next;
+      }
+      var s = document.createElement("script");
+      s.src = src;
+      if (fallback) s.onerror = fallback;
+      document.head.appendChild(s);
+    }
+    var v = C.v || "?v=" + Date.now();
+    if (C.dev)
+      js(C.devBase + "index.js", function () {
+        js(C.stag + "index.js" + v);
+      });
+    else if (C.staging)
+      js(C.stag + "index.js" + v, C.release ? function () {
+        js(C.prod + "index.js");
+      } : null);
+    else js(C.prod + "index.js" + (C.release ? "" : v));
+  })();
+</script>
