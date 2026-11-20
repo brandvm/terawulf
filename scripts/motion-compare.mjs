@@ -22,7 +22,7 @@ async function open(mode, p, w, h) {
   }
   const url = mode==='new' ? 'https://terawulff.webflow.io'+p+'?wfc-motion=1&wfc-dev=0' : 'https://www.terawulf.com'+p;
   await pg.goto(url, {waitUntil:'load', timeout:90000}); await pg.waitForTimeout(4000);
-  await pg.addStyleTag({content:'#wfc-environment,canvas,video{visibility:hidden!important}'});
+  await pg.addStyleTag({content:'canvas,video{visibility:hidden!important}'});
   return {pg, ctx, errs};
 }
 const pages = process.argv.slice(2).length ? process.argv.slice(2) : ['/','/about','/our-operations','/our-expertise','/our-impact','/news'];

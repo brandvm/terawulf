@@ -1,6 +1,6 @@
 ---
 name: webflow-build
-description: Build a Webflow site from an approved design (a Figma link or a localhost prototype) with the Webflow MCP and this wf-template repo, section by section, verified against the design at three widths, up to the build handoff. Use when starting a new project ("New project: Webflow site <name>, Figma <link>"), setting up a repo and workspace from wf-template, reading a Figma design, starting a localhost prototype, starting or continuing a Webflow build (Designer through the MCP plus JS/CSS in the repo), comparing Webflow staging with the prototype, checking anchors, page transitions or load flicker, or wrapping up a build session. For launch, use webflow-launch.
+description: Build a Webflow site in Webflow from its approved localhost prototype (built first from the Figma design), with the Webflow MCP and this wf-template repo: variables, tag styles, classes and CMS, the repo port and loader, the style guide page, the media page, components, then pages section by section, each verified against the prototype at four widths, up to the build handoff. Use when building prototype pages from Figma frames, starting or continuing a Webflow build (Designer through the MCP plus JS/CSS in the repo), building components or pages, comparing Webflow staging with the prototype, checking anchors, page transitions, load flicker or the published HTML, or wrapping up a build session. For project setup, the inputs and the Webflow snapshot, use webflow-prototype; for launch, webflow-launch; for a site that is already live, webflow-audit.
 ---
 
 # Webflow build: approved design → Webflow, section by section
@@ -10,22 +10,38 @@ reports. A section is done only when it matches the approved design at every
 width, works after every way of arriving at it, and its manual steps are
 listed.
 
-- [checklists.md](checklists.md) gates the start of the build, each
-  finished page and the build handoff.
+- [checklists.md](checklists.md) gates every step: the design handoff,
+  the Webflow foundation, the media page, each component, each finished
+  page and the build handoff. Progress on them is recorded in
+  `docs/handoff/progress.json` with `pnpm progress` (checklists.md › How
+  to record progress); `pnpm progress show` prints it.
 - [conventions.md](conventions.md) sets the page and section structure,
   class and variable naming, and the component, CMS and style-guide
   patterns every build starts from.
 - [lessons/](lessons/README.md) holds what cost time on earlier builds, by
   area. Read the file for the area you are about to work in.
-- [prototype-starter/](prototype-starter/README.md) is a localhost
-  prototype that mirrors Webflow, for when the design is built and approved
-  in code first.
-- [figma.md](figma.md) reads a design from a Figma link through the Figma
-  connector: frames per breakpoint, screenshots, variables, measurements.
+- [reference/](reference/README.md) keeps Webflow's default stylesheet,
+  what every property a class leaves unset falls back to, and the
+  defaults that most often cause trouble.
+- The prototype comes first, always: it is built from the Figma file,
+  page by page, and the client approves it before anything is built in Webflow.
+  The steps are below (The prototype, from Figma); the
+  `webflow-prototype` skill has project setup, the inputs, the snapshot
+  and the style guide, and its [figma.md](../webflow-prototype/figma.md)
+  how to read the file.
+- [rules.md](rules.md) has the rules every Webflow skill shares (no commit
+  or push without an OK, Designer first, no credentials in chat, manual
+  steps, lessons), the session wrap-up and how to contribute back.
 - [starter-site.md](starter-site.md) describes the starter Webflow site a
   project duplicates, with the base system already in it.
-- [style-guide.md](style-guide.md) is how to make a project's style guide
-  page when asked: prototype first, then Webflow, then the staging checks.
+- The `webflow-style-guide` skill makes the style guide page, the first
+  page of the prototype and of the Webflow build, in the one layout every
+  site uses.
+- [media.md](media.md) is the media page: where a site's videos are
+  uploaded so Webflow converts and hosts them, built before the first page
+  that plays one.
+- A site that is already live is not a build: use the `webflow-audit`
+  skill (audit, then small verified batches; also for one-off fixes).
 - After the build handoff, the `webflow-launch` skill takes over: pre-launch
   QA, launch day, the client handoff and the first 30 days.
 
@@ -40,52 +56,147 @@ Every checklist item says who does it:
 
 1. Read the workspace `CLAUDE.md`, then this repo's `AGENTS.md` and
    `GOTCHAS.md`, then `docs/handoff/` (`HANDOFF.md`, `MANUAL-TODO.md`,
-   `BUILD-NOTES.md`). Skim [lessons/README.md](lessons/README.md) and read
-   the lesson file for today's area (MCP work: `lessons/mcp.md`). Never
-   repeat a mistake already logged.
+   `BUILD-NOTES.md`, and `REVIEW.md` once the review phase has started).
+   Skim [lessons/README.md](lessons/README.md) and read the lesson file
+   for today's area (MCP work: `lessons/mcp.md`). Never repeat a mistake
+   already logged.
 2. Read the project memory: where the last session stopped, open manual
-   steps, open questions. Say in one line where things stand and what's
-   next; ask which page or section if it isn't clear.
-3. On a new project, run **Before the prototype** in `checklists.md`
-   first, and **Before building** before the first Webflow batch. Agree
+   steps, open questions. Run `pnpm progress show` for the stage, the
+   checklists still open and the person's own to-dos. Say in one line
+   where things stand and what's next; ask which page or section if it
+   isn't clear.
+3. Run **Before building** in `checklists.md` before the first Webflow
+   batch; the **Prototype** stage before it is done (the inputs are
+   `webflow-prototype`'s). Agree
    any change to `conventions.md` with the designer. If an input is
    missing, ask for it; don't guess content, states or SEO fields.
 4. Webflow MCP: call `webflow_guide_tool` once, then reuse one session id
    and agent id for the whole session.
 5. The prototype dev server is running and `webflow-build.config.json`
-   exists (`pnpm new-project` writes it; see Project setup).
+   exists (`pnpm new-project` writes it; `webflow-prototype` › Project
+   setup).
 6. Today's scope is one page (see Working rhythm). Say which.
 
-## Standing rules (unless the project's own rules say otherwise)
+## Standing rules
 
-- **Never commit or push without an explicit OK.** List the touched files
-  first; group related changes into one ask. Work on the default branch.
-- **Designer first.** Anything the Designer can express (classes, combos,
-  variables, breakpoint styles, states, custom properties) goes in Webflow.
-  Repo CSS only with a `repo-css: <tag>` reason (see `AGENTS.md`).
+The shared rules are in [rules.md](rules.md). The build adds:
+
 - **Ask before creating, editing or removing classes and variables**, one
   batch at a time, with names and values. A request that clearly implies
   them (e.g. "build it in Webflow" after approving a mock) is the OK.
-- **Publishing to the webflow.io staging domain is fine.** Never publish to
-  a custom domain, cut a release or change DNS without asking.
-- **No credentials in chat.** Logins come through the team's password vault
-  or the person's own sessions; never ask for, store or repeat a password,
-  API key or token.
-- **Manual steps** the API can't do go in `docs/handoff/MANUAL-TODO.md`
-  (lettered A, B, C…) with *why* the API can't. Mark them done when the person says so.
-- **Log surprises** in `GOTCHAS.md` in the same change as the fix, with the
-  file's entry format; tag `template-candidate` when it would recur on any
-  wf-template project.
-- When the person corrects you, update the fix everywhere it applies and
-  say so. Don't argue; verify.
+- **Publishing depends on whether the site is live.**
+  - *New build (no custom domain attached):* publishing to the webflow.io
+    staging domain is fine.
+  - *Live site:* a publish is site-wide. It sends out everything pending,
+    including other people's unfinished edits. Publish to staging only,
+    check what else would go live, and wait for the person to type
+    "publish" before the custom domain (`webflow-audit` has the steps).
+  - Never publish to a custom domain, cut a release or change DNS without
+    asking.
+- **After every Webflow write batch, say two things:** "reload the
+  Designer" (an open Designer tab doesn't show MCP changes, and saving
+  from a stale tab can overwrite them), and what is not published yet.
+- **Mark manual steps on the page.** A `MANUAL-TODO.md` row that leaves
+  something visibly unfinished (a value still missing, a binding not
+  made) gets a marker next to the element, or next to its specimen on the
+  style guide: a Caption with `data-manual-todo="<letter>"` and the text
+  "Manual step <letter>: <what>". It shows on the canvas and on staging,
+  so nobody reviews the unfinished state as the design. Remove it in the
+  batch that ticks the row; none may be left at the build handoff or at
+  launch (search the published HTML for `data-manual-todo`).
+
+## The prototype, from Figma
+
+Every site starts from a Figma file. The prototype is built from it, page
+by page, and approved before anything is built in Webflow.
+
+`pnpm new-project` sets up the workspace with an empty `prototype/` (a
+copy of [prototype-starter/](../webflow-prototype/prototype-starter/README.md)).
+List the frames, agree the pages, their order and addresses with the
+person, then build one page at a time. When the Figma file changes later,
+update only the pages whose frames changed, change only what changed in
+those frames, and keep edits made in the prototype since.
+
+**One page:**
+
+1. **Its frames.** Frames with the same name across Desktop, Tablet and
+   Mobile are one page. Read each with the Figma connector
+   (`get_design_context`, `get_screenshot`, `get_variable_defs`) or the
+   Figma app's MCP server ([figma.md](../webflow-prototype/figma.md)).
+   No Tablet frame: draw Tablet between Desktop and Mobile. No Mobile
+   frame: make it work on a phone from the larger frames, and say so.
+   Frames that aren't pages (the style guide) are read for tokens, type
+   and components.
+2. **Tokens** from the file's variables and text styles, as CSS custom
+   properties: changes to the snapshot's variables and new ones in
+   `src/css/proposed.css` (old → new), named by `conventions.md` §4;
+   never in the generated `tokens.css`.
+3. **Fonts** the text styles use, in `public/fonts/` with their licence,
+   declared in `src/css/prototype.css` and preloaded in
+   `partials/head.html`.
+4. **Images** exported from the file into `prototype/images/`: photos as
+   WebP at the largest size the design uses, icons as SVG.
+5. **Only what's in the file.** A value, state, text or image the file
+   doesn't give is a question: ask before inventing it.
+6. **Where it goes:** `prototype/<page>/index.html` at its Webflow address
+   (Home is `prototype/index.html`), added to `pages` in
+   `prototype/vite.config.js`. Nav and footer are shared partials. Change
+   only that page, plus the partials and tokens it needs. Don't commit,
+   push or publish.
+7. **Check** it beside its frames at Desktop, Tablet and Mobile, and that
+   the Figma prototype's links work (menus, tabs, forms).
+
+Then the page runs **Prototype page done** (`webflow-prototype`'s
+[checklists.md](../webflow-prototype/checklists.md)) and the person
+approves it. The **Prototype** stage in
+[checklists.md](checklists.md) tracks it all, up to the client's approval
+in writing:
+
+- each page matches its Figma frame at Desktop, Tablet and Mobile
+  (the Matches the Figma frame item);
+- the Figma file is linked to the client;
+- frames picked, in order, each with its page address;
+- every picked frame built as a prototype page;
+- tokens, fonts and images come from the file; nothing made up;
+- the Figma prototype's links work;
+- each page approved in the prototype;
+- the client approved the prototype in writing.
+
+## The order of a build
+
+It starts once the **Prototype** stage is done. Structure and names follow
+`conventions.md`. Each step is gated in `checklists.md`:
+
+1. variables;
+2. tag styles (set once in the Designer so the MCP can reach them);
+3. classes;
+4. CMS collections;
+5. the repo port (modules and repo CSS from the prototype) and the
+   loader, so staging runs the real code → **Foundation done**;
+6. the style guide page, the first page built
+   (`webflow-style-guide` skill) → **Style guide base done**;
+7. the media page, when any page plays a video
+   ([media.md](media.md)) → **Media done**;
+8. components, built from the real page markup (never from style guide
+   previews), each adding its style guide row → **Component done**;
+9. pages, section by section → **Page done**;
+10. the style guide final check, then **Build handoff**;
+11. the review phase: `docs/handoff/REVIEW.md` lists what is built per
+    page, each feedback round and what is left before launch, until the
+    `webflow-launch` skill takes over.
+
+A site duplicated from the starter already has the base of steps 1 to
+3 and the page shell; the project adds to it. Before each import run
+`pnpm wf:preflight`; plan class batches with `pnpm wf:styles`
+(see Checks).
 
 ## The section loop
 
 For each section, in page order:
 
-1. **Read the design**: prototype markup, CSS and the module that animates
-   it; or the Figma frame, its states and the interaction spec. Note every
-   `data-*` hook, id and aria attribute.
+1. **Read the prototype**: its markup, CSS and the module that animates
+   it, with the page's Figma frame for states and the interaction spec.
+   Note every `data-*` hook, id and aria attribute.
 2. **Check what Webflow has**: classes (`query_styles`), components and
    their props, CMS fields, assets. Reuse before creating; name anything
    new by `conventions.md` (sections 2–4).
@@ -130,6 +241,11 @@ When a page is complete, run **Page done** in `checklists.md`.
   font-size 0).
 - Every grid sets at least one row and one column template; centre single
   children with flex, not grid.
+- An element drawn only by a pseudo-element (an icon font glyph) gets a
+  space as its text (`set_settings`, key `text`), so it is not empty on
+  the canvas. Webflow publishes it as a non-breaking space, which takes
+  room: size the element (1em × 1em) and align its content to flex-start
+  so the space can't move the glyph.
 - No style values only the MCP can see: if the Designer can't display it,
   it belongs in repo CSS with a tag.
 
@@ -139,7 +255,9 @@ The scripts are in this skill's `scripts/` folder, with a `pnpm` shortcut
 each. They read `webflow-build.config.json` from the current directory or a
 parent (the example is `webflow-build.config.example.json`). By default
 staging loads this repo's local `dist/`, so code can be checked before a
-push; `--live` checks what visitors get. Screenshots go to
+push; `--live` checks what visitors get (`seo`, `install`, `parity`,
+`tracking` and `redirects` check the custom domain in `liveUrl` with it;
+`domain` always does). Screenshots go to
 `.webflow-build/` next to the config.
 
 ```bash
@@ -150,8 +268,27 @@ pnpm wf:outline /path                                            # heading outli
 pnpm wf:film /path [selector] [width]                            # first seconds of a load (flicker)
 pnpm wf:transitions /start /a /b [--width W]                     # Barba swaps, leaks, full page loads
 pnpm wf:a11y [/path…] [--all-widths]                             # axe scan, WCAG 2.2 A/AA rules
-pnpm wf:links [/path…] [--max 50] [--external]                   # crawl: broken, # and placeholder links
+pnpm wf:links [/path…] [--max 50] [--external]                   # crawl: broken and # links, placeholder text and images, http content, privacy link
 pnpm wf:baseline save|compare [/path…]                           # full-page visual baselines (launch, releases)
+pnpm wf:html [/path…]                                            # published HTML: what Webflow changed on publish
+pnpm wf:perf [/path…] [--runs 5] [--mobile|--desktop]            # Lighthouse, median of several runs
+pnpm wf:seo [/path…] [--live] [--canonical]                      # sitemap crawl: titles, OG, one h1, JSON-LD, noindex
+pnpm wf:install [/path…] [--live]                                # installed snippets vs loader.html, localhost requests
+pnpm wf:parity [/path…] [--live] [--width W] [--control]         # migration: old custom code vs dist/, every element
+pnpm wf:overflow [/path…] [--live] [--width W[,W…]] [--why]     # what runs off the right edge, 2560 … 360
+pnpm wf:tracking [/path…] [--live]                               # tags, double page views, cookie consent, gclid/UTM (hits blocked)
+pnpm wf:redirects map [--from URL] [--existing export.csv]       # old site → new pages, Webflow 301 import file
+pnpm wf:redirects test [--live] [--file urls.txt]                # every redirect lands in one permanent hop
+pnpm wf:domain                                                   # liveUrl: certificate, domain renewal, DNS host, http/www redirects
+```
+
+Two more read the prototype's files, with no browser and no Webflow
+(`--root <dir>`, else `prototypeDir` in the config, default
+`../prototype`):
+
+```bash
+pnpm wf:preflight [/path…] [--strict]   # markup the importer or publisher will change: FIX now, or PLAN the step
+pnpm wf:styles                          # new classes sorted into: connector / by hand in the Designer / repo CSS
 ```
 
 Paths default to `pages` in the config, else `/`.
@@ -177,17 +314,60 @@ Reading results:
   one is in the known issues.
 - `baseline`: `CHANGED` rows have before/after PNGs; expected changes →
   `save` again and commit.
+- `html`: every finding is something no canvas or API read shows: a field
+  published as `name="field"`, a link standing in for a button, a variant
+  whose class is on no element, a class no stylesheet defines (a
+  conditional class with a typo), a script hook the prototype has and the
+  published page lost. Exits 1 on any finding.
+- `perf`: read the median, and the range next to it. A change smaller
+  than the range is noise, not a result. It always measures the deployed
+  bundle.
+- `seo`: pages from `sitemap.xml`, else a crawl from `pages`. Missing
+  title, description or OG tags, not one `<h1>`, and JSON-LD that doesn't
+  parse or holds an HTML entity (`&#39;`) fail; noindex pages are listed,
+  and fail with `--live` unless `seo.noindexOk` allows them. Long titles,
+  short descriptions and pages with no JSON-LD (outside `seo.noSchemaOk`)
+  are notes.
+- `install`: a loader piece (head code, Embed 2a, 2b, footer code) that
+  differs from `loader.html` is an old paste: re-paste it and publish.
+  Also fails on two viewport metas, two Finsweet Attributes tags and any
+  request to localhost from the page.
+- `parity`: every difference is a change the live site would see. Run
+  `--control` first: what differs between two renders of the published
+  page is noise, for `parity.ignore`. Screenshot pairs are in
+  `.webflow-build/parity/`.
+- `overflow`: each row is the first element of a chain whose visible
+  right edge passes the viewport, with the widths and the worst
+  overshoot; a page that scrolls sideways is its own finding. The sweep
+  covers the widths the three checks miss (1366, 1280, 1024, 992…), where
+  the fluid scale holds and fixed sizes stop fitting. Clipped content
+  (slider masks, marquees), off-canvas menus and hidden elements are
+  skipped; `--why` lists them, `overflow.ignore` adds selectors. A row
+  marked "moved by a transform" may be an animation's start state: check
+  it after the animation has played. Fixes are Designer fixes:
+  `minmax(0, 1fr)` columns, `min-width: 0` on flex and grid children,
+  wrapping instead of fixed widths.
+- `preflight`: **FIX** means change the prototype markup now (an empty
+  span as a shape, a control outside a form, a valueless boolean, an inline
+  style, a class in no CSS file). **PLAN** means the markup is right and
+  the build needs a known extra step (a button, a span inside text, image
+  attributes, a placeholder).
+- `styles`: the plan for the class batches, saved to
+  `.webflow-build/styles/styles-plan.json`. **connector** lines are what
+  to propose; every **BY HAND** line becomes a row in `MANUAL-TODO.md`
+  before the batch, not after; **Repo CSS** rules go to `src/styles.css`
+  with the tag shown. It writes nothing to Webflow.
 
-Run `compare` per section while building; `pass`, `outline`, `anchors`,
-`a11y` and `links` when a page is done; `load-film` after touching the hero or the loader;
+Run `preflight` on a prototype page before it is approved and again before
+its import; `styles` before the first class batch and whenever
+`new-classes*.css` changes; `compare` per section while building; `pass`,
+`outline`, `anchors`, `a11y`, `links`, `html` and `overflow` when a page is done;
+`perf` at the build handoff and before and after any speed work;
+`install` after every paste of a loader piece; `seo` before launch; `load-film` after touching the hero or the loader;
 `transitions` after touching pages, links or modules. Check all three
 widths (Webflow's breakpoints are 991/767/479). For interactions, script
 the hover, click or scroll state and compare that, not only the resting
 state.
-
-The prototype comparison needs a localhost prototype. With a Figma-only
-handoff, review against the frame screenshots in `Assets/figma/`
-([figma.md](figma.md)) and run the other scripts as they are.
 
 ## Repo work
 
@@ -205,82 +385,50 @@ handoff, review against the frame screenshots in `Assets/figma/`
   section's `.pin-spacer`; pause scroll snapping during the glide.
 - Never put `backdrop-filter`, `filter` or `transform` on a wrapper that
   holds `position: fixed` children.
-- Libraries are bundled, never Webflow script tags. Finsweet Attributes:
-  [recipes/finsweet/](recipes/finsweet/README.md).
+- Libraries are bundled, never Webflow script tags. Copy-in recipes:
+  [finsweet](recipes/finsweet/README.md) (Finsweet Attributes),
+  [phosphor](recipes/phosphor/README.md), [video](recipes/video/README.md),
+  [anchor-scroll](recipes/anchor-scroll/README.md),
+  [smooth-scroll](recipes/smooth-scroll/README.md) (GSAP + Lenis),
+  [barba](recipes/barba/README.md), [modal](recipes/modal/README.md),
+  [snippets](recipes/snippets/README.md) (count-up, marquee, FAQ, tabs,
+  dropdown close, resize reload, page-loader backstop, IX3 fallback).
 - Sizes follow the fluid scaling in `src/styles.css` §01: Webflow
   variables in em, the desktop frame set to the design before building.
 - Loader snippets aren't versioned: any `loader.html` change must be
   re-pasted in Webflow (a manual step).
 
-## Project setup (new project)
+## Migrating a live site
 
-The flow starts from one message (README › Starting a project), e.g.
-*"New project: Webflow site <name>, Figma <link>. Set up the repo and
-workspace, run Before the prototype, then build the prototype page by page;
-wait for my go-ahead before any Webflow change."*
+Moving a site that is already live onto the template (its old custom
+code hosted elsewhere) happens in two phases, never one:
 
-Before it, a person has created the repo from the template on GitHub,
-cloned it into its own client folder (`<Client>/wf-<client>/`), and
-duplicated the starter site under the client's name
-([starter-site.md](starter-site.md)).
+1. **Parity first.** The port reproduces the live site with no visual,
+   content or behaviour change. Map each old custom-code asset in
+   `parity.oldAssets` (a URL regex → `index.js`, `styles.css`, or `""` for
+   a library the bundle now carries), then `pnpm wf:parity --live` on every
+   template page at every width until it reports zero differences, or
+   each one is explained. Only then paste the loader and remove the old
+   code, and run `pnpm wf:install --live`.
+2. **Improvements second**, in later releases, one at a time, each
+   re-checked with `wf:parity` and shown to the person.
 
-1. **Skills first.** Offer `pnpm update-skills` (ask; it replaces local
-   skill edits), so the project starts on the latest lessons.
-2. **Find the site.** Through the Webflow connector, list the sites and
-   match the name the person gave: the site ID and the short name (the
-   staging subdomain, `<short name>.webflow.io`). Two matches or none →
-   ask. Read the GitHub org and repo from `git remote get-url origin`.
-3. **Fill in the repo and set up the workspace:**
-
-   ```bash
-   pnpm install
-   pnpm new-project --client "<Client>" --slug <short name> --org <org> --site-id <id>
-   ```
-
-   It fills in the project facts in `AGENTS.md`, the `package.json` name,
-   `REPO` in `loader.html` and the handoff title, and writes
-   `webflow-build.config.json`. Around the repo it creates the workspace:
-   `<Client>/CLAUDE.md` (imports `AGENTS.md`, `GOTCHAS.md` and
-   `docs/handoff/`), `.mcp.json`, links to the skills, `prototype/` (a copy
-   of [prototype-starter/](prototype-starter/README.md)) and `Assets/`.
-   Write the Figma link into the workspace `CLAUDE.md` (Design line). Ask
-   for any value you can't find; never guess.
-4. **List the person's steps, in this order,** and track them in
-   `docs/handoff/MANUAL-TODO.md` until done:
-   1. Repo Settings → Pages → Source: GitHub Actions; add the developers
-      team.
-   2. First push: Claude asks to commit the setup; after the push the
-      staging workflow must pass (`https://<org>.github.io/<repo>/styles.css`
-      loads).
-   3. Paste the loader from `loader.html` (ORG and REPO are now filled
-      in): head code and footer code in Site settings. Embeds 2a and 2b
-      already sit in G | Components with placeholders: Claude fills
-      them in through the MCP after the go-ahead, or the person pastes
-      them.
-   4. Staging password and noindex until launch.
-5. **Move to the workspace.** From the next session, Claude is opened in
-   `<Client>/`, not in the repo: that is where the MCP server, the skills
-   and the imports are set up. Run `pnpm install` in `prototype/`.
-6. **Inputs, then the prototype.** Run **Before the prototype** in
-   `checklists.md`, read the design ([figma.md](figma.md)), take the
-   Webflow snapshot, and build the prototype page by page.
-7. Fill in `docs/handoff/HANDOFF.md` from the design; keep
-   `MANUAL-TODO.md` and `BUILD-NOTES.md` current from the first session.
-8. Structure and names follow `conventions.md`. Webflow order: approve
-   variables → classes → tag styles (set once in the Designer so the MCP
-   can reach them) → CMS collections → style guide page
-   (every class used, so cleanup can't delete them) → components → pages,
-   section by section. A site duplicated from the starter already has the
-   base of each; the project adds to it.
+Template defaults that change a live site are improvements, not parity:
+check each before the first release and keep it off until approved. The
+scroll lock (`html.is-loading` in the head code and `src/styles.css`),
+the `theme-color` meta in the head code, the icon font in the bundle
+(`pnpm phosphor`), and the base CSS (`box-sizing`, the §01 type scaling)
+all show up in `wf:parity` if the live site didn't have them.
 
 ## Working rhythm
 
 - **One page per session, finished completely:** built, checked at every
   width, its states and SEO fields done, **Page done** run, handoff
   updated. Half-built pages are where shortcuts get forgotten.
-- **Page-by-page approval.** The designer approves each prototype page
-  before its Webflow build, and each Webflow page before the next one
-  starts.
+- **Page-by-page approval.** The client approves each prototype page
+  (after **Prototype page done**), then the whole prototype in writing,
+  before its Webflow build; the designer approves each
+  Webflow page before the next one starts.
 - **A go-ahead before each Webflow batch.** Propose the batch (variables
   old → new, classes with what they are for, the elements to build), wait
   for the OK, write it, report what changed. Approval of one batch never
@@ -288,47 +436,13 @@ duplicated the starter site under the client's name
 - **`docs/handoff/` stays current** during the session, not at the end:
   a decision goes into `HANDOFF.md` when it is made, a manual step into
   `MANUAL-TODO.md` when it is found.
+- **After the build handoff, review.** Fill in `docs/handoff/REVIEW.md`:
+  what is built per page, then one table per feedback round, the next
+  free `MANUAL-TODO.md` letter and the list of what has to happen before
+  launch.
 - **Lessons go back.** At wrap-up, offer every `template-candidate`
-  lesson to the template (see Contributing).
+  lesson to the template ([rules.md](rules.md) › Contributing).
 
-## Session wrap-up
+## Session wrap-up and contributing
 
-1. Everything published; repo clean or the commit ask made.
-2. `GOTCHAS.md` updated; `docs/handoff/` current.
-3. Project memory updated: where things stand, last commit, next step,
-   open questions.
-4. Short report: done today, next, open questions.
-5. If the session taught something the next project should know, offer to
-   contribute it back (see Contributing).
-
-## Contributing
-
-This skill lives in the template repository this project was created from
-(`template` in `.wf-template.json`), at
-`.claude/skills/webflow-build/` (with `webflow-launch` next to it). Anyone
-with a GitHub account can improve it: fork the repo, change the skill or
-its lessons, and open a pull request. A repo created from the template
-gets later skill versions with `pnpm update-skills` (recorded in
-`.wf-template.json`); ask before running it, since it replaces local edits
-to the skills.
-
-**When to offer a contribution** (Claude, at wrap-up or when it happens):
-- a `template-candidate` lesson that isn't in `lessons/` yet;
-- a fix or improvement to a check script, or a new check worth reusing;
-- a checklist item that turned out to be missing or wrong.
-
-**How:** say what you'd contribute and why, in two or three lines, and ask.
-Follow the template's `CONTRIBUTING.md` (version bump and changelog
-entry).
-With an OK, prepare the change against a fresh clone of `wf-template`
-(never the client repo), keep it generic (no client names, URLs, people or
-credentials), and open a pull request from a branch or fork with `gh pr
-create`. Never push to the template's default branch unless the person
-says so. If the person has no write access, fork first.
-
-**What a good contribution looks like:**
-- lessons follow the `GOTCHAS.md` entry format (without Scope), go in the
-  file for their area, say what happened and why, and give a fix someone
-  else can apply, with client names, copy and project details made generic;
-- scripts keep working from the config file alone (no hard-coded sites);
-- checklist items keep their [Claude] / [Claude checks] / [Person] tag.
+Both are in [rules.md](rules.md).

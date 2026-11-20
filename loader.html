@@ -1,24 +1,14 @@
 <!-- ============================================================
 Custom-code loading — three pieces, pasted into three different places
 in Webflow (piece 2 is two Embeds, 2a and 2b). ORG/REPO are filled in for brandvm/terawulf. The release
-version lives in ONE place: RELEASE in piece 1.
+version lives in RELEASE in piece 1 and, on TeraWulf, also in Embed 2a's
+@version (see 2a).
 
   prod        = pinned jsDelivr tag (immutable)
   webflow.io  = latest pushed staging bundle (JS + CSS)
-  dev flag    = the dev server on this machine (staging only)
 
-The bundle includes a compact Dev / Staging switcher in the bottom-left
-corner of *.webflow.io pages. Click the current mode to expand it.
-
-Dev flag — also available via URL param on the staging site:
-   ?wfc-dev=1   → dev mode on (persists in localStorage)
-   ?wfc-dev=0   → back to normal
-Console equivalent: localStorage.setItem('wfc-dev','1') / removeItem.
-
-Dev mode is localhost-only by design. http://localhost is a
-potentially-trustworthy origin, so an https page is allowed to load
-it; a LAN IP is not and gets blocked as mixed content. To check work
-on another device, git push and use the staging bundle (~1 min).
+There is no local mode (wf-template 1.0.0): a page never loads code from
+this machine. To see a change on staging, git push and reload (~1 min).
 
 Everything that is not below lives in src/ and ships through the
 bundle. Resist adding site logic to any of these three snippets —
@@ -45,34 +35,72 @@ published.
 ------------------------------------------------------------ -->
 <meta name="theme-color" content="#112135" />
 
-<!-- Two lines on purpose: a stylesheet fetch and its font fetches are
-     CORS-different and open separate connections. -->
-<link rel="preconnect" href="https://cdn.jsdelivr.net" />
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
-
 <script>
   (function () {
     var RELEASE = null; // the release tag, e.g. "1.0.0" — also update the @version in Embed 2a
     var OWNER = "brandvm"; // the GitHub org or user that owns this repo
     var SITE = "terawulf"; // this repo's name
     var STAG = "https://" + OWNER + ".github.io/" + SITE + "/";
-    var DEV = "http://localhost:3000/";
-    var staging = /\.webflow\.io$/.test(location.hostname);
-    var q = new URLSearchParams(location.search);
-    var flag = staging && q.get("wfc-dev") === "1";
-    try {
-      if (staging && q.has("wfc-dev")) localStorage.setItem("wfc-dev", flag ? "1" : "0");
-      if (staging && !q.has("wfc-dev")) flag = localStorage.getItem("wfc-dev") === "1";
-    } catch (e) { /* An explicit URL flag still works without storage. */ }
+    // *.canvas.webflow.com is the Designer's custom-code preview: it runs
+    // the staging bundle like webflow.io.
+    var staging = /\.webflow\.io$|\.canvas\.webflow\.com$/.test(location.hostname);
     var prod = RELEASE
       ? "https://cdn.jsdelivr.net/gh/" + OWNER + "/" + SITE + "@" + RELEASE + "/dist/"
       : STAG;
     if (!staging && !RELEASE)
       console.error("[wfc] RELEASE is not set in head code; serving the staging bundle. Tag a release and set RELEASE before launch.");
+    // Warm the connection to wherever the bundle comes from (GitHub Pages
+    // on staging, jsDelivr with a RELEASE). Two links on purpose: the
+    // stylesheet and its font fetches are CORS-different and open
+    // separate connections.
+    var origin = new URL(staging ? STAG : prod).origin;
+    [false, true].forEach(function (cors) {
+      var warm = document.createElement("link");
+      warm.rel = "preconnect";
+      warm.href = origin;
+      if (cors) warm.crossOrigin = "";
+      document.head.appendChild(warm);
+    });
+    // On a release domain, write the pinned sheet into <head>: a
+    // parser-inserted head stylesheet holds first paint in every browser,
+    // so the page never paints at the wrong scale (§01) and the sheet is
+    // found as early as possible (wf-template 0.8.0). TeraWulf's Embed 2a
+    // already links the same URL, so the browser fetches it once. If the
+    // observer sees 2a with another URL (2a not bumped), it re-points 2a.
+    // document.write is deliberate (Lighthouse flags it): only a
+    // parser-inserted sheet holds first paint, and it writes a stylesheet,
+    // never a script, so Chrome's document.write intervention doesn't apply.
+    // If the release sheet fails (jsDelivr down or blocked), 2a moves to the
+    // staging sheet so the page stays styled.
+    var releaseCSSFailed;
+    if (!staging && RELEASE) {
+      var want = prod + "styles.css";
+      var embed, failed = false;
+      releaseCSSFailed = function () {
+        failed = window.WFC.cssFallback = true;
+        if (embed) embed.href = STAG + "styles.css";
+      };
+      document.write('<link rel="stylesheet" href="' + want + '" onerror="WFC.releaseCSSFailed()">');
+      if (window.MutationObserver) {
+        var watch = new MutationObserver(function () {
+          var link = document.getElementById("wfc-css");
+          if (!link) return;
+          watch.disconnect();
+          embed = link;
+          if (failed) link.href = STAG + "styles.css";
+          else if (link.href !== want) {
+            console.error("[wfc] Embed 2a pins " + link.href + " but RELEASE is " + RELEASE + " — update 2a; the stylesheet downloads twice until then.");
+            link.href = want;
+          }
+        });
+        watch.observe(document.documentElement, { childList: true, subtree: true });
+        document.addEventListener("DOMContentLoaded", function () { watch.disconnect(); });
+      }
+    }
     // Shared config — the Embed, the footer loader and the bundle read this.
     window.WFC = {
-      staging: staging, dev: flag, devBase: DEV, stag: STAG,
-      release: RELEASE, prod: prod,
+      staging: staging, stag: STAG,
+      release: RELEASE, prod: prod, releaseCSSFailed: releaseCSSFailed,
       // One cache-buster for the Embed and the footer loader, so staging
       // fetches styles.css once instead of once per snippet.
       v: "?v=" + Date.now(),
@@ -87,7 +115,7 @@ published.
 
 <!-- ============================================================
 2) CSS — TWO HTML Embed elements ON THE CANVAS, inside the component
-   that sits on every page (on TeraWulf: G | Embed Code; see the skill's
+   that sits on every page (on TeraWulf: G | Components; see the skill's
    conventions.md §1), 2a first and 2b directly after it.
    NOT Site settings → Head code.
 
@@ -105,31 +133,19 @@ published.
    designing. An icon font belongs here for the same reason: in head
    code the canvas would show blank boxes where every icon should be.
 
-   The canvas shows the STAGING stylesheet: push, wait ~1 min, reload
-   the Designer tab. Everywhere else the 2b script rewrites the href
-   (pinned tag on prod, cache-busted staging on webflow.io) and adds
-   the localhost sheet only when the dev flag is on.
-
-   There is deliberately no static localhost <link> here. It used to
-   let the canvas show unsaved local CSS, but every public visitor's
-   browser then requested http://localhost:3000 before the script could
-   remove it — which can block rendering and triggers Chrome's
-   local-network-access prompt. To see local CSS on the canvas while
-   designing, add this link below wfc-css TEMPORARILY, with `pnpm dev`
-   running, and remove it before publishing:
-     <link id="wfc-css-dev" rel="stylesheet" href="http://localhost:3000/styles.css" />
-   While both are live they are ADDITIVE: deleting a rule locally does
-   not delete staging's copy of it. Deletions can only be verified
-   after a push.
+   Never add a localhost <link> here, not even for a moment: every
+   public visitor's browser would request this machine, which can block
+   rendering and triggers Chrome's local-network-access prompt.
 
    TeraWulf: 2a's href is the PINNED RELEASE stylesheet, not staging.
-   The browser's preload scanner requests 2a's href before 2b can change
-   it, so a staging href meant every production visitor downloaded the
-   CSS twice, once from github.io (tested 2026-10-09). With the release
-   URL, production downloads it once; only *.webflow.io swaps to
-   staging. Trade-offs: the canvas shows the release CSS (as before the
-   template), and a release updates TWO strings — RELEASE in piece 1 and
-   the @version below. 2b logs a console error if they disagree.
+   The browser's preload scanner requests 2a's href before any script can
+   change it, so a staging href meant every production visitor downloaded
+   the CSS twice, once from github.io (tested 2026-10-09; the template's
+   own test still allows that request). With the release URL, production
+   downloads it once (the same URL piece 1 writes into <head>); only
+   *.webflow.io swaps to staging. Trade-offs: the canvas shows the release
+   CSS, and a release updates TWO strings — RELEASE in piece 1 and the
+   @version below. 2b logs a console error if they disagree.
 
    Placement: an Embed in the body loads after Webflow's own
    stylesheet, so our rules win ties on specificity. That is exactly
@@ -157,16 +173,12 @@ published.
     // the sheet and fetches it again, so only write when the URL differs:
     // on production 2a already carries the release URL.
     var want = C.staging ? C.stag + "styles.css" + C.v : C.prod + "styles.css";
+    // (On production piece 1's observer has usually settled 2a already, and
+    // logged a mismatch; this covers browsers without MutationObserver.)
+    if (C.cssFallback) return; // jsDelivr failed: piece 1 moved 2a to staging
     if (!C.staging && C.release && base.href !== want)
       console.error("[wfc] Embed 2a pins " + base.href + " but RELEASE is " + C.release + " — update 2a; the stylesheet downloads twice until then.");
     if (base.href !== want) base.href = want;
-    if (C.dev && !document.getElementById("wfc-css-dev")) {
-      var dev = document.createElement("link");
-      dev.id = "wfc-css-dev";
-      dev.rel = "stylesheet";
-      dev.href = C.devBase + "styles.css";
-      base.parentNode.insertBefore(dev, base.nextSibling); // second, so it wins
-    }
   })();
 </script>
 
@@ -179,7 +191,8 @@ dynamically, which makes it async, so a sibling <script defer> in the
 footer is no longer guaranteed to execute first and the bundle can
 find its global undefined.
 
-Rollback = set RELEASE in piece 1 back to the previous tag and publish.
+Rollback = set RELEASE in piece 1 (and 2a's @version) back to the
+previous tag and publish.
 ============================================================ -->
 <script>
   (function () {
@@ -188,29 +201,22 @@ Rollback = set RELEASE in piece 1 back to the previous tag and publish.
     if (!document.getElementById("wfc-css"))
       console.warn("[wfc] CSS embed not found on this page; styles are missing.");
     function js(src, fallback) {
-      // Set before execution so the switcher sees the bundle that actually
-      // loads, including local -> staging and staging -> pinned fallbacks.
+      // Set before execution: the base the bundle actually loads from,
+      // including the staging -> pinned release fallback.
       C.source = new URL(".", src).href;
-      if (C.source !== C.devBase) {
-        var devCSS = document.getElementById("wfc-css-dev");
-        if (devCSS) devCSS.remove();
-        var baseCSS = document.getElementById("wfc-css");
-        var next = C.source + "styles.css" + new URL(src).search;
-        // Every href write drops the sheet and fetches it again: only change it
-        // when the URL really differs.
-        if (baseCSS && baseCSS.href !== next) baseCSS.href = next;
-      }
+      var baseCSS = document.getElementById("wfc-css");
+      var next = C.source + "styles.css" + new URL(src).search;
+      // Every href write drops the sheet and fetches it again: only change it
+      // when the URL really differs.
+      // After a failed release sheet (C.cssFallback) the staging sheet stays.
+      if (baseCSS && !C.cssFallback && baseCSS.href !== next) baseCSS.href = next;
       var s = document.createElement("script");
       s.src = src;
       if (fallback) s.onerror = fallback;
       document.head.appendChild(s);
     }
     var v = C.v || "?v=" + Date.now();
-    if (C.dev)
-      js(C.devBase + "index.js", function () {
-        js(C.stag + "index.js" + v);
-      });
-    else if (C.staging)
+    if (C.staging)
       js(C.stag + "index.js" + v, C.release ? function () {
         js(C.prod + "index.js");
       } : null);

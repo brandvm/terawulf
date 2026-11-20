@@ -13,8 +13,9 @@ without restructuring:
 ```
 body
 ├── G | Components         component, class G | Components + aria-hidden="true"
-│                          (fixed, 0×0, invisible): GTM, site-wide scripts and
-│                          embeds, incl. the loader's Embeds 2a (link) and 2b (script)
+│                          (fixed, 0×0, invisible), in this order:
+│                          Embed · site code (GTM noscript), then the loader's
+│                          Embeds 2a (link) and 2b (script), 2b directly after 2a
 └── G | Page W             component, class G | Page W (Barba: data-barba="wrapper")
     ├── Skip link          → #main (first focusable element on every page)
     ├── G | Nav W          component: div G | Nav W › nav G | Nav
@@ -46,6 +47,12 @@ Components carry the name of their root class (**G | Components**,
   `aria-hidden="true"` on its root hides it from screen readers too: only
   code goes in it. Anything visible or focusable that every page needs
   (the skip link, a popup, a banner) goes in G | Page W.
+- **Site code embed** (first child of G | Components, empty in the
+  starter): body-start code every page needs, such as Google Tag Manager's
+  `<noscript>` iframe, which GTM wants right after `<body>` opens.
+  GTM's main `<script>` goes in Site settings › Head code, not here: an
+  Embed runs later than head code, and the canvas skips an Embed that holds
+  a script. Keep 2a and 2b last and adjacent; 2b finds 2a by id.
 
 - **G | Page W is one component on every page**, so anything added to it
   (a band under the footer, a newsletter popup, a banner above the nav)
@@ -139,7 +146,9 @@ Section (section, id="<anchor>")     + combos: Is Hero, Is Top, Is Media, theme
   them.
 - **Utilities** mirror a variable and are named after it: **Size 16**,
   **Weight Medium**, **Leading Tight**, **Tracking Wide**,
-  **Text Secondary**, **Text Uppercase**, **Max Width Text**.
+  **Text Secondary**, **Text Uppercase**, **Max Width Text**. The starter
+  ships a fixed set (`starter-site.md` §C); add to it in the same
+  pattern, one property per class.
 - **Typography classes** use the role names:
   **D0–D6** (display and headings), **Body L** and **Body S** (body is the
   default), **Label Text**, **Chip**.
@@ -164,6 +173,17 @@ primitives; nothing in a class holds a raw value that a variable could hold.
 | **Spacing** | gaps and small sizes | `None`, `Hairline`, `2`, `4`, `8`, `12`… (px names, em values) | Base only |
 | **Radius** | corner radii | `None`, `2`, `4`, `8`, `Pill` | Base only |
 
+- **A standard, not a limit.** The collections, names and starter values
+  above are the default layout and the default way to use variables. A
+  project changes values freely and adds, renames or removes variables,
+  modes and collections when its design needs to, proposed as old → new.
+  The default font (`Family/Base`) is Geist, with its stylistic sets
+  `ss03` and `ss08` turned on once, on the Body tag style
+  (`font-feature-settings`, a custom property; all text inherits it). The
+  font is the official file uploaded as a custom font, not Google Fonts'
+  Geist, which leaves those sets out (`starter-site.md` §A). A project
+  with its own typeface replaces the font and removes or changes the
+  feature setting with it.
 - **Group/Name**, both in Title Case with spaces. The group is the folder in
   the Designer and becomes part of the CSS name.
 - **Name by role, never by value or place:** `Text/Secondary`, not
@@ -251,16 +271,33 @@ has been set on it), then bind through the MCP:
 - **Images:** descriptive alt on content images, `alt=""` on decorative ones
   inside an `aria-hidden` S Bg.
 - **Forms:** labelled by a visible label or an sr-only one, `name` and
-  `required` set, a Form Block class with margin 0.
+  `required` set, a Form Block class with margin 0. Radios and checkboxes
+  in a Collection List publish one id on every item; the starter module
+  `src/modules/unique-form-ids.ts` makes them unique and moves each
+  label's `for` with it.
 - **Tabs, lists and dialogs:** keep ARIA roles on DOM elements or set them from
-  script (`data-aria-role`); Webflow rewrites roles on its List elements.
+  script: put the role in `data-aria-role` and the starter module
+  `src/modules/aria-roles.ts` sets it; Webflow rewrites roles on its List
+  elements.
 - **Head:** Open Graph and Twitter meta, `theme-color`, favicon, and an
   Organization JSON-LD (address, phone, e-mail) in the home page's head
   code.
 - **Motion:** reduced motion stops video autoplay (poster shows) and long
   scroll scenes; a looping hero video needs a pause control (WCAG 2.2.2).
+  Both come from the video recipe ([recipes/video/](recipes/video/README.md)).
+  The rest of motion, and moving off Webflow interactions, is §16.
 
 ## 10. Components
+
+- **Start from the starter's control components** (`starter-site.md` §D2):
+  Icon, C | Button (Button Color › Button Size › Button Content), C | Icon
+  Button, C | Video, Section Head. Restyle their variants for the design;
+  add a variant before adding a class. Searchable selects, accordions,
+  sliders and lightboxes are not in the starter: they are built when a
+  site needs one, from a recipe where there is one (`recipes/`; the
+  searchable select is `recipes/finsweet/searchable-select.md`).
+- **Icons** are the Icon component (colour and size on one component): type `ph ph-<name>` into its prop
+  (`recipes/phosphor/`). Brand and social logos are uploaded SVGs.
 
 - **Make a component when behaviour should appear only where you place it.**
   The behaviour lives inside it as a `data-*` attribute (a Gallery's
@@ -274,7 +311,8 @@ has been set on it), then bind through the MCP:
 - **Props:**
   - bindable text is a Text Block, Paragraph, Heading or Link, never a Span;
   - an input placeholder comes from a text prop bound to `data-placeholder`
-    (a module copies it to `placeholder`), since placeholders can't bind;
+    (the starter module `src/modules/placeholders.ts` copies it to
+    `placeholder`), since placeholders can't bind;
   - a boolean attribute is an attribute whose *name* is a text prop
     (default `muted`, value `true`); clearing the prop removes it;
   - a variant that changes an element's styles needs that element to carry a
@@ -284,6 +322,12 @@ has been set on it), then bind through the MCP:
 - **Content in a component** (heading levels, links to the current CMS item,
   slot names) is often a Designer step; list it in
   `docs/handoff/MANUAL-TODO.md`.
+- **In the prototype,** a component instance's root carries
+  `data-component="<Component name>"`, and an element whose content or
+  visibility is a prop carries `data-prop="<Prop name>"`:
+  `<a class="c-button" data-component="C | Button"><span data-prop="Label">Get in touch</span></a>`.
+  They only mark the tree for tools, change nothing visible, and are not
+  made in Webflow (the component and its props are).
 
 ## 11. CMS
 
@@ -295,37 +339,54 @@ has been set on it), then bind through the MCP:
 - **Conditional visibility on CMS fields** is a Designer step; put it on a
   plain wrapper div, not on a component instance.
 - **Collection lists publish `role="list"` / `listitem`:** put the intended
-  role in `data-aria-role` and let a module set it.
+  role in `data-aria-role`; `src/modules/aria-roles.ts` sets it.
+- **Form controls in a Collection List** share one Designer id;
+  `src/modules/unique-form-ids.ts` rewrites them. Style them by class,
+  never by id.
 - Plan the collections (fields, references, sort field) with the designer
   before the template page is built.
+- **In the prototype,** a Collection List wrapper carries
+  `data-collection="<Collection name>"`, and an element bound to a field
+  (in a list item, or on a CMS template page) carries
+  `data-field="<Field name>"`:
+  `<div class="blog-list" data-collection="Blog Posts"><article><h3 data-field="Name">…</h3></article></div>`.
+  Like the component markers they change nothing visible and are not made
+  in Webflow, where the list and its bindings are.
 
 ## 12. Style guide page
 
-Made per project when the person asks, prototype first:
-[style-guide.md](style-guide.md) has the procedure.
+The `webflow-style-guide` skill has the layout, the generator, the check and
+the procedure. In short:
 
+- **First page built,** in the prototype and then in Webflow, before any
+  other page; every later class or component adds its row in the same piece
+  of work.
+- **One layout on every site:** a sidebar of sections, each section a list
+  of rows (name, class and note on the left; the live specimen on the
+  right). The sections, their order and the row are fixed in the skill; a
+  project supplies content only.
 - A page in a `design` folder (`/design/style-guide`), excluded from search
   and the sitemap, `noindex` in its head code, links with
   `data-barba-prevent`.
 - **Every class in the project is applied to at least one element on it**, so
   "Clean up unused styles" can never delete a class used only by the CMS, a
-  script or a page not built yet. Generate the page and check this with a
-  script.
-- **Sections:** colours, typography (roles and utilities as specimens),
-  spacing, radius, buttons and states, form parts, components, then page
-  components.
-- **Page component previews** keep page-specific classes alive until their
-  page exists. Remove a preview once its page is built; generic sections stay
-  for good.
+  script or a page not built yet. `pnpm check:style-guide` checks this and
+  the layout.
+- **Page section previews** keep page-specific classes alive until their
+  page exists. Remove a preview once its page is built; the other sections
+  stay for good.
 
 ## 13. Before Webflow: the prototype phase
 
-When the design is first built as a localhost prototype (start from
-[prototype-starter/](prototype-starter/README.md)):
+The `webflow-prototype` skill runs this phase (its
+[prototype-starter/](../webflow-prototype/prototype-starter/README.md) is
+the folder a project starts from). In short:
 
 - **It mirrors Webflow:** the same URLs, the same breakpoints (991, 767, 479),
   the Webflow class names, and the page shell and section structure above.
   Nav and footer are single partials (one component each).
+- **It marks components and CMS** with `data-component`, `data-prop`,
+  `data-collection` and `data-field` (§10, §11); Webflow doesn't get them.
 - **It reads the site's variables** from a snapshot of Webflow, and variable
   changes are proposed as old → new in one file, grouped and lettered for
   approval.
@@ -338,11 +399,18 @@ When the design is first built as a localhost prototype (start from
 
 ## 14. Media
 
+- **Videos go through the media page** ([media.md](media.md)): uploaded
+  once at `/design/media`, hosted by Webflow, and used on the real pages
+  by address.
 - **Hero video:** MP4 (H.264, fast start, no audio), at most 30 MB for
   Webflow's Background Video, with a poster image; a smaller encode for
   phones. Skip WebM when it is larger than the MP4.
 - **`<video>` attributes need values** (`muted="true"`, `loop="true"`,
   `playsinline="true"`), or publishing drops them and autoplay is blocked.
+- **Autoplay video** uses the video recipe
+  ([recipes/video/](recipes/video/README.md)): sources load late, play only
+  on screen, reduced motion and the visitor's pause are respected, and a
+  `data-video-toggle` button pauses it.
 - **Images:** Webflow adds `srcset`; a module that swaps an image removes
   `srcset` and `sizes` first. Give images a size or a class with
   `aspect-ratio`, since the importer drops their attributes.
@@ -353,10 +421,11 @@ These live in client repos, not in the template. Rebuild them when a design
 asks for them:
 
 - **Page transitions:** Barba with a parallax swap, and an image zoom from a
-  card into the next page's hero. Page modules run per page inside a
-  `gsap.context` and their listeners are removed on leave; Webflow is
-  re-initialised after each swap; the clicked link's hash is restored after
-  the swap.
+  card into the next page's hero. The skeleton every Barba site needs (head
+  and current-link sync, Webflow and Turnstile re-init, focus, page views,
+  per-page modules) is a recipe with a plain cross-fade:
+  [recipes/barba/](recipes/barba/README.md); the design's transition
+  replaces the fade.
 - **Floating nav:** the bar scrolls away with the page; a small fixed nav
   appears once it is off screen, light or dark from the section under it, and
   opens the menu as a side sheet. The blur sits on a child, never on the
@@ -366,3 +435,83 @@ asks for them:
 - **Anchor handling:** unbind webflow.js's `click.wf-scroll`, glide with
   Lenis to the section (or its pin spacer) flush with the top, pause scroll
   snapping during the glide, and jump to the hash again after pins are added.
+  The first part (unbind, clear sticky bars, optional Lenis) is a recipe:
+  [recipes/anchor-scroll/](recipes/anchor-scroll/README.md), with Lenis
+  from [recipes/smooth-scroll/](recipes/smooth-scroll/README.md).
+- **Modals, count-ups, marquees, FAQ, CMS tabs:**
+  [recipes/modal/](recipes/modal/README.md) and
+  [recipes/snippets/](recipes/snippets/README.md).
+
+## 16. Motion and Webflow interactions
+
+- **New motion goes in the repo, not in Webflow Interactions** (classic IX,
+  IX2 or IX3), and existing interactions move out page by page when a
+  site is worked on, keeping the approved motion and timing:
+  1. **CSS first:** a transition or `@keyframes` on a class or
+     `[data-state]` a module toggles (`js-state`), CSS scroll-driven
+     animation (`animation-timeline: view()` inside `@supports`) for
+     parallax-style effects, and the reduced-motion override in §07.
+  2. **A module only where CSS can't:** one shared IntersectionObserver for
+     reveals keyed by a `data-*` attribute; GSAP
+     ([recipes/smooth-scroll/](recipes/smooth-scroll/README.md), only the
+     plugins used) for split-text reveals and scrubbed or pinned scenes.
+  3. **Never hide first-screen content waiting for JS.** A hero heading,
+     logo or CTA set to `visibility: hidden` or opacity 0 until a script
+     reveals it costs LCP on every load and stays hidden when the script
+     fails. First-screen motion starts from visible content (a small
+     offset or a clip, never invisible), with `gsap.set()` + `gsap.to()`,
+     not `gsap.from()`.
+  4. When a page has no interactions left, its IX hidden-state styles go
+     too; when the site has none, turn off Webflow's GSAP and interactions
+     site settings so they stop loading. Webflow components (nav,
+     dropdown, tabs, slider) are not interactions and stay.
+- **Until then, IX3 content needs a fallback.** Content IX3 hides before
+  its entrance stays invisible if IX3 never starts. Webflow adds
+  `w-mod-js` to `<html>` when webflow.js runs and `w-mod-ix3` once IX3
+  has started, so `html.w-mod-js:not(.w-mod-ix3) [data-ix-fallback]
+  { visibility: visible !important }` shows it in between and stops
+  matching once IX3 runs. Visibility only: it doesn't undo opacity or
+  transforms. It is an `override-webflow` rule (ask first, log it in
+  `GOTCHAS.md`); the CSS is in [recipes/snippets/](recipes/snippets/README.md)
+  (`ix3-fallback.css`). IX3 has no public re-init, so a site with page
+  transitions moves off IX3 first.
+- **A page loader always has a CSS exit.** A full-screen loader removed
+  only by an interaction or a module covers the site for good when that
+  never runs. Give it `data-page-loader` and the backstop in
+  [recipes/snippets/](recipes/snippets/README.md) (`page-loader.css`): it
+  fades out and stops taking clicks 4 s after first paint, is never shown
+  in the Designer canvas (`html.wf-design-mode`), and is not shown at all
+  under reduced motion. The starter's `styles.css` has no loader rule;
+  copy it when a site has a loader.
+- **Reduced motion** turns off smooth scrolling, marquees, count-ups,
+  page-transition animation, autoplay and long scroll scenes; content is
+  shown in its final state, never left hidden.
+
+## 17. Splitting the stylesheet (optional, large sites)
+
+`src/styles.css` can become a manifest of `@import`s, one file per
+section, once it is too long to navigate (several hundred lines of
+components). esbuild bundles CSS imports (`build.mjs` has
+`bundle: true`, and the Phosphor `@import` already works this way), so
+the output is still one `dist/styles.css` and the loader is unchanged.
+
+```css
+/* src/styles.css — no rules; the import order is the cascade order. */
+@import "./phosphor.css";
+@import "./styles/01-tokens.css";
+@import "./styles/02-base.css";
+@import "./styles/03-webflow-internals.css";
+@import "./styles/04-document-state.css";
+@import "./styles/05-components/_index.css"; /* one file per component */
+@import "./styles/06-utilities.css";
+@import "./styles/07-accessibility.css";
+@import "./styles/08-editor-dev-supports.css";
+```
+
+- Keep the cascade notes at the top of the manifest; reordering the lines
+  reorders the cascade.
+- `@import` lines must come before any rule, so the manifest holds none.
+- Each file keeps its section header and `repo-css:` tags; a rule still
+  goes in the file for its section, not the one that happens to be open.
+- `pnpm build` and diff `dist/styles.css` before and after the split: it
+  should only move, not change.

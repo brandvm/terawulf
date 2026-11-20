@@ -9,6 +9,10 @@ bundle, isn't version-pinned with the release, and loads every page.
 The markup stays exactly as the Finsweet docs describe (`fs-list-element`,
 `fs-combobox-element`…); only the loading changes.
 
+A searchable select built on Combo Box, with the Webflow structure, the
+classes it needs and its pitfalls, is in
+[searchable-select.md](searchable-select.md).
+
 ## Add it to a project
 
 1. Copy the files:
@@ -39,8 +43,12 @@ To update Finsweet later: `pnpm update @finsweet/attributes`, then
 - `finsweet.ts` does what the CDN loader does: creates
   `window.FinsweetAttributes` (`scripts`, `modules`, `process`, `load`,
   `push`, `destroy`), finds which chosen attributes the page uses (any
-  `fs-<name>…` attribute), and starts only those. `loadAttribute('list')`
-  resolves with the List instances for modules that need them.
+  `fs-<name>…` attribute), and starts only those, each once one of its
+  elements comes within two screens of the viewport or on the first
+  scroll, pointer or key input (0.8.0: a list's nest fetches every item's
+  page, which competed with the hero at load). `loadAttribute('list')`
+  starts one at once and resolves with the List instances for modules
+  that need them.
 
 ## Known issues
 
@@ -49,4 +57,11 @@ To update Finsweet later: `pnpm update @finsweet/attributes`, then
   never published. `pnpm finsweet add` writes a pnpm override (`'-'`) for
   each into `pnpm-workspace.yaml`; the code is all in the package's `dist/`.
 - **Combo Box** differs from its docs (needs a clear element, sorts options
-  by value, finds parts by position): see `lessons/js.md`.
+  by value, finds parts by position): see
+  [searchable-select.md](searchable-select.md) and `lessons/js.md`.
+- **Hidden elements start on first input** (0.8.0): an element with
+  `display: none` (a closed modal, an inactive tab) never comes near the
+  viewport, so an attribute used only there starts on the first scroll,
+  pointer or key input. If that input is the click that opens it, the
+  attribute sets up a moment after it appears; call
+  `loadAttribute('<name>')` from a module to start it at load instead.

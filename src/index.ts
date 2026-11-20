@@ -5,7 +5,6 @@
 // 2026-09-02 audit: KeyboardIx3ShiftGToggle, GoToTop, SmartSwiper,
 // ClickOnLoad and NavShrink were removed (no matching markup on the live
 // site). Restore from git tag v1.0.0 if that markup returns.
-import { initEnvironmentSwitcher } from './modules/environment-switcher';
 import { initSessionModal } from './modules/session-modal';
 import { initDottedCanvas } from './modules/dotted-canvas';
 import { initPopupVideo } from './modules/popup-video';
@@ -32,7 +31,6 @@ function boot() {
   // module measures the page. The head snippet also has a fallback timeout.
   document.documentElement.classList.remove('is-loading');
 
-  run('environment-switcher', initEnvironmentSwitcher);
   run('session-modal', () => initSessionModal());
   run('dotted-canvas', initDottedCanvas);
   run('popup-video', initPopupVideo);
