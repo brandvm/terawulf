@@ -1,0 +1,22 @@
+<script>
+  (function () {
+    var C = window.WFC;
+    var base = document.getElementById("wfc-css");
+    if (!C) return console.error("[wfc] Head code config missing; the stylesheet stays on staging.");
+    if (!base) return;
+    // Runs right after 2a, before anything paints. Every href write drops
+    // the sheet and fetches it again, so only write when the URL differs:
+    // on production 2a already carries the release URL.
+    var want = C.staging ? C.stag + "styles.css" + C.v : C.prod + "styles.css";
+    if (!C.staging && C.release && base.href !== want)
+      console.error("[wfc] Embed 2a pins " + base.href + " but RELEASE is " + C.release + " — update 2a; the stylesheet downloads twice until then.");
+    if (base.href !== want) base.href = want;
+    if (C.dev && !document.getElementById("wfc-css-dev")) {
+      var dev = document.createElement("link");
+      dev.id = "wfc-css-dev";
+      dev.rel = "stylesheet";
+      dev.href = C.devBase + "styles.css";
+      base.parentNode.insertBefore(dev, base.nextSibling); // second, so it wins
+    }
+  })();
+</script>
