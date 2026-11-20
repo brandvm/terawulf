@@ -6,6 +6,668 @@ Harvested from client builds made from this template (`Scope:
 template-candidate` entries in their `GOTCHAS.md`). Module and file names
 refer to the project the lesson came from; Status is that project's.
 
+### 2026-11-18 · WebGL scores fine locally and badly on PageSpeed Insights
+- Area: js, perf
+- Symptom: a page with a WebGL hero shader scored 97 desktop in local
+  Lighthouse (TBT 4 ms) but 59 on PageSpeed Insights, mobile and desktop
+  (mobile TBT over 11 s); long tasks from the bundle through the whole
+  trace.
+- Cause: PageSpeed's Chrome has no GPU. WebGL runs on SwiftShader, so
+  every frame is drawn on the main thread. A local run uses the machine's
+  GPU and hides it. `failIfMajorPerformanceCaveat` doesn't catch it:
+  SwiftShader still returns a context.
+- Fix: read `WEBGL_debug_renderer_info` and skip the shader when the
+  renderer matches swiftshader / llvmpipe / software (a CSS gradient or
+  still under the canvas is the hero then); also stop animating when
+  frames average over 50 ms. PageSpeed after: mobile 97 (TBT 0), desktop
+  99. Measure WebGL and canvas pages on PageSpeed Insights, not only
+  local Lighthouse. See "A WebGL context created before the first paint
+  delays it".
+- Status: fixed in that project
+
+### 2026-11-13 · Anchor links draw a focus ring around the target section
+- Area: js, css
+- Symptom: after clicking a same-page anchor link, the whole section it
+  scrolled to showed a 2px outline in Safari, and in Chrome after
+  keyboard use.
+- Cause: the anchor-scroll module gives a non-focusable target
+  `tabindex="-1"` and focuses it so the next Tab continues from there.
+  Safari treats that programmatic focus as `:focus-visible`, so the
+  repo's `:focus-visible` ring (§07) applied to the section.
+- Fix: the module marks the targets it made focusable with an attribute
+  (`data-anchor-focus`), and §07 removes the outline on that attribute
+  only. Focus still moves; real controls keep their ring. Check in WebKit
+  and Chromium.
+- Status: fixed in that project
+
+### 2026-11-11 · Motion on a live site that isn't in Webflow: ask the browser
+- Area: js
+- Symptom: asked to rebuild a live hero "slideshow", the page HTML showed
+  one image, no Webflow slider, no interaction (`data-w-id`), and a
+  MutationObserver on the hero saw nothing change, yet the photo changed
+  every few seconds.
+- Cause: the old custom bundle injected extra images at load and its
+  stylesheet crossfaded them with `@keyframes` and per-image
+  `animation-delay`. Nothing in the markup or the Designer shows it.
+- Fix: to find how something on a live site moves, read
+  `document.getAnimations()` on the element (keyframe name, duration and
+  delays at once), then search the site's custom bundle and stylesheet
+  for that name. To test Webflow changes that are staged but not
+  published, rewrite the staging HTML in Playwright's `page.route` next
+  to the local-bundle swap, then re-check after the publish. Also:
+  `query_elements` with `return_parent: "parent"` returned no match for
+  an element a plain query found; query the parent's class with
+  `children_depth` instead.
+- Status: worked around
+
+### 2026-11-09 · Finsweet TOC highlights a link its scrolling box never shows
+- Area: js
+- Symptom: on long articles a table of contents box (max-height, overflow
+  auto) stayed at its top; past the first screen of sections the
+  highlighted link sat below the visible part of the box.
+- Cause: Finsweet `fs-toc` only moves `w--current` between links; it
+  never scrolls the box that holds them. In a hidden browser pane
+  Finsweet sets no `w--current` at all (its observers pause).
+- Fix: a small module watches the TOC links for `w--current` (a
+  MutationObserver) and scrolls the nearest scrolling ancestor so that
+  link is centred. Test with the browser pane visible, or toggle the
+  class by hand.
+- Status: fixed in that project
+
+### 2026-11-09 · A marquee paused for good when one set was wider than its strip
+- Area: js
+- Symptom: a logo marquee stopped after scrolling back up from the bottom
+  of one page; the same component kept moving on another.
+- Cause: the module paused rows its IntersectionObserver reported off
+  screen and observed the moving row itself. In a narrower column one
+  logo set was wider than the row, so the transformed row could slide
+  entirely out of its own box, read as not intersecting and never
+  restart.
+- Fix: observe the clipping wrapper (`row.parentElement`), never the
+  element being transformed.
+- Status: fixed in that project
+
+### 2026-11-09 · A GSAP `scale` tween on a parallax image jitters
+- Area: js
+- Symptom: a zoom reveal (scale 1.12 → 1) on an image that also had a
+  scroll parallax looked glitchy.
+- Cause: GSAP's `scale` is part of the `transform` it writes inline; the
+  parallax module rewrites the same image's inline `transform` on every
+  scroll frame, so each overwrote the other.
+- Fix: run the zoom on the CSS `scale` property, which composes with
+  `transform`: `img.style.scale = 'var(--reveal-scale, 1)'` and tween
+  `--reveal-scale` with GSAP (or WAAPI on `scale`). Rule: one module owns
+  `transform` on an element; others use `scale`, `translate`, `rotate`.
+- Status: fixed in that project's prototype
+
+### 2026-11-09 · A custom dropdown over a native select: what bites
+- Area: js
+- Symptom: replacing native selects with a button + listbox module (the
+  native select kept behind it for form submission and Finsweet) hit
+  several surprises: a validity check fired the form's error UI, clicks
+  in the list opened the native select, the options came out bold, and
+  the list couldn't be scrolled.
+- Cause: `select.checkValidity()` fires an `invalid` event; a click
+  inside a `<label>` activates its control; Webflow's `label {
+  font-weight: bold }` reaches a list placed inside a label; Lenis
+  swallows wheel events on a nested scroller.
+- Fix: read `select.validity.valid` instead of `checkValidity()`;
+  `preventDefault()` on the list's clicks; the list class sets its own
+  weight and type; `data-lenis-prevent` on the list. Find the list by
+  class and set its ARIA role in the module (Webflow rewrites roles, see
+  designer.md "Webflow rewrites roles and drops attributes on publish").
+  Give the module's classes (list, option, open and selected combos) a
+  style guide specimen, or "Clean up unused styles" deletes them.
+- Status: fixed in that project
+
+### 2026-11-05 · A before/after slider selects or drags the photo on press
+- Area: js, css
+- Symptom: pressing or double-clicking a compare slider tinted the photo
+  blue (browser selection) or started a native image drag instead of
+  moving the handle.
+- Cause: the pointerdown handler didn't `preventDefault()`, and the
+  `<img>`s still took pointer events, so the browser treated the press as
+  select or drag on the image.
+- Fix: `preventDefault()` on pointerdown and block `dragstart` in the
+  module; the compared images `pointer-events: none` in the Designer; a
+  `designer-cant` repo rule for `user-select: none` and
+  `-webkit-tap-highlight-color: transparent` on the slider.
+- Status: fixed in that project's prototype
+
+### 2026-11-04 · Finsweet "load all" skips a hidden list; Lenis keeps its boot height
+- Area: js
+- Symptom: lists shown only on phones held just their first page of
+  items (6 per category instead of all), and the page wouldn't scroll
+  past the first screen once a module added rows.
+- Cause: (1) `fs-list-load="all"` fetches a list's later pages only once
+  the list nears the viewport; a list that is `display: none` at that
+  width never does, so it never loads. (2) Lenis measured the page height
+  at boot and clamps `scrollTo` to it after JS adds content.
+- Fix: for a list that may be hidden, follow its `.w-pagination-next`
+  link in a module and take the same block (by id) from each fetched
+  page; call `lenis.resize()` (or `ScrollTrigger.refresh()`, which the
+  smooth-scroll recipe ties to it) whenever a module changes the page
+  height. Scroll Lenis to a number, not an element plus offset (it
+  overshot). Webflow's delegated section-link scroll also fired on
+  in-page tab buttons: `stopPropagation()` on them.
+- Status: fixed in that project
+
+### 2026-10-13 · Several sliders in one wrapper all take the first one's arrows
+- Area: js
+- Symptom: in a tabbed section with one Swiper per tab pane, the
+  prev/next arrows worked in the first tab only; the other sliders could
+  be dragged but their arrows did nothing.
+- Cause: the module looked the arrows up with
+  `wrapper.querySelector('.swiper-prev')` from a wrapper shared by all
+  the panes, so every slider got the first pane's buttons.
+- Fix: walk up from each slider and take the nearest controls, falling
+  back to the wrapper lookup for single-slider wrappers.
+- Status: fixed in that project
+
+### 2026-10-12 · A screenshot of a canvas includes what sits on top of it
+- Area: js, perf
+- Symptom: the still image made from a shader panel (its first-paint
+  stand-in) had the panel's text baked into it.
+- Cause: a Playwright element screenshot captures the page region, not
+  the canvas pixels.
+- Fix: hide the overlapping content (`visibility: hidden`) before
+  capturing a still from a canvas, or read the canvas itself
+  (`toDataURL` with `preserveDrawingBuffer`).
+- Status: fixed in that project
+
+### 2026-09-15 · Form validation must not toggle Webflow's disabled submit
+- Area: js
+- Symptom: a multi-step form's step navigation and required-field button
+  states were wrong; Submit could be enabled before Webflow allowed it.
+- Cause: Webflow disables Submit itself for its spam check (Turnstile)
+  and while a submission is pending; a validation script that sets or
+  clears `disabled` on the button can unlock it early.
+- Fix: never touch the button's `disabled`. Wrap Submit in a `<fieldset>`
+  and disable the fieldset as the validation gate; Webflow keeps control
+  of the button. Validate required fields per step.
+- Status: fixed in that project
+
+### 2026-09-15 · Modules must start after Webflow wires tabs and dropdowns
+- Area: js
+- Symptom: risk of observers and click handlers attaching before
+  Webflow's own tab and dropdown setup, so they miss or fight Webflow's
+  classes and handlers.
+- Cause: the bundle can run before webflow.js has initialised its
+  modules (the footer loader appends it dynamically).
+- Fix: boot the manifest through `Webflow.push(boot)` when
+  `window.Webflow` exists (it runs at once if Webflow is already ready),
+  with the DOMContentLoaded path as the fallback. The anchor-scroll
+  recipe already unbinds through `Webflow.push` for the same reason.
+- Status: fixed in that project
+
+### 2026-11-02 · SplitText with `tag: 'span'` leaves pieces inline (IX3 did not)
+- Area: js
+- Symptom: after moving text reveals off IX3, mobile pages sat 24–47px
+  lower than production from the first split heading down, and line
+  slide-ins did not move.
+- Cause: IX3 writes `position: relative; display: inline-block` on split
+  words and chars, and `display: block` on lines and line masks. GSAP
+  3.15 `SplitText.create({ tag: 'span' })` adds neither, so words wrap
+  differently and transforms on inline spans are ignored.
+- Fix: set the same display and position on the pieces right after
+  splitting (with a test). See "Moving off IX3: decode the published
+  interactions, then replay them".
+- Status: fixed in that project
+- Found by: claude
+
+### 2026-11-02 · A line split cuts a not-yet-split heading into several headings
+- Area: js
+- Symptom: a heading on mobile was 14px shorter than production on some
+  loads only, and the DOM held two or three `<h2>`s for one heading.
+- Cause: lazy building made the order of nested splits depend on scroll
+  timing. When a section's line split (`words,lines`) ran before the char
+  split of the h2 inside it, SplitText broke the h2 at each line break
+  into separate h2 elements. IX3 always split the inner heading first.
+- Fix: before splitting lines, build any pending split nested inside that
+  trigger (with a test). See "Lazy ScrollTrigger builds: hidden and
+  re-rendered trigger elements".
+- Status: fixed in that project
+- Found by: claude
+
+### 2026-11-02 · Nested Collection Lists and Finsweet's late pages
+- Area: js
+- Symptom: a module's card counts were inflated in tests, and only the
+  first 20 of 61 cards got their toggle on staging.
+- Cause: (1) each card held a nested Collection List, so `.w-dyn-items >
+  .w-dyn-item` also matched the nested rows; (2) with
+  `fs-list-load="all"` Finsweet fetches the later pages after boot, so
+  cards set up at init missed them.
+- Fix: select only items that hold the card directly (`:scope >` or a
+  check on the child), and set up cards again from a MutationObserver on
+  each list. Count unique items by their link when the same item appears
+  in several lists.
+- Status: fixed in that project
+- Found by: claude
+
+### 2026-10-29 · Once the bundle starts after first paint, every layout a module sets is a visible shift
+- Area: js, perf
+- Symptom: after the bundle was moved after the first paint (see
+  loader-release-ci.md, "Lighthouse counts anything that finishes before
+  the first paint"), pages jumped on reload and first load. Reloaded while
+  scrolled down, CLS was 0.3–1.3: pins added their height, quote slides
+  stacked, Finsweet cut 9 cards to 6, an open-first accordion opened.
+  Logos took no space until they loaded. A load from the top measured CLS
+  0.003–0.018, so a top-of-page check missed all of it.
+- Cause: the modules build pins, stacks and page sizes at boot; a reload
+  restores the scroll position before that, so the boot moves what is on
+  screen. Images with `height: auto` and no width/height attributes are
+  0px tall until loaded.
+- Fix: each module's first state in CSS before its state attribute
+  exists, under the module's own conditions: pin heights as the module's
+  sum, slides stacked with the first shown, the first accordion item open
+  until the module's state attribute appears, only the first page of a
+  list until Finsweet starts (an attribute set on success and failure);
+  count-ups hold their box height; `html { scrollbar-gutter: stable }`.
+  In Webflow, `aspect-ratio` on every logo and mark class. To find them,
+  reload at several scroll depths and collect `layout-shift` entries with
+  their sources, and load with images blocked to compare image heights.
+  Playwright's `page.route` turns off the HTTP cache, so routed reloads
+  are cold loads. Worst reload CLS per page went to 0–0.04.
+- Status: fixed in that project
+- Found by: human + claude
+
+### 2026-10-30 · A CSS fade inside a Webflow Dropdown List never plays on open
+- Area: js
+- Symptom: porting IX2 dropdown animations to CSS transitions keyed on
+  `.w--open`, the dropdown's content jumped to opacity 1 on open; IX2 had
+  faded it in.
+- Cause: `.w-dropdown-list` is `display: none` until `w--open`, and a
+  transition can't start from `display: none`, so the open rule applies at
+  once. Closing works: the list stays displayed until the close fades
+  end.
+- Fix: play the opening fade with the Web Animations API (`fill:
+  backwards` through the delay) and keep the settled values in CSS.
+  `@starting-style` does it too, but not in older Safari and Firefox.
+- Status: fixed in that project
+- Found by: claude
+
+### 2026-10-29 · Closing a mobile menu played its transitions one after another
+- Area: js
+- Symptom: closing the mobile menu from inside a sub-menu first slid back
+  to the main list, then the panel went, then the bar changed colour. On
+  phones the panel also took taps while it faded (a stale link opened).
+- Cause: each piece has its own transition (slide 300ms, panel visibility
+  300ms, bar colour 250ms), meant for moving inside the open menu; closing
+  the whole menu fires them all and they finish at different times.
+- Fix: opening or closing the whole menu is one motion: the bar's colour
+  eases while the menu and any open view fade together (Web Animations,
+  250ms), and the view resets after the fade with transitions off (an
+  `.is-instant` state class). Panels pinned to a colour mode stay put
+  while the bar changes. Run the cleanup on a timer too: animations don't
+  advance in a background tab. The panel is `pointer-events: none` unless
+  open, and `overflow: clip` so focusing a link in a sliding view can't
+  scroll it sideways.
+- Status: fixed in that project's prototype
+- Found by: claude
+
+### 2026-10-29 · A sideways carousel caught the page's vertical wheel under Lenis
+- Area: js
+- Symptom: scrolling the page with the mouse over a carousel stuck there:
+  the wheel went into the carousel instead of the page.
+- Cause: Lenis with `allowNestedScroll: true` hands the wheel to any
+  element under the pointer that can scroll that way. The track had
+  `overflow-x: auto`, which makes `overflow-y` compute to `auto` too; with
+  fluid scaling its content can be a pixel taller than the box, so Lenis
+  saw a vertically scrollable element.
+- Fix: every sideways scroller is `overflow-x: auto` plus `overflow-y:
+  hidden`. The vertical wheel then scrolls the page; the horizontal wheel,
+  swipes and arrows move the carousel. No `data-lenis-prevent` needed.
+  The opposite mistake freezes the page: `data-lenis-prevent` on a box
+  that only scrolls sideways (a wide table) hands every wheel over it to
+  the box, and Lenis's CSS adds `overscroll-behavior: contain`, so a
+  vertical wheel there goes nowhere. Don't mark sideways scrollers;
+  sideways wheels never reach Lenis anyway.
+- Status: fixed in that project's prototype
+- Found by: human
+
+### 2026-10-29 · Never start the LCP element from opacity 0
+- Area: perf, js
+- Symptom: a home page scored 80 on mobile PageSpeed: LCP 4.0 s, of which
+  3 s render delay, and the LCP element was the hero H1. With the intro
+  loader replaced by a CSS entrance (`@keyframes` from `opacity: 0` at
+  first paint), LCP went to 4.5 s although FCP was 2.8 s.
+- Cause: an element painted at opacity 0 isn't an LCP candidate. With an
+  intro loader (which Lighthouse always sees: every run is a first visit)
+  LCP waited for the hero to fade in after the curtain; with the CSS
+  entrance the opacity animation runs on the compositor, so the H1 was
+  only counted after the animation, not at its first frame. A covered but
+  painted element does count.
+- Fix: the LCP element only moves (`y`) under a loader, never fades; an
+  entrance without a loader starts from a partial opacity (0.6) with a
+  small rise. Mobile went to 93 (LCP 2.7–3.1 s) and the reveal looks the
+  same. Check which element is the LCP in the Lighthouse report before
+  designing an entrance.
+- Status: fixed in that project
+- Found by: claude
+
+### 2026-10-29 · Finsweet List 2.7: what the markup needs on Webflow
+- Area: js
+- Symptom: (1) a custom empty message (`fs-list-element="empty"` outside
+  the Collection List) showed all the time, with and without matches;
+  (2) checks from a script saw Finsweet never start in a hidden browser
+  pane.
+- Cause: (1) Finsweet 2.7 finds that element but toggles only the list's
+  own Empty State; (2) the recipe starts an attribute when its elements
+  come near the viewport or on the first scroll, pointer or key input, and
+  a hidden pane gives neither.
+- Fix: (1) a small module shows the custom message only while the list
+  has no items; give it a hidden start state in Webflow so it doesn't
+  flash. (2) In checks, scroll or move the pointer first. Works as
+  documented (2.7.1 source, checked on staging): `fs-list-element="list"`,
+  `fs-list-load="more"` and `fs-list-itemsperpage` on the Collection List;
+  a custom Show more with `fs-list-element="pagination-next"` + instance
+  (hidden when all are shown); filters on the Form element (submit is
+  prevented, so Webflow's form handler doesn't run); search
+  `fs-list-field="*"`; a sort select's initial value is applied on start,
+  so the list is sorted without a native sort. Start List once per page
+  from one owner (a shared promise other modules await): every `init()`
+  call wraps each `[fs-list-element="list"]` again. Modules that set
+  `fs-list-*` attributes must run before it.
+- Status: fixed in that project
+- Found by: claude
+
+### 2026-10-28 · Webflow Dropdown accordions close each other page-wide
+- Area: js
+- Symptom: "first item open in every FAQ block" couldn't be done: opening
+  one accordion built from Webflow Dropdowns closed every other one on the
+  page, and a click anywhere or moving focus away closed it too.
+- Cause: on open, Webflow sends `w-close.w-dropdown` to every other
+  dropdown, closes on `focusout`, and binds a document `mouseUpOutside`
+  closer. A script that re-runs Webflow's setup after boot (Finsweet can)
+  binds them again and resets the open panels' IX2 styles.
+- Fix: a module that leaves Webflow in charge of clicks, keys, IX2 and
+  `aria-expanded`, and only unbinds those three closers for the accordion
+  class (nav dropdowns untouched). It opens the first visible item per
+  group through Webflow's own toggle handler, and repeats both after every
+  re-run of the dropdown module's `ready`. For a new build, an accordion
+  that isn't a Dropdown avoids all of this. Hover nav menus built from
+  Dropdowns, with several modules each watching `w--open`, showed two
+  menus open at once: nothing owned "one open", and hover and Webflow's
+  deferred class changes slip past its outside-click closer. One module
+  with a single `current` menu (a `button` with `aria-expanded`) avoids
+  it. An `overflow` scroll box on a nav row clips absolutely placed menu
+  panels inside it; anchor the panels to an ancestor outside it.
+- Status: fixed in that project
+- Found by: claude
+
+### 2026-10-28 · Scroll-snap rows: markup order isn't screen order, and the row is as tall as its tallest card
+- Area: js
+- Symptom: a mobile scroll-snap row's dots pointed at the wrong cards, and
+  short cards had ~450px of empty panel under them.
+- Cause: one card was moved last with `order` in Webflow, so markup order
+  is not screen order; and a flex row is as tall as its tallest card,
+  whatever card is in view.
+- Fix: the dots module sorts cards by their on-screen position, and rows
+  marked for it take the height of the card in view (`overflow-y: hidden`
+  while they do), like Swiper's `autoHeight`. Bind only a row that
+  actually scrolls sideways, so a row that stacks at a breakpoint gets
+  nothing.
+- Status: fixed in that project
+- Found by: claude
+
+### 2026-10-20 · Bundled GSAP plugins register themselves on Webflow's `window.gsap`
+- Area: js
+- Symptom: with the bundle running after Webflow's GSAP, the bundled
+  ScrollTrigger's triggers showed up in `window.ScrollTrigger.getAll()`,
+  and a stub `window.gsap` received 5 `registerPlugin` calls.
+- Cause: GSAP's ESM plugin files (ScrollTrigger, Observer, CustomEase) end
+  with `_getGSAP() && gsap.registerPlugin(Plugin)`, and `_getGSAP()` falls
+  back to `window.gsap`. Importing them registers the bundled plugin on
+  Webflow's core and replaces `window.ScrollTrigger` under IX3 and any page
+  code that uses it. gsap-core itself stays private.
+- Fix: one entry point (`src/lib/gsap.ts`) that hides `window.gsap` while
+  the plugins evaluate — `gsap-hide` → plugins → `gsap-restore`, relying on
+  ES module evaluation order — and registers them on the bundled core.
+  Never import `gsap/…` anywhere else. Test it with a stub `window.gsap`
+  that counts `registerPlugin` calls.
+- Status: fixed in that project
+- Found by: claude
+
+### 2026-10-20 · Lazy ScrollTrigger builds: hidden and re-rendered trigger elements
+- Area: js
+- Symptom: a scroll-scrubbed card in a CMS template stayed at its
+  from-state (scale 0.5); IX3 had scrubbed it to 1. An earlier build
+  created all 78 triggers with start = end = 0.
+- Cause: the template holds 78 copies of the block (a CMS list) and shows
+  one. (1) A hidden element's 0×0 rect counted as "near the viewport", so
+  it was built while hidden and measured as 0/0. (2) Finsweet List
+  re-rendered the list after start-up, so the IntersectionObserver kept
+  watching detached nodes and never fired for the visible one. IX3
+  avoided both with a body ResizeObserver and by resolving targets again.
+- Fix: build at once only elements with a layout box near the viewport;
+  re-query each selector on every scan (a WeakSet of nodes already seen);
+  re-scan and `ScrollTrigger.refresh()` when the body height changes
+  (debounced) and on `window.load`. Regression test: a list that
+  re-renders after start-up. Eagerly built triggers need the same
+  body-height refresh: lazy images and Finsweet lists grow the page after
+  the boot `refresh()`, so pins at tablet width played ~110px early while
+  desktop matched. IX3 re-measures itself; when moving its scroll
+  interactions to code, check every width.
+- Status: fixed in that project
+- Found by: claude
+
+### 2026-10-20 · Reserving space for an async form: when to let go
+- Area: js, perf
+- Symptom: mobile CLS 0.276 from a HubSpot form pushing the page down.
+  Reserving its height fixed most runs, but releasing on `:empty` made it
+  0.355, releasing on HubSpot's `onFormReady` gave 0.467 in 1 of 10 runs,
+  and with HubSpot blocked (ad blockers) releasing the empty space shifted
+  the page by ~0.28 every time.
+- Cause: HubSpot inserts its wrapper before the fields render, and
+  `onFormReady` can fire before they reach their final height. A blocked
+  form never fills the space, so any release is a shift.
+- Fix: keep the reservation until a ResizeObserver sees the rendered form
+  at least as tall as the reserved space (or on submit). If the script
+  fails or nothing renders in 8 s, keep the space and show contact details
+  in it (email, phone). CLS 0 in all runs, form loading or blocked.
+- Status: fixed in that project
+- Found by: claude
+
+### 2026-10-20 · Finsweet list nesting fetches every item's page at load
+- Area: js, perf
+- Symptom: a home page fetched seven case-study pages (~340 KB of HTML)
+  right after load, competing with the hero image and font on phones.
+- Cause: `fs-list-nest` loads each item's page to read the nested list,
+  and the recipe started every attribute the page uses at once, even for
+  a list far below the fold.
+- Fix: the Finsweet recipe (0.8.0) starts each attribute when one of its
+  elements comes within two screens of the viewport, or on the first
+  scroll, pointer or key input. Lists near the top still start at once.
+- Status: fixed in the template's recipe, 0.8.0
+- Found by: claude
+
+### 2026-10-20 · Deferring GTM: what it buys and what it costs
+- Area: js, perf
+- Symptom: GA4, Google Ads and the HubSpot tracker (all loaded by GTM)
+  cost 160–300 ms of main-thread blocking on Lighthouse mobile, the main
+  gap between a site's live score and its staging score (staging fired no
+  tags).
+- Fix: in site head code, push `gtm.start` at once but load `gtm.js` on the
+  first scroll, pointerdown, pointermove, keydown or touchstart, or 3.5 s
+  after `window.load`, whichever comes first. Mobile TBT went to 0–10 ms;
+  dataLayer events queue until GTM arrives.
+- Cost: a visitor who leaves within ~3.5 s without touching the page is
+  not counted (no page_view, no remarketing hit). Phone-link clicks and
+  form submits are interactions, so their conversions still fire. It is
+  the client's call: agree it before shipping, and keep the standard
+  snippet in the repo's docs for an easy undo.
+- Status: documented
+- Found by: claude
+
+### 2026-10-16 · Barba: forms dead after a page change; stale head and current links
+- Area: js
+- Symptom: comparing a direct load with arriving by transition:
+  - every form reached by a transition had no Turnstile widget, so Webflow
+    kept its submit disabled for good; the console showed "Turnstile
+    already has been loaded" and "Cannot find Widget …";
+  - links outside the container (nav, floating nav, menu sheet) kept the
+    first page's `w--current` / `aria-current="page"`;
+  - meta description, Open Graph, Twitter, robots and JSON-LD stayed the
+    first page's (Barba swaps only the container and `<title>`).
+- Cause: webflow.js renders a form's Turnstile widget from
+  `$(document).on("ready")` whenever `turnstile` is already defined, and
+  jQuery 3 never fires that event again; on a full load the script's
+  onload is used instead, so only swaps break. Webflow writes current
+  states at publish time, so they don't follow Barba.
+- Fix: in the transition module: `beforeLeave` removes the old page's
+  widgets (`turnstile.remove`); the re-init clears
+  `$(document).off("ready")`, runs `Webflow.destroy()` / `ready()` / IX2,
+  then fires `$(document).trigger("ready")` once, so each widget renders as
+  its form nears the viewport, as on a direct load. `syncCurrentLinks()`
+  applies Webflow's rule (same path, no hash) to every link outside the
+  container; `syncHead()` copies the page-specific head tags from the next
+  page. For accessibility, `focusPage()` moves focus to the #hash target
+  or `<main>` without scrolling and announces the new title in a polite
+  `.sr-only` live region (the clicked link is gone after a swap). The
+  "already loaded" warning stays (webflow.js re-adds the script on every
+  `ready()`). Token and submit can't be checked headless or in a hidden
+  browser pane: confirm a real submit in a normal browser.
+- Status: fixed in that project's repo
+- Found by: claude
+
+### 2026-10-16 · Pins created out of page order are measured in the wrong place
+- Area: js
+- Symptom: after a horizontal timeline section (pinned) moved below
+  another pinned section, scrolling into it showed an empty screen; the
+  timeline appeared later, near the end of its pin.
+- Cause: ScrollTrigger measures pins in creation order. The timeline's
+  module ran before the other section's module in the manifest, so its
+  start was calculated before the pin above it had added its spacer.
+- Fix: `src/index.ts` calls `ScrollTrigger.sort()` and then `refresh()`
+  once all page modules have started, so pins are measured top to bottom
+  whatever order the modules run in.
+- Status: fixed in that project's repo
+- Found by: claude
+
+### 2026-10-13 · Barba ignores a root `custom` rule when `to` or `from` is set
+- Area: js
+- Symptom: some links felt dead: nothing moved for about a second, then
+  the page changed. A rule "zoom only from an image at least half on
+  screen" had no effect.
+- Cause: in Barba 2.10.3's `resolve`, each rule is checked on the
+  transition root and then on `to` / `from`, and the second result
+  overwrites the first. A transition with `custom` at the root and
+  `to: { namespace }` therefore matched on namespace alone, so an image
+  zoom ran with no image.
+- Fix: put `custom` inside `to` (`to: { namespace, custom }`) and type
+  `src/barba.d.ts` to allow it. Check that a plain link gets the default
+  transition and only the intended trigger gets the special one.
+- Status: fixed in that project's repo
+- Found by: human + claude
+
+### 2026-10-13 · iOS Low Power Mode refuses autoplay and Safari paints a play glyph
+- Area: js
+- Symptom: on an iPhone in Low Power Mode the muted, looping hero video
+  stayed on its poster with Safari's own play and skip glyphs painted over
+  it; nothing in the console.
+- Cause: Low Power Mode (and data saver modes) refuse autoplay: `play()`
+  rejects with `NotAllowedError`, which the module swallowed. A video
+  without `controls` still gets Safari's native start-playback overlay,
+  and with `pointer-events: none` on the video it can't even be tapped.
+- Fix: use `recipes/video/`. It keeps the poster, remembers videos whose
+  `play()` was refused with `NotAllowedError`, and retries them on the
+  visitor's first `touchend`, `click` or `keydown` (capture phase, once).
+  Repo CSS hides `::-webkit-media-controls`, `-panel`,
+  `-start-playback-button` and `-overlay-play-button` on
+  `video:not([controls])`. Test on a real iPhone with Low Power Mode on;
+  simulators and desktop Safari autoplay normally.
+- Status: recipe in the template (`recipes/video/`)
+- Found by: human + claude
+
+### 2026-10-13 · Testing local code in the built-in browser pane
+- Area: js
+- Symptom: the environment switcher on staging loaded the staging bundle,
+  not localhost (`ERR_BLOCKED_BY_CLIENT` on `http://localhost:3000/…`).
+  With the browser pane hidden, GSAP timelines, CSS animations and
+  IntersectionObserver callbacks didn't advance, so a transition sampled
+  from script looked frozen and a keyframe sat on its first frame.
+- Cause: the Claude desktop browser pane blocks a public page from
+  requesting localhost, and a hidden pane gets no animation frames.
+- Fix: for logic checks, save the staging HTML, point the loader's
+  staging URL at a local static server holding `dist/` (an absolute URL:
+  the loader passes it to `new URL()`) and open that. Class toggles and
+  layout can be read while the pane is hidden; anything that moves needs
+  the pane visible, or a check on staging by a person. With the dev flag
+  the loader falls back to staging silently, so the page looks like it
+  runs local code. A quick alternative to a local copy: inject the code
+  with the JS tool, nothing fetched from localhost: the built CSS as a
+  style element and an IIFE build of the module (`npx esbuild
+  src/modules/x.ts --bundle --format=iife`).
+- Status: documented
+- Found by: claude
+
+### 2026-10-09 · Moving off IX3: decode the published interactions, then replay them
+- Area: js
+- Symptom: rebuilding IX3 motion by eye drifts from the approved timing,
+  and the MCP's interaction tool isn't needed to read it.
+- Cause/fix: the published site ships every IX3 interaction and timeline
+  in `webflow.achunk.*.js` (find the chunk containing `"i-` ids; the
+  `[{id:"i-…"}]` and `[{id:"t-…"}]` arrays are plain JS literals). Decode
+  them once to JSON and generate a spec; a small module replays it with
+  bundled GSAP + ScrollTrigger + SplitText + CustomEase. Details that
+  matter for a faithful replay:
+  - eases are indexes into IX3's table (`"none","power1.in","power1.out",
+    "power1.inOut",…`; 3 = power1.inOut, 6 = power2.inOut, 12 =
+    power4.inOut); custom eases are SVG paths in a 160 box (y down);
+  - most triggers have `clamp: true` → `start: "clamp(top bottom)"`;
+  - **no ease** on a step means GSAP's default `power1.out`, not linear;
+  - `tt`: 0 to, 1 from, 2 fromTo, 3 set; `null` = current value;
+  - **no `position` = 0, not append**: IX3's runtime places every action
+    at `timing.position ?? 0`, so actions without one run together. It
+    also skips an action with no properties (no spacer), adds
+    `force3D: true`, and uses 0.5 s when no duration is given — the
+    published chunk omits a default duration and every action marked
+    hidden in the Designer (an interaction whose actions are all hidden
+    still loads IX3 and gates the page: delete it);
+  - `conditionalPlayback` `dont-animate` per breakpoint → `matchMedia`;
+  - IX3's SplitText uses `span`s with `gsap_split_word/letter/line`
+    classes, splits words as inline blocks (no line break at hyphens) and
+    **keeps the split** after the reveal — the live line breaks and page
+    heights depend on that, so match it.
+  Load interactions (hero, page header) are better as CSS `@keyframes`
+  gated on `html:not(.w-mod-ix3)`: they start at first paint instead of
+  after IX3's `visibility:hidden` gate (the main mobile LCP cost). Bundled
+  gsap-core never overwrites Webflow's `window.gsap` (it only installs when
+  none exists), so the module can stay off while `window.gsap !== gsap` — no
+  double animation before the cutover. Its plugins are different: see
+  "Bundled GSAP plugins register themselves on Webflow's `window.gsap`". Build timelines lazily
+  (IntersectionObserver one screen ahead) and batch one
+  `ScrollTrigger.refresh()` after each build. Verifying by blocking IX3 on
+  staging with Playwright is only approximate: Webflow also writes IX3
+  start styles inline, so check the real cutover on staging by eye. The
+  module's `data-*` hooks published in Webflow while the interactions are
+  still on mean both animate once the bundle with the module ships:
+  deploy the bundle and remove the interactions in one sitting, or keep
+  the module gated off until the cutover. A prototype that runs `src/`
+  live on pulled Webflow HTML has the same double run.
+- Status: cut over in a second project (0 differences on 7 page/width
+  pairs); the `position` rule above was corrected there
+- Found by: claude
+
+### 2026-10-09 · Finsweet recipe: keep it out of index.js
+- Area: js, perf
+- Symptom: following `recipes/finsweet`, List + Custom Select + Social
+  Share added ~118 KB to `index.js`, so every page paid for attributes used
+  on two.
+- Cause: the registry's `import()`s are inlined in the single IIFE bundle;
+  importing the registry anywhere in index.js (even for its keys) pulls all
+  of Finsweet in.
+- Fix: a second esbuild entry (`src/fs-bundle.ts` → `dist/fs-bundle.js`)
+  that runs `initFinsweet()`, and a tiny loader in index.js that checks for
+  `[fs-<name>-element]` (names as a literal list, kept in step by a test)
+  and appends `<script src>` with the same base and query as index.js, so
+  each release loads its matching version. Guard: do nothing while a
+  Finsweet CDN `<script>` is still on the page, or both copies initialise
+  the same elements during the migration. v1 (`fs-cmsload/cmsfilter/
+  cmssort`) markup has to be renamed to v2 `fs-list-*` in Webflow.
+- Status: fixed in the project; recipe not updated
+- Found by: claude
+
 ### 2026-10-06 · Finsweet Combo Box 2.7.1 differs from its docs
 - Area: js
 - Symptom: With the bundled `@finsweet/attributes@2.7.1` (an earlier
@@ -113,8 +775,12 @@ refer to the project the lesson came from; Status is that project's.
   round trips between two pages keep 3 pin spacers and the same
   page height, and every scene still runs. Global modules (Lenis, nav) run
   once and expose refresh hooks. Webflow is re-initialised after each swap
-  (`data-wf-page`, `Webflow.destroy()` / `ready()`, IX2); Turnstile then
-  logs "already has been loaded" — harmless.
+  (`data-wf-page`, `Webflow.destroy()` / `ready()`, IX2). Correction
+  (2026-10-16): Turnstile then logs "already has been loaded". The warning
+  itself is harmless, but it hid a real fault: forms reached by a
+  transition get no widget and stay disabled, and head tags and current
+  links stay the first page's. See "Barba: forms dead after a page
+  change; stale head and current links".
 - Status: fixed in that project's repo
 - Found by: claude
 
@@ -164,7 +830,116 @@ refer to the project the lesson came from; Status is that project's.
 - Symptom: Same-page hash links land under a sticky nav.
 - Cause: Webflow's scroll module offsets only for `position: fixed` headers
   and never reads `scroll-margin-top`.
-- Fix: an earlier project's `anchor-scroll.ts` unbinds `click.wf-scroll` and measures
-  `--nav-h` from the nav.
-- Status: project pattern
+- Fix: use `recipes/anchor-scroll/`. It unbinds `click.wf-scroll` (again
+  after every `Webflow.ready()`), scrolls through Lenis, and offsets by the
+  larger of `scroll-margin-top` and any sticky or fixed bar pinned above
+  the target that overlaps it horizontally (a sticky side nav must not
+  count), measured with a ResizeObserver, never a hard-coded nav height.
+  Don't add a second hash-link handler beside it. Three projects wrote
+  their own before the recipe existed.
+- Status: recipe in the template (`recipes/anchor-scroll/`)
 - Found by: human
+
+### 2026-09-28 · `window.lenis` is a version marker, not the instance
+- Area: js
+- Symptom: a card's popup did nothing and the page silently
+  scroll-locked.
+- Cause: the scroll lock probed `window.lenis`, but Lenis sets
+  `window.lenis = { version }` itself, so the probe was always truthy and
+  `.stop()` threw "stop is not a function" after `aria-hidden` and the
+  lock were set but before the modal was shown.
+- Fix: pass the Lenis instance into any module that needs it (as the nav
+  module does); never look it up on `window`.
+- Status: fixed in that project's repo
+- Found by: claude
+
+### 2026-09-14 · GSAP `.from()` animates to the current value: items stranded at 0
+- Area: js
+- Symptom: footer accordions on mobile opened to full height with
+  invisible links.
+- Cause: `.from()` takes the element's current value as its end value. An
+  earlier timeline had left the items at opacity 0, so the new tween
+  animated 0 → 0. (A throw in one module also stopped later inits; see
+  "One throwing module leaves the page scroll-locked".)
+- Fix: state both ends (`fromTo()`, or `set()` + `to()`, as in
+  "gsap.from() start state reverts on load") for any tween that can run
+  more than once or after another animation on the same elements, and clip
+  inside the panel itself.
+- Status: fixed in that project's repo
+- Found by: claude
+
+### 2026-10-08 · A consent manager blocks the dynamically inserted bundle
+- Area: js, loader
+- Symptom: behaviour from the bundle worked after cookie consent but
+  failed on another page or in a fresh browser before consent: the CSS
+  loaded, `index.js` was never requested.
+- Cause: the consent manager (Iubenda) blocks scripts it doesn't know are
+  essential, including ones created by another script. The site's old
+  script tags carried its exemption attribute (`data-cmp-ab="2"`); the
+  new footer loader didn't, so the whole bundle was treated as a
+  consent-dependent script.
+- Fix: mark the inline footer loader itself with the consent manager's
+  allow attribute (for Iubenda `data-cmp-ab="2"`), so scripts it creates
+  are exempt too, and set the same attribute on each script it appends.
+  When a site has a consent manager, test the bundle in a fresh private
+  window before consenting, on more than one page.
+- Status: fixed in that project's loader
+- Found by: codex
+
+### 2026-10-16 · HubSpot forms with CAPTCHA must use the embed
+- Area: js
+- Symptom: the plan was the designed Webflow form posting to HubSpot's
+  Forms API, but the client's form has CAPTCHA on, which the submit
+  endpoints refuse. The embed then rendered the themed form inside an
+  iframe, out of reach of page CSS, and changes made in `onFormReady`
+  (placeholders, a custom button) vanished.
+- Cause: themed HubSpot forms render in a same-origin, srcless iframe;
+  the form is a React app that re-renders after `onFormReady` and may
+  replace the form element it passed. HubSpot's theme selectors beat
+  plain class rules.
+- Fix: keep the HubSpot embed for any form with CAPTCHA. A module loads
+  it near the viewport, writes the design's CSS into the iframe (every
+  declaration `!important`, sizes relative to the iframe root), and
+  re-applies its DOM changes (placeholders from labels, a designed button
+  that clicks HubSpot's hidden submit, the reCAPTCHA disclosure) from a
+  MutationObserver, always on the live `form.hs-form`. Test with headless
+  Playwright: a hidden browser pane never fires IntersectionObserver.
+  More inside the frame:
+  - the v2 embed renders in an iframe even with `css: ''`, unless the form
+    is set to raw HTML in HubSpot (a paid setting that unstyles any other
+    page using the form); `css: ''` doesn't remove the theme stylesheet,
+    which gives every `.hs-input` a fixed height that clips a file input
+    (`height: auto`);
+  - copy the page's stylesheets in and add the site's classes to
+    HubSpot's elements, re-added from a MutationObserver created in the
+    frame's realm; `instanceof HTMLElement` is false for the frame's
+    nodes;
+  - set the frame body's font size from the page's (fluid scaling reads
+    the frame's 100vw); Webflow's base `html { height: 100% }` / `body {
+    min-height: 100% }` ties content to the frame height, so set `height:
+    auto` / `min-height: 0`;
+  - a ResizeObserver never fired for the frame's elements and HubSpot
+    rewrites the iframe height after re-renders: fit it on DOM
+    mutations, stylesheet loads and resize with `height … !important`;
+  - wheel events in the frame never reach the page's Lenis: forward them;
+  - the error list reuses `inputs-list` (`ul.hs-error-msgs.inputs-list`),
+    so a grid on `.inputs-list` squeezes errors: set `.hs-error-msgs {
+    display: block }`;
+  - computed colours read in a background tab are stale while
+    transitions are paused; check with `transition: none`.
+- Status: fixed in that project's repo
+- Found by: claude
+
+### 2026-10-12 · A WebGL context created before the first paint delays it
+- Area: js, perf
+- Symptom: Lighthouse mobile showed an observed first paint at 2.1 s with
+  0 ms blocking time; desktop was fine.
+- Cause: a hero shader created its WebGL context and compiled during
+  boot. Where the GPU is emulated (headless Chrome, lab tests) that work
+  holds back the first frame without showing as main-thread time.
+- Fix: a canvas on screen at load starts after `load`, two animation
+  frames and idle time, with a still image as the first paint; canvases
+  further down start near the viewport. Observed first paint went to
+  0.26 s.
+- Status: fixed in that project's repo
+- Found by: claude

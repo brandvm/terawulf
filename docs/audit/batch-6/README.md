@@ -1,8 +1,8 @@
 # Batch 6: icons and accessibility
 
-Webflow part staged on terawulff.webflow.io on 2026-10-09; production is
-unchanged until "publish". The icon part ships as repo release **v1.3.0**
-(needs merge + tag + Embed 2a edit, below).
+**Live 2026-10-09** (PR #6 merged, tag v1.3.0, Embed 2a + RELEASE switched,
+published after "publish"). Hero pause button added after the decision
+(below).
 
 ## A. Accessibility (Webflow, staged)
 
@@ -25,9 +25,14 @@ current production: same heights and card counts, SSIM ≥ 0.998.
 
 404 uses its own header (no G | Navigation), so it has no skip link.
 
+Hero pause button (decided 2026-10-09): `<button data-video-toggle>` in the
+Home hero section, class `Home Hero | Video Toggle` (40 px round, navy 60 %,
+`bottom: 5.25rem` so it clears the stats bar that overlaps the hero bottom),
+`ph-bold ph-pause` glyph added to the subset; `src/modules/video-toggle.ts`.
+Verified on staging: pauses, label/icon swap, stays paused after scrolling
+away, reduced motion starts on Play.
+
 Not in this batch:
-- **Hero video pause control** (WCAG 2.2.2): adds a visible button to the
-  approved hero design → needs a design decision.
 - aria-prohibited-attr / colour-contrast / aria-hidden-focus: all from IX3
   SplitText (aria-label on divs, words measured mid-fade) → B6.
 

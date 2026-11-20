@@ -2,5 +2,11 @@
   "version": "0.1.0",
   "template": "brandvm/wf-template",
   "adopted": "2026-10-09",
-  "commit": "63bfb7981619b7e21e166dea58bae26fd7a16907"
+  "commit": "63bfb7981619b7e21e166dea58bae26fd7a16907",
+  "skills": {
+    "version": "v1.0.0",
+    "commit": "4d814ec70c3bf48d31914df6b5e34b05f377f435",
+    "updated": "2026-11-20",
+    "workflowSeeded": true
+  }
 }

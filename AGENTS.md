@@ -6,8 +6,9 @@ source of agent rules — edit this file, never a copy of it.
 
 ## Project facts
 
-Adopted from `brandvm/wf-template` 0.1.0 (63bfb79) on 2026-10-09
-(`.wf-template.json`); the repo predates the template layout.
+Adopted from `brandvm/wf-template` 0.1.0 (63bfb79) on 2026-10-09; skills,
+tooling and loader updated to template **1.0.0** on 2026-11-20
+(`.wf-template.json`). The repo predates the template layout.
 
 - Client / site: TeraWulf (live, SEO/AEO/GEO retainer)
 - GitHub: `brandvm/terawulf`, default branch `master`
@@ -18,16 +19,20 @@ Adopted from `brandvm/wf-template` 0.1.0 (63bfb79) on 2026-10-09
 - Staging site: `https://terawulff.webflow.io` (double f)
 - Staging bundles: `https://brandvm.github.io/terawulf/`
 - Production domain: `https://www.terawulf.com` (apex redirects to www)
-- Production release: **`1.3.1`** (live in the 2026-10-13 publish; checked
-  2026-11-02), installed with the template loader: `RELEASE` in head code +
-  the `@1.3.1` in Embed 2a (G | Components). Rollback copies:
+- Production release: **`1.4.2`** (live in the 2026-11-10 publish; checked
+  2026-11-20 on www and staging), installed with the template loader:
+  `RELEASE` in head code + the `@1.4.2` in Embed 2a (G | Components). The
+  installed loader is the pre-0.8.0 one with dev mode until batch TW-1
+  (2026-11-20) re-pastes `loader.html`. Rollback copies:
   `docs/rollback/2026-10-09/` (1.1.1, old two-piece loader) and
   `docs/rollback/2026-11-02/` (1.3.1, before the B6 cutover). Release plan: small batches, each
   staging → check → production (`docs/audit/STATUS.md`).
 - Global code component: **G | Components** (2026-10-09, wf-template
   shell): fixed 0×0 div, `aria-hidden="true"`, first child of `body` on all
   15 pages, holding Embed 2a (icon CSS + `#wfc-css` pinned release) and
-  Embed 2b. It replaced **G | Embed Code**, whose definition is kept unused
+  Embed 2b. The Phosphor icons are a subset inside `styles.css` since
+  v1.3.0 (no CDN links in 2a; `src/phosphor.css` is the template's empty
+  `pnpm phosphor none` stub). It replaced **G | Embed Code**, whose definition is kept unused
   until production is confirmed, then deleted. G | Grid Guide was deleted.
 - Origin: migrated 2026-09-02 from CodeSandbox (`terawulf-main.js`,
   `terawulf-main.css`) plus the inline `<style>` of the global embed.
@@ -73,9 +78,10 @@ Adopted from `brandvm/wf-template` 0.1.0 (63bfb79) on 2026-10-09
   to the repo in B6; the nav dropdown/menu, pop-ups and hovers stay IX2
   for now.
 - **Release = two strings** (TeraWulf loader): `RELEASE` in head code AND
-  the `@x.y.z` in Embed 2a's href (G | Embed Code). 2a pins the release so
-  production downloads the CSS once (GOTCHAS 2026-10-09). 2b logs a console
-  error when they disagree.
+  the `@x.y.z` in Embed 2a's href (G | Components). 2a pins the release so
+  production downloads the CSS once (GOTCHAS 2026-10-09); head code also
+  writes the same URL into `<head>` (template 0.8.0) so it holds first
+  paint. A mismatch is logged as a console error.
 - Installing the template loader: remove the old head/footer snippets and
   the old CSS link in G | Embed Code, keep the existing `theme-color` meta
   only once, set `RELEASE` to the new tag, paste 2a/2b into G | Embed Code.
@@ -158,12 +164,12 @@ Before writing any CSS, decide where it belongs.
 - **The Designer canvas never runs scripts.** Anything shown only after JS
   runs is invisible there; use a `canvas-preview` rule if the Designer needs
   to see it.
-- **The canvas shows the staging stylesheet only.** Seeing a CSS change in
-  the Designer means push → ~1 min → reload the Designer tab. Never add a
-  static `http://localhost` link to the Embed for good — every public
-  visitor's browser would request it. `loader.html` describes the temporary
-  opt-in; if one is in use, the local and staging sheets are additive and a
-  deleted rule keeps applying from staging until pushed.
+- **The canvas shows the release stylesheet** (TeraWulf's Embed 2a pins
+  it), so a CSS change shows on the canvas only after a release. Check
+  CSS on terawulff.webflow.io instead (push → ~1 min → reload). Never add
+  an `http://localhost` link to the Embed — every public visitor's browser
+  would request it. There is no local mode on Webflow pages (template
+  1.0.0).
 - No live reload on the canvas. Reload the Designer tab.
 - Debug "is my CSS loading?" with `background`, not `outline` — outlines on
   `body` paint outside the canvas iframe and get clipped.
@@ -172,28 +178,31 @@ Before writing any CSS, decide where it belongs.
 
 A push updates the JS/CSS bundles only. Any change to `loader.html` must be
 re-pasted into Webflow and published to take effect — say so in the commit
-or PR description, and keep `loader.html` identical to what is installed.
+or PR description, and keep `loader.html` identical to what is installed,
+**except `RELEASE`** and 2a's `@version`: they stay `null` / `@1.2.0` in the
+repo (the browser tests need that) and the installed values live in
+Project facts above.
 
 ## Commands and release
 
 ```bash
-pnpm dev      # watch + server on :3000
 pnpm build    # minified -> dist/
 pnpm check    # tsc --noEmit + repo checks (scripts parse, skill links)
 pnpm test     # build + Playwright checks (loader + modules) + the new-project test
 pnpm wf:pass /   # webflow-build checks: wf:compare, wf:pass, wf:anchors, wf:outline,
-                 # wf:film, wf:transitions, wf:a11y, wf:links, wf:baseline
-pnpm update-skills   # skills from the latest template release (ask first)
+                 # wf:film, wf:transitions, wf:a11y, wf:links, wf:baseline,
+                 # wf:html, wf:perf, wf:seo, wf:install, wf:parity, wf:overflow,
+                 # wf:tracking, wf:redirects, wf:domain
+pnpm update-skills   # skills, build tooling and new scripts from the latest template release (ask first)
 ```
 
 Node 22 and the pinned pnpm in `package.json`. `dist/` is committed: after
 any `src/` change run `pnpm build` and commit `dist/` with it — CI fails the
 push otherwise, and staging only deploys after `pnpm check`, the browser
-tests and the `dist/` check pass. `pnpm dev` builds in memory and never
-touches `dist/`.
+tests and the `dist/` check pass.
 
 Release as the README describes: tag a commit whose CI passed, then set
-`RELEASE` in the head snippet — the only version string. Never move a pushed
+`RELEASE` in the head snippet and the `@version` in Embed 2a. Never move a pushed
 tag; cut the next patch. Never use `@latest` or a branch URL in production.
 
 ## Webflow MCP connection

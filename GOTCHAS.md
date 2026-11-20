@@ -23,6 +23,54 @@ repos to improve `brandvm/wf-template`.
 
 ## This project
 
+### 2026-11-20 · `pnpm update-skills` replaces a customised `build.mjs`
+- Area: ci, release
+- Scope: template-candidate
+- Symptom: after updating 0.1.0 → 1.0.0, `pnpm build` deleted
+  `dist/fs-bundle.js` (the Finsweet bundle) and wrote the Phosphor subset
+  fonts as separate `dist/fonts/*.woff2` files instead of inlining them.
+  Tests and `pnpm check` still passed.
+- Cause: `build.mjs` is template tooling and is overwritten whole. The
+  repo had added an entry point (`src/fs-bundle.ts`) and a `dataurl`
+  loader; the template has `'file'` for `src/phosphor/` fonts and no hook
+  for extra entries.
+- Fix: re-added both, with a comment in `build.mjs` pointing here. After
+  every `update-skills`, run `git diff build.mjs` and `git status dist`
+  before committing. The template could read extra entry points and the
+  font loader from `webflow-build.config.json`.
+- Status: open (template)
+- Found by: claude
+
+### 2026-11-20 · `pnpm update-skills` seeds the full icon font next to a subset
+- Area: css, perf
+- Scope: template-candidate
+- Symptom: the update added `src/phosphor.css`, `src/phosphor/Phosphor.woff2`
+  (147 KB) and an `@import` in `styles.css`, on a site that already ships
+  its own 13-glyph subset in §05. With the template's `dataurl`-less build
+  that is one more font; with TeraWulf's `dataurl` loader it would have put
+  147 KB into `styles.css`.
+- Cause: the seed is added whenever `src/phosphor.css` is missing; it
+  doesn't look for Phosphor rules already in the stylesheet.
+- Fix: `pnpm phosphor none` leaves an empty `src/phosphor.css` stub (keeps
+  the import, so the seed is never added again) and deletes the font.
+- Status: fixed (this branch)
+- Found by: claude
+
+### 2026-11-20 · The tracker said "in repo" for a fix live for six weeks
+- Area: release
+- Scope: project
+- Symptom: `docs/audit/STATUS.md` C8 (Phosphor subset) read "in repo, ships
+  as v1.3.0", and the 2026-11-20 audit planned to release it. It had been
+  live since 2026-10-09; Embed 2a had no Phosphor links.
+- Cause: the "batch 6 live" docs commit (daa17d4) stayed on the branch
+  `docs/batch-6-live` and was never merged, so master's tracker kept the
+  staged state.
+- Fix: rows corrected from the live HTML. Check the published site, not
+  only the tracker, before planning a batch; merge docs branches with the
+  release they describe.
+- Status: fixed (this branch)
+- Found by: claude
+
 ### 2026-11-02 · SplitText with `tag: 'span'` leaves pieces inline (IX3 did not)
 - Area: js
 - Scope: template-candidate
@@ -131,7 +179,7 @@ repos to improve `brandvm/wf-template`.
   release from day one.
 - Fix: keep `RELEASE = null` in the repo and record the installed value in
   AGENTS.md › Project facts; set it only in the pasted snippet.
-- Status: open
+- Status: upstreamed — template 1.0.0 AGENTS.md says the same ("except `RELEASE`")
 - Found by: claude
 
 ### 2026-10-09 · Template loader double-fetches staging CSS
